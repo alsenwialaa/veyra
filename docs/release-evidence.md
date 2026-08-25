@@ -12,7 +12,7 @@
 - Formally accepted tools: **0**
 - Release owner/acceptance authority: unresolved
 
-Candidate `0.1.7` is a fail-closed engineering build, not a production release. The checks below establish deterministic contract and static evidence only. They do not establish supported WordPress/WooCommerce/MySQL/MariaDB/Gemini behavior, privacy/legal approval, independent security acceptance, accessibility acceptance, performance, operations, or formal proposal acceptance.
+Candidate `0.1.7` is a fail-closed engineering build, not a production release. The checks below establish deterministic/static evidence plus bounded attributable quality checks and platform/browser smokes. They do not establish broad supported WordPress/WooCommerce/database/provider behavior, privacy/legal approval, independent security or accessibility acceptance, performance, operations, or formal proposal acceptance.
 
 ## Inventory and governance
 
@@ -58,7 +58,7 @@ No catalog row, anchor, DoD item, provider route, commerce workflow, or optional
 
 - Media routes require an explicit absolute non-public `VEYRA_PROTECTED_STORAGE_PATH`, approved scanner callback, and explicit `VEYRA_PROTECTED_MEDIA_RETENTION_SECONDS` from 3,600 through 31,536,000 seconds. No retention default exists.
 - Authorized delivery verifies the exact stored byte count and SHA-256, caps the verified payload at 10 MiB, uses process memory, and never streams unverified content.
-- The customer UI rejects cross-origin REST bases, binds quick replies to the exact pending question, and gives the native confirmation dialog focus/Escape behavior. Browser/axe fixtures are checked in but are not recorded as executed here.
+- The customer UI rejects cross-origin REST bases, binds quick replies to the exact pending question, and gives the native confirmation dialog focus/Escape behavior. The isolated Chromium fixture passes keyboard/dialog/Escape, 390×844 viewport containment, and its serious/critical axe gate; broader accessibility acceptance remains open.
 
 The complete subsystem and 20-feature trace is in `review-and-implementation-report-0.1.7.md`.
 
@@ -78,7 +78,7 @@ The executable default route remains `Unconfigured`. These values remain false:
 
 Implementation and fixture evidence cannot self-promote independent certification flags.
 
-## Local verification
+## Verification summary
 
 | Check | Result | Evidence boundary |
 |---|---|---|
@@ -93,11 +93,35 @@ Implementation and fixture evidence cannot self-promote independent certificatio
 | Static release verifier | Passed | `0.1.7`, schema `1.6.0`, 28 capabilities, 20 core, 17 optional, 30 JSON, 262 PHP source, 12 REST routes, 91 Arabic strings |
 | Workflow YAML and diff check | Passed | Static definition/whitespace boundary |
 | Heuristic audit | 0 critical, 16 high, 34 medium | Manually dispositioned; not an independent security audit |
-| Composer/PHPUnit, PHPStan, Plugin Check, coverage | Not run | CI jobs exist; no attributable pass recorded here |
-| Live platform/provider/browser matrices | Not run | Release-blocking |
-| Deterministic package double-build | Passed | Two byte-identical builds; 424-file source and 275-file installable archives |
+| Composer/PHPUnit, PHPStan, Plugin Check, coverage | Passed in attributable CI | Bounded automated evidence; Clover generation has no accepted coverage threshold |
+| WordPress/WooCommerce/database smoke | 3/3 passed in attributable CI | Exact three-cell matrix below; not a broad compatibility declaration |
+| Isolated Chromium/axe smoke | 2/2 passed in attributable CI | One fixture; not WCAG, assistive-technology, RTL, or workflow acceptance |
+| Live provider and broad acceptance matrices | Not run / Not assessed | Release-blocking |
+| Deterministic package double-build | Passed | Two byte-identical builds; 425-file source and 275-file installable archives |
 
-The standalone scripts ran through a PHP 8.2.32 WebAssembly runtime. The package requires PHP 8.1+, but supported-PHP-version testing remains unassessed.
+The standalone scripts ran through a PHP 8.2.32 WebAssembly runtime. Attributable CI also ran the deterministic contract suite on PHP 8.1, 8.2, 8.3, and 8.4. That is bounded runtime evidence, not a complete supported-PHP declaration.
+
+## Attributable GitHub Actions evidence
+
+Evidence commit: [`c8a46aa73974af81fb1fb5e5831ab9b203cc3a43`](https://github.com/alsenwialaa/veyra/commit/c8a46aa73974af81fb1fb5e5831ab9b203cc3a43).
+
+| Workflow | Result | Exact evidence |
+|---|---:|---|
+| [Candidate quality checks 32797874762](https://github.com/alsenwialaa/veyra/actions/runs/32797874762) | 9/9 jobs passed | Composer validation/install/audit and all PHP/Node contracts on PHP 8.1–8.4; PHPUnit coverage generation; PHPStan; Draft 2020-12 schemas/registries; Plugin Check; deterministic packaging |
+| [WordPress and WooCommerce integration 32797874806](https://github.com/alsenwialaa/veyra/actions/runs/32797874806) | 4/4 jobs passed | Three packaged platform cells plus isolated Chromium widget/accessibility smoke |
+
+Plugin Check completed with **0 errors and 0 warnings**. The generated Clover artifact reports coverage across 262 PHP source files and 222 classes: 2,892/21,277 statements (13.59%), 158/1,355 methods (11.66%), and 3,050/22,632 elements (13.48%). Coverage-report generation passed; no release coverage threshold is approved or claimed.
+
+The deterministic package job built the candidate twice byte-for-byte: source archive 425 files, SHA-256 `64c814e085407b49403a348fdda23c9d1994e1878a9fb612d252af58a77ae7a9`; installable archive 275 files, SHA-256 `4bf60ab538ed4739ce7b4dd2a24e8c5514ff6a7a52eb4be21672e9ea5ee1e077`.
+
+| Platform cell | Result | Bounded behavior exercised |
+|---|---:|---|
+| WP 6.5 / WC 8.5.2 / PHP 8.1 / MySQL 8.0 | Passed | Packaged activation/reactivation; public simple-product/order CRUD under legacy then HPOS storage; classic and Checkout Blocks page-fixture assertions; fatal-log denial |
+| WP 7.1 / WC 11.0.1 / PHP 8.4 / MySQL 8.0 | Passed | Same bounded packaged CRUD and page-fixture smoke on the current cell |
+| WP 7.1 / WC 11.0.1 / PHP 8.4 / MariaDB 11.4 | Passed | Same bounded packaged CRUD and page-fixture smoke on MariaDB |
+| Chromium / WP 7.1 / WC 11.0.1 / PHP 8.4 / MySQL 8.0 | 2/2 passed | Exact asset/bootstrap/mount checks, keyboard/dialog/Escape focus, 390×844 viewport containment, and zero serious/critical axe violations in the isolated fixture |
+
+These are ephemeral automated smokes, not complete commerce E2E, upgrade/rollback/concurrency/load evidence, a compatibility or HPOS declaration, WCAG/assistive-technology/RTL acceptance, independent security/privacy acceptance, operational readiness, or live Gemini transmission/evaluation. They promote no formal ledger row.
 
 ## Mandatory blockers
 
@@ -109,8 +133,8 @@ The standalone scripts ran through a PHP 8.2.32 WebAssembly runtime. The package
 | Guest Woo binding | Missing; guest commerce remains denied |
 | Tool coverage/certification | 1 tested, 7 implemented-not-tested, 147 contracted; 0 formally accepted |
 | Commerce/continuity workflows | Catalog/cart/checkout/order/gateway/CRM/payment/media/knowledge/memory/summary/handoff/operations remain incomplete end to end |
-| Live compatibility | WordPress, WooCommerce, HPOS, Blocks/classic, Store API, extensions, MySQL/MariaDB, Action Scheduler, gateways, shipping/tax/fees not accepted |
-| Security/accessibility/localization | No independent security acceptance or accepted browser/assistive-tech/zoom/reflow/Arabic/RTL matrix |
+| Live compatibility | The exact three-cell packaged smoke passed; broader WordPress/WooCommerce/HPOS/Blocks/classic, Store API, extensions, databases, Action Scheduler, gateways, shipping/tax/fees remain unaccepted |
+| Security/accessibility/localization | The isolated Chromium/axe smoke passed; no independent security acceptance or accepted assistive-tech/zoom/reflow/Arabic/RTL/full-flow matrix |
 | Performance/operations/recovery | No accepted load/concurrency, monitoring, incident, backup/restore, rollout, or rollback exercise |
 | Formal acceptance | 0/35 anchors and 0/64 DoD items accepted; accountable owners unresolved |
 
@@ -118,6 +142,6 @@ Any mandatory `Missing`, `Not run`, `Not assessed`, or failed gate blocks releas
 
 ## Final decision
 
-Candidate `0.1.7` is materially safer and more testable than `0.1.6`, but live compatibility, provider/privacy/evaluation, complete workflows, operational readiness, and formal acceptance remain absent.
+Candidate `0.1.7` is materially safer and more testable than `0.1.6`, and its bounded automated quality/platform/browser smokes pass. Broad compatibility, provider/privacy/evaluation, complete workflows, operational readiness, and formal acceptance remain absent.
 
 **Final verdict: NOT READY. Do not deploy this candidate to production.**

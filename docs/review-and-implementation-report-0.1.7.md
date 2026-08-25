@@ -24,7 +24,7 @@ Candidate `0.1.7` repairs confirmed fail-closed, state-integrity, concurrency, p
 7. order, CRM, payment-review, confirmation, idempotency, REST, and quick-reply paths received focused failure/ownership/replay repairs; and
 8. a checked-in test environment now defines deterministic PHP/Node/schema/static/package jobs plus WordPress/WooCommerce/MySQL/MariaDB and browser/axe matrices.
 
-These repairs do not establish production completeness. The provider route remains `Unconfigured`; shopper transmission, privacy publication, evaluation, release certification, and all five independent route certifications remain false. Live platform/provider/browser results, formal acceptance, and major canonical workflows are still absent.
+These repairs do not establish production completeness. The provider route remains `Unconfigured`; shopper transmission, privacy publication, evaluation, release certification, and all five independent route certifications remain false. Bounded attributable quality, three-cell platform, and isolated Chromium/axe smokes pass; live provider evaluation, broad compatibility/accessibility acceptance, formal acceptance, and major canonical workflows remain absent.
 
 ## Formal acceptance ledger
 
@@ -47,7 +47,7 @@ No row was promoted because a class, schema, fixture, or workflow definition exi
 |---|---|---|
 | `AI` | Preserved provider error codes; false readiness capabilities no longer become true. Non-readiness native Gemini calls are denied. Provider continuations accept validated projections only; semantic replay is recorded without mutating stored ToolResult data; nested output objects/arrays must be recursively closed. | Default route Unconfigured; exact release model, privacy, live capability/evaluation, complete projection acceptance, and post-mutation context refresh unresolved. |
 | `Audit` | Expanded safe-metadata denial for bank identifiers and retained minimum correlation-only failure evidence. | Independent log/secret review, access/retention policy, and live observability unassessed. |
-| `Bootstrap` | Deferred migration work instead of request-path schema work; plugin/runtime failures block Veyra without breaking Woo. Security/privacy/media hook registration rolls back as one unit. Deactivation transaction invalidates confirmations, marks in-progress idempotency uncertain, then releases locks. Uninstall retains recovery roles when deletion fails. | Live clean/repeated upgrade, interruption/resume, rollback, deactivation/reactivation, bounded purge, and time-limit behavior unrun. |
+| `Bootstrap` | Deferred migration work instead of request-path schema work; plugin/runtime failures block Veyra without breaking Woo. Security/privacy/media hook registration rolls back as one unit. Deactivation transaction invalidates confirmations, marks in-progress idempotency uncertain, then releases locks. Uninstall retains recovery roles when deletion fails. Packaged clean activation/reactivation passed in the exact CI cells below. | Repeated upgrade, interruption/resume, rollback, bounded purge, and time-limit behavior remain unassessed. |
 | `CRM` | Empty customer messages fail before idempotency claim; checkout-draft orders cannot be attached; failed terminal idempotency transitions become uncertain. | Case taxonomy, teams, SLAs, human workflow, live duplicate/race behavior, and decision-to-execution adapters unresolved. |
 | `Cart` | Uses the same actor-wide Woo authority lock as checkout; inspects current state before claim and after lock; safe retry reconciles before a new mutation; uncertain outcome does not become retryable success. | Live Woo sessions, totals/extensions, compound semantics, guest binding, concurrent tabs, and accepted idempotency evidence missing. |
 | `Catalog` | Added closed outputs for current handler surfaces, list-shaped facets/attributes, exact typed comparison IDs, strict variation attributes, and explicit truncation/completeness metadata. | Catalog tools remain unaccepted; live variable-product, visibility, pricing, stock, extension, and response-grounding evidence absent. |
@@ -55,11 +55,11 @@ No row was promoted because a class, schema, fixture, or workflow definition exi
 | `Confirmation` | Bounded/canonical confirmation request fields; unexpected sensitive-gate failure maps to uncertain rather than silently safe retry. | Database atomicity and complete sensitive-action E2E matrix unrun. |
 | `Context` | Reviewed authority/freshness helpers and retained server-side time/authority boundaries. | Complete branch/location/culture/time source publications and invalidation evidence missing. |
 | `Conversation` | Schema 1.6 stores `unresolved_references_json`; journey IDs match the 36-character column; unresolved references are unique/bounded; reads/writes are actor-owned, versioned, and round-trip checked. Pending-question and quick-reply bindings are exact. | Validated summaries, full Journey State/history, cross-session resume, natural-language thresholds, and live isolation remain incomplete. |
-| `Experience` | Cross-origin REST bases are rejected; quick replies are filtered to the exact pending-question binding; confirmation dialog uses native focus/Escape behavior; REST idempotency exceptions are contained. Browser fixtures cover mobile, keyboard, focus, and axe smoke paths. | Browser workflow was configured but not recorded as run here; WCAG 2.2 AA, screen reader, zoom/reflow, Arabic/RTL, reconnect, and historical-flow acceptance missing. |
+| `Experience` | Cross-origin REST bases are rejected; quick replies are filtered to the exact pending-question binding; confirmation dialog uses native focus/Escape behavior; REST idempotency exceptions are contained. The isolated Chromium fixture passes 2/2 for asset/mount integrity, keyboard/dialog/Escape, mobile containment, and zero serious/critical axe violations. | Full WCAG 2.2 AA, screen reader, zoom/reflow, Arabic/RTL, reconnect, and historical-flow acceptance remain missing. |
 | `Features` | Effective-state schema requires non-empty reason/remediation when blocked/degraded; missing Woo/runtime failures no longer appear On or falsely equivalent. | Every Production Core feature remains registry `Blocked`; cross-surface live exposure matrix unassessed. |
 | `Http` | Reviewed request/error envelope helpers as adapter-only boundaries. | Complete route-by-route nonce/capability/ownership/rate/abuse integration evidence missing. |
 | `Identity` | Existing server-resolved actor/capability scope retained and exercised by affected fixtures. | Guest-to-Woo-session binding, complete cross-customer matrix, account-link transaction behavior, and role-grant policy unresolved. |
-| `Infrastructure` | Added postcondition-checked schema 1.6 focus migration; actor-scoped repository failures throw instead of becoming ordinary misses. | Live `dbDelta`, MySQL/MariaDB isolation/index/volume, rollback, backup/restore, and queue operations unrun. |
+| `Infrastructure` | Added postcondition-checked schema 1.6 focus migration; actor-scoped repository failures throw instead of becoming ordinary misses. Clean-table/InnoDB postconditions passed in bounded MySQL 8.0 and MariaDB 11.4 smokes. | Upgrade migration, isolation/concurrency/index-volume evidence, rollback, backup/restore, and queue operations remain unassessed. |
 | `Knowledge` | Inputs now use closed typed source-ID/source-type lists; outputs report total, truncation, completeness, and no silent first-result selection; conflict result is advisory. | Published source operations, conflicts, citations, injection corpus, freshness, and provider grounding unaccepted. |
 | `Media` | Protected routes require explicit absolute non-public storage, scanner, and `VEYRA_PROTECTED_MEDIA_RETENTION_SECONDS`; no guessed default. Delivery verifies exact size/SHA-256 up to 10 MiB in `php://memory` and never streams unverified data. | Storage/scanner vendor, malware/polyglot/parser corpus, encryption policy, live access, deletion propagation, and legal retention approval missing. |
 | `Operations` | Runtime/admin asset versions align to `0.1.7`; configuration remains capability/effective-state gated. | Five merchant products, simulation/publish/schedule/rollback, view-as-customer, queues, monitoring, and incident workflows incomplete. |
@@ -68,7 +68,7 @@ No row was promoted because a class, schema, fixture, or workflow definition exi
 | `Privacy` | WordPress callbacks return `WP_Error` on authorization, audit, or query failure and never mark a failed page complete; focus unresolved references are inventoried; referenced attachments are retained when required. | Legal basis, paging under real WordPress, complete export/erasure propagation, holds, source deletion, processor deletion, and approval unresolved. |
 | `Recommendation` | Attributes are closed ordered lists; hard quantity truth uses current min/max/stock/backorder/sold-individually facts; caller scores/requirements and stale state remain denied. | Five registry rows remain `implemented_not_tested`; live Woo/policy race, compatibility claims, diversity/evaluation thresholds, and acceptance missing. |
 | `Requirements` | Existing actor-owned version/hash CAS and exact source provenance were rechecked against provider/recommendation changes. | Semantic promotion, qualified AI evaluation, live repository behavior, complete correction/resume acceptance incomplete. |
-| `Runtime` | Computes truthful compatibility/health; composes services before hooks and removes registered hooks if later registration fails; protected media is exposed only when all explicit gates pass. | Live WordPress hook ordering, dependency loss/recovery, Action Scheduler, caches, and production diagnostics unrun. |
+| `Runtime` | Computes truthful compatibility/health; composes services before hooks and removes registered hooks if later registration fails; protected media is exposed only when all explicit gates pass. Bounded composition-root, route/effective-state, packaged activation, and reactivation smokes passed. | Dependency loss/recovery, Action Scheduler, caches, and production diagnostics remain unassessed. |
 | `Shared` | Canonical JSON, clock, identifiers, and value boundaries remain the shared deterministic base. | Full static-analysis/coverage results and performance budgets are not accepted. |
 
 ## Production Core feature trace
@@ -110,7 +110,7 @@ Media routes remain Blocked unless all of these are true:
 
 There is no retention default. The bounded range is an implementation safety limit, not merchant/legal approval of a duration. `DEC-017`, `DEC-018`, and `DEC-023` remain open.
 
-## Local verification
+## Verification summary
 
 | Check | Result | Evidence boundary |
 |---|---:|---|
@@ -125,11 +125,22 @@ There is no retention default. The bounded range is an implementation safety lim
 | Release verifier | Passed | `0.1.7`, schema `1.6.0`, 28 capabilities, 20 core, 17 optional, 30 JSON, 262 PHP source, 12 REST routes, 91 Arabic strings |
 | Workflow YAML and diff whitespace | Passed | Definition/static validity only |
 | Heuristic repository audit | 0 critical, 16 high, 34 medium | Manual dispositions; not independent security certification |
-| Deterministic package double-build | Passed | Two byte-identical builds; 424-file source and 275-file installable archives |
+| Composer/PHPUnit, PHPStan, Plugin Check | Passed in attributable CI | Automated bounded evidence; not formal acceptance |
+| WordPress/WooCommerce/database cells | 3/3 passed in attributable CI | Exact cells below; not broad compatibility acceptance |
+| Chromium widget/axe | 2/2 passed in attributable CI | One isolated fixture; not full accessibility acceptance |
+| Deterministic package double-build | Passed | Two byte-identical builds; 425-file source and 275-file installable archives |
 
-The local PHP runner is a PHP 8.2.32 WebAssembly environment. The candidate requires PHP 8.1+, so the PHP 8.1–8.4 support matrix is not established by this run.
+The local PHP runner is a PHP 8.2.32 WebAssembly environment. Attributable CI ran the deterministic suite on PHP 8.1–8.4; this is bounded runtime evidence, not a complete supported-PHP declaration.
 
-Composer/PHPUnit, PHPStan, Plugin Check, coverage, live WordPress/WooCommerce/MySQL/MariaDB, Playwright/axe browser execution, and GitHub Actions are **Not run in this report** unless a later attributable result is appended. Checked-in workflow files are a test environment, not proof that the jobs passed.
+## Attributable CI result
+
+Candidate commit [`c8a46aa73974af81fb1fb5e5831ab9b203cc3a43`](https://github.com/alsenwialaa/veyra/commit/c8a46aa73974af81fb1fb5e5831ab9b203cc3a43) has attributable passing results:
+
+- [Quality run 32797874762](https://github.com/alsenwialaa/veyra/actions/runs/32797874762): **9/9 jobs passed**, including PHP 8.1–8.4 deterministic contracts, PHPUnit coverage generation, PHPStan, schemas/registries, reproducible packages, and Plugin Check with 0 errors/0 warnings. Clover reports 13.59% statements, 11.66% methods, and 13.48% elements; no release threshold is approved.
+- [Platform run 32797874806](https://github.com/alsenwialaa/veyra/actions/runs/32797874806): **4/4 jobs passed**—WP 6.5/WC 8.5.2/PHP 8.1/MySQL 8.0; WP 7.1/WC 11.0.1/PHP 8.4 on MySQL 8.0 and MariaDB 11.4; and 2/2 isolated Chromium tests with a clean serious/critical axe gate.
+- Reproducible installable archive: 275 files, SHA-256 `4bf60ab538ed4739ce7b4dd2a24e8c5514ff6a7a52eb4be21672e9ea5ee1e077`.
+
+These automated ephemeral smokes are not complete commerce E2E, migration/rollback/concurrency/load evidence, broad compatibility/HPOS acceptance, WCAG/assistive-technology/RTL acceptance, independent security/privacy acceptance, operational readiness, or live Gemini transmission/evaluation. See `release-evidence.md` for the exact boundary.
 
 ## Release blockers
 
