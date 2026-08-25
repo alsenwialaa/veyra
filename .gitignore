@@ -1,0 +1,11 @@
+/build/
+/coverage/
+/node_modules/
+/test-results/
+/vendor/
+/.phpunit.cache/
+/.phpunit.result.cache
+/.phpstan-cache/
+__pycache__/
+*.py[cod]
+*.log

@@ -1,0 +1,99 @@
+{
+  "name": "veyra/ai-commerce-agent-for-woocommerce",
+  "description": "AI-led conversational commerce agent for WooCommerce.",
+  "type": "wordpress-plugin",
+  "license": "GPL-2.0-or-later",
+  "require": {
+    "php": ">=8.1"
+  },
+  "require-dev": {
+    "php-stubs/woocommerce-stubs": "^11.0",
+    "phpstan/phpstan": "^2.1",
+    "phpunit/phpunit": "^10.5",
+    "szepeviktor/phpstan-wordpress": "^2.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Veyra\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Veyra\\Tests\\": "tests/"
+    }
+  },
+  "config": {
+    "allow-plugins": {},
+    "optimize-autoloader": true,
+    "sort-packages": true
+  },
+  "scripts": {
+    "analyse": "phpstan analyse -c phpstan.neon.dist --no-progress",
+    "test": "phpunit -c phpunit.xml.dist",
+    "test:foundation": "php tests/run-foundation.php",
+    "test:catalog": "php tests/Catalog/run-catalog-security.php",
+    "test:knowledge": "php tests/Knowledge/run-knowledge-contract.php",
+    "test:cart": "php tests/Cart/run-cart-clear.php",
+    "test:checkout": "php tests/Checkout/run-checkout-domain.php",
+    "test:orders": "php tests/Orders/run-order-safety.php",
+    "test:payment-media": "php tests/PaymentReview/run-payment-media-domain.php",
+    "test:crm": "php tests/CRM/run-crm-write-reconciliation.php",
+    "test:provider": "php tests/Provider/run-provider-persistence.php",
+    "test:ai-context": "php tests/AI/run-ai-context-governance.php",
+    "test:prompt-policy": "php tests/AI/run-prompt-policy.php",
+    "test:strict-orchestration": "php tests/AI/run-strict-orchestration.php",
+    "test:pending-question": "php tests/Conversation/run-pending-question-consumption.php",
+    "test:conversation-focus": "php tests/Conversation/run-conversation-focus.php",
+    "test:context-bundle": "php tests/Conversation/run-context-bundle-contract.php",
+    "test:provider-transmission": "php tests/Provider/run-provider-transmission-boundary.php",
+    "test:provider-safety": "php tests/Provider/run-provider-safe-projection.php",
+    "test:requirements": "php tests/Requirements/run-requirement-state-contract.php",
+    "test:recommendation-binding": "php tests/Recommendation/run-recommendation-state-binding.php",
+    "test:requirement-repository": "php tests/Migration/run-requirement-state-repository.php",
+    "test:requirement-privacy": "php tests/Privacy/run-requirement-privacy-compatibility.php",
+    "test:configuration-revisions": "php tests/Configuration/run-configuration-revision-safety.php",
+    "test:migration": "php tests/Migration/run-migration-contract.php",
+    "test:product-configuration": "php tests/Operations/run-product-configuration.php",
+    "test:rendering": "php tests/Accessibility/rendering-contract.test.php",
+    "test:security-lifecycle": "php tests/Security/run-security-lifecycle.php",
+    "test:source-symbols": "php scripts/source_symbol_sweep.php",
+    "test:php-contracts": [
+      "@test:foundation",
+      "@test:catalog",
+      "@test:knowledge",
+      "@test:cart",
+      "@test:checkout",
+      "@test:orders",
+      "@test:payment-media",
+      "@test:crm",
+      "@test:provider",
+      "@test:ai-context",
+      "@test:prompt-policy",
+      "@test:strict-orchestration",
+      "@test:pending-question",
+      "@test:conversation-focus",
+      "@test:context-bundle",
+      "@test:provider-transmission",
+      "@test:provider-safety",
+      "@test:requirements",
+      "@test:recommendation-binding",
+      "@test:requirement-repository",
+      "@test:requirement-privacy",
+      "@test:configuration-revisions",
+      "@test:migration",
+      "@test:product-configuration",
+      "@test:rendering",
+      "@test:security-lifecycle",
+      "@test:source-symbols"
+    ],
+    "test:js-contracts": "node --test tests/E2E/ui-contract.test.js tests/Accessibility/ui-a11y-contract.test.js tests/Security/security-lifecycle-contract.test.js",
+    "test:contracts": [
+      "@test:php-contracts",
+      "@test:js-contracts"
+    ],
+    "test:all": [
+      "@test",
+      "@test:contracts"
+    ]
+  }
+}

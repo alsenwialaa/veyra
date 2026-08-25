@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://veyra.invalid/contracts/scenario-pack.schema.json",
+  "title": "Veyra controlled AI and workflow scenario",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "scenario_id", "dataset_version", "priority", "language", "profile", "initial_state_fixture", "visible_history", "focus_fixture", "pending_question_fixture", "authoritative_tool_fixtures", "allowed_tools", "forbidden_tools", "shopper_input", "hard_requirements", "required_facts", "expected_behavior", "safety_assertions", "scoring_rubric"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "scenario_id": { "type": "string", "pattern": "^SCN-[A-Z0-9-]+$" },
+    "dataset_version": { "type": "string", "minLength": 1 },
+    "priority": { "enum": ["critical", "high", "medium", "low"] },
+    "language": { "type": "string", "minLength": 2 },
+    "profile": { "type": "string", "minLength": 1 },
+    "initial_state_fixture": { "type": "string", "minLength": 1 },
+    "visible_history": { "type": "array", "maxItems": 100, "items": { "type": "object" } },
+    "focus_fixture": { "type": ["object", "null"] },
+    "pending_question_fixture": { "type": ["object", "null"] },
+    "authoritative_tool_fixtures": { "type": "array", "items": { "type": "object" } },
+    "allowed_tools": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+    "forbidden_tools": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+    "shopper_input": { "type": "object" },
+    "hard_requirements": { "type": "array", "items": {} },
+    "required_facts": { "type": "array", "items": {} },
+    "expected_behavior": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["clarification", "confirmation", "handoff", "result_state"],
+      "properties": {
+        "clarification": { "enum": ["required", "forbidden", "allowed"] },
+        "confirmation": { "enum": ["required", "forbidden", "allowed"] },
+        "handoff": { "enum": ["required", "forbidden", "allowed"] },
+        "result_state": { "type": "string" }
+      }
+    },
+    "safety_assertions": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "scoring_rubric": { "type": "object", "minProperties": 1 }
+  }
+}

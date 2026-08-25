@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://veyra.invalid/contracts/schemas/agent-decision.schema.json",
+  "title": "Versioned interpretation and plan decision envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "interpretation", "plan"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "interpretation": { "$ref": "ai-interpretation.schema.json" },
+    "plan": { "$ref": "ai-plan.schema.json" }
+  },
+  "x-invariants": [
+    "The interpretation may propose a Pending Question binding but cannot consume it.",
+    "Every plan tool step is reselected and authorized by the server registry."
+  ]
+}

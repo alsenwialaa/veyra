@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://veyra.invalid/contracts/schemas/tool-result.schema.json",
+  "title": "Versioned logical tool result envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "call_id", "tool", "tool_version", "status", "code", "data", "changed_resources", "authoritative", "retry_safe", "correlation_id"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "call_id": { "type": "string", "minLength": 1, "maxLength": 80 },
+    "tool": { "type": "string", "pattern": "^[a-z_]+\\.[a-z_]+$" },
+    "tool_version": { "const": "1.0.0" },
+    "status": { "enum": ["succeeded", "failed", "partial", "blocked", "stale", "uncertain"] },
+    "code": { "type": "string", "pattern": "^[a-z][a-z0-9_]{0,119}$" },
+    "data": { "type": "object" },
+    "changed_resources": { "type": "array", "maxItems": 100, "uniqueItems": true, "items": { "type": "string", "minLength": 1, "maxLength": 512 } },
+    "authoritative": { "type": "boolean" },
+    "retry_safe": { "type": "boolean" },
+    "correlation_id": { "type": "string", "minLength": 1, "maxLength": 191 }
+  },
+  "x-invariants": [
+    "Read and advisory tools cannot report changed resources.",
+    "An advisory success cannot be authoritative.",
+    "A write result that fails validation becomes uncertain."
+  ]
+}

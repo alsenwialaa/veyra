@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://veyra.invalid/contracts/effective-feature-state.schema.json",
+  "title": "Published effective feature state",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "feature_key", "configured_state", "effective_state", "publication_version", "evaluated_at", "dependency_results", "health_results", "reason_code", "remediation", "exposure_manifest_hash"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "feature_key": { "type": "string", "pattern": "^[a-z][a-z0-9_]+$" },
+    "configured_state": { "enum": ["On", "Off"] },
+    "effective_state": { "enum": ["On", "Off", "Blocked", "Degraded"] },
+    "publication_version": { "type": "integer", "minimum": 1 },
+    "evaluated_at": { "type": "string", "format": "date-time" },
+    "dependency_results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["key", "passed", "version", "reason_code"],
+        "properties": {
+          "key": { "type": "string" },
+          "passed": { "type": "boolean" },
+          "version": { "type": ["string", "integer", "null"] },
+          "reason_code": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "health_results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["check", "status", "checked_at", "fresh_until"],
+        "properties": {
+          "check": { "type": "string" },
+          "status": { "enum": ["pass", "fail", "unknown", "stale"] },
+          "checked_at": { "type": ["string", "null"], "format": "date-time" },
+          "fresh_until": { "type": ["string", "null"], "format": "date-time" }
+        }
+      }
+    },
+    "reason_code": { "type": ["string", "null"] },
+    "remediation": { "type": ["string", "null"] },
+    "degraded_mode_key": { "type": ["string", "null"] },
+    "exposure_manifest_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "configured_state": { "const": "Off" } } },
+      "then": { "properties": { "effective_state": { "const": "Off" } } }
+    },
+    {
+      "if": { "properties": { "effective_state": { "enum": ["Blocked", "Degraded"] } } },
+      "then": {
+        "required": ["reason_code", "remediation"],
+        "properties": {
+          "reason_code": { "type": "string", "minLength": 1 },
+          "remediation": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  ]
+}

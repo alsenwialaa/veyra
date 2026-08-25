@@ -1,0 +1,21 @@
+{
+  "name": "veyra-ai-commerce-agent-quality",
+  "version": "0.1.7",
+  "private": true,
+  "description": "Node-based contract, schema, browser, and accessibility checks for Veyra.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "npm run test:contracts && npm run test:schemas",
+    "test:contracts": "node --test tests/E2E/ui-contract.test.js tests/Accessibility/ui-a11y-contract.test.js tests/Security/security-lifecycle-contract.test.js",
+    "test:schemas": "node scripts/validate-contract-schemas.mjs",
+    "test:browser": "playwright test tests/E2E/playwright-widget.spec.js --reporter=line"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.55.0",
+    "ajv": "8.17.1",
+    "ajv-formats": "3.0.1",
+    "axe-core": "4.10.3"
+  }
+}

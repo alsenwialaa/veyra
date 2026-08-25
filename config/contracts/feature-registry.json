@@ -1,0 +1,1328 @@
+{
+  "schema_version": "1.0.0",
+  "proposal_version": "4.1",
+  "generated_at": "2026-08-24",
+  "state_precedence": [
+    "Off when merchant configured Off",
+    "Blocked when configured On but any mandatory policy/dependency/health/certification gate fails",
+    "Degraded only for an explicitly declared tested fallback that preserves authority and quality floor",
+    "On only when configured On and all gates pass"
+  ],
+  "foundational_features": [
+    "ai_semantic_orchestration",
+    "ai_context_graph",
+    "ai_conversation_focus",
+    "ai_conversation_memory"
+  ],
+  "policies": [
+    {
+      "key": "commerce_require_authentication",
+      "default": "On",
+      "merchant_configurable": true,
+      "effect": "Protected checkout/account service requires authentication. Guest checkout cannot override this while On."
+    }
+  ],
+  "feature_count": 37,
+  "production_core_count": 20,
+  "optional_module_count": 17,
+  "entries": [
+    {
+      "key": "ai_semantic_orchestration",
+      "release_unit": "production_core",
+      "purpose": "AI-led interpretation, planning, tool use, verification, and response.",
+      "implementation_requirement": "mandatory_for_production_core",
+      "merchant_configurable": false,
+      "configured_default": "On",
+      "initial_effective_state": "Blocked",
+      "initial_reason_code": "implementation_not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "ai_context_graph",
+        "ai_conversation_focus",
+        "ai_conversation_memory",
+        "provider.default_text_tool_orchestration.ready"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "defined by actor-capability-action matrix and each tool contract",
+      "model_tools": [],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "allowed only when separately authorized and proposal permits",
+      "off_or_blocked_behavior": "remove active controls, prompts, cards, tools, routes and new writes; expire confirmations; preserve native WooCommerce",
+      "degraded_behavior": "only a declared tested fallback preserving authority and quality floor; never regex/keyword/fixed dialogue",
+      "certification_status": "not_assessed"
+    },
+    {
+      "key": "ai_context_graph",
+      "release_unit": "production_core",
+      "purpose": "Source-ranked facts, evidence, relationships, and freshness.",
+      "implementation_requirement": "mandatory_for_production_core",
+      "merchant_configurable": false,
+      "configured_default": "On",
+      "initial_effective_state": "Blocked",
+      "initial_reason_code": "implementation_not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "identity.actor_scope",
+        "persistence.context"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "defined by actor-capability-action matrix and each tool contract",
+      "model_tools": [
+        "identity.get_current_actor",
+        "identity.get_customer_profile",
+        "identity.get_capabilities",
+        "context.get_store_profile",
+        "context.get_page_context"
+      ],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "allowed only when separately authorized and proposal permits",
+      "off_or_blocked_behavior": "remove active controls, prompts, cards, tools, routes and new writes; expire confirmations; preserve native WooCommerce",
+      "degraded_behavior": "only a declared tested fallback preserving authority and quality floor; never regex/keyword/fixed dialogue",
+      "certification_status": "not_assessed"
+    },
+    {
+      "key": "ai_conversation_focus",
+      "release_unit": "production_core",
+      "purpose": "Foreground journey, focused entities, Pending Question, short-reply target, and open loops.",
+      "implementation_requirement": "mandatory_for_production_core",
+      "merchant_configurable": false,
+      "configured_default": "On",
+      "initial_effective_state": "Blocked",
+      "initial_reason_code": "implementation_not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "ai_context_graph",
+        "journey.state",
+        "conversation.retained_visible_messages"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "defined by actor-capability-action matrix and each tool contract",
+      "model_tools": [
+        "context.get_conversation_focus"
+      ],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "allowed only when separately authorized and proposal permits",
+      "off_or_blocked_behavior": "remove active controls, prompts, cards, tools, routes and new writes; expire confirmations; preserve native WooCommerce",
+      "degraded_behavior": "only a declared tested fallback preserving authority and quality floor; never regex/keyword/fixed dialogue",
+      "certification_status": "not_assessed"
+    },
+    {
+      "key": "ai_merchant_knowledge",
+      "release_unit": "production_core",
+      "purpose": "Approved knowledge retrieval.",
+      "implementation_requirement": "mandatory_for_production_core",
+      "merchant_configurable": true,
+      "configured_default": "Off",
+      "initial_effective_state": "Blocked",
+      "initial_reason_code": "implementation_not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "ai_semantic_orchestration",
+        "knowledge.published_sources"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "defined by actor-capability-action matrix and each tool contract",
+      "model_tools": [
+        "knowledge.search",
+        "knowledge.read_source",
+        "knowledge.get_policy",
+        "knowledge.get_product_guide",
+        "knowledge.get_shipping_policy",
+        "knowledge.get_payment_policy",
+        "knowledge.get_return_policy",
+        "knowledge.get_review_evidence",
+        "knowledge.check_freshness",
+        "knowledge.resolve_conflict",
+        "knowledge.get_citations"
+      ],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "allowed only when separately authorized and proposal permits",
+      "off_or_blocked_behavior": "remove active controls, prompts, cards, tools, routes and new writes; expire confirmations; preserve native WooCommerce",
+      "degraded_behavior": "only a declared tested fallback preserving authority and quality floor; never regex/keyword/fixed dialogue",
+      "certification_status": "not_assessed"
+    },
+    {
+      "key": "ai_conversation_memory",
+      "release_unit": "production_core",
+      "purpose": "Mandatory actor-scoped in-conversation continuity, validated state, and summaries.",
+      "implementation_requirement": "mandatory_for_production_core",
+      "merchant_configurable": false,
+      "configured_default": "On",
+      "initial_effective_state": "Blocked",
+      "initial_reason_code": "implementation_not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "identity.actor_scope",
+        "persistence.memory",
+        "conversation.retained_visible_messages"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "defined by actor-capability-action matrix and each tool contract",
+      "model_tools": [
+        "memory.get_context_bundle",
+        "memory.get_conversation_state",
+        "memory.list_active_journeys",
+        "memory.propose_conversation_state_update",
+        "memory.propose_summary_update"
+      ],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "allowed only when separately authorized and proposal permits",
+      "off_or_blocked_behavior": "remove active controls, prompts, cards, tools, routes and new writes; expire confirmations; preserve native WooCommerce",
+      "degraded_behavior": "only a declared tested fallback preserving authority and quality floor; never regex/keyword/fixed dialogue",
+      "certification_status": "not_assessed"
+    },
+    {
+      "key": "ai_cultural_profiles",
+      "release_unit": "production_core",
+      "purpose": "Language, dialect, etiquette, and local presentation.",
+      "implementation_requirement": "mandatory_for_production_core",
+      "merchant_configurable": true,
+      "configured_default": "Off",
+      "initial_effective_state": "Blocked",
+      "initial_reason_code": "implementation_not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "context.published_cultural_profile"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "defined by actor-capability-action matrix and each tool contract",
+      "model_tools": [
+        "context.get_cultural_profile"
+      ],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "allowed only when separately authorized and proposal permits",
+      "off_or_blocked_behavior": "remove active controls, prompts, cards, tools, routes and new writes; expire confirmations; preserve native WooCommerce",
+      "degraded_behavior": "only a declared tested fallback preserving authority and quality floor; never regex/keyword/fixed dialogue",
+      "certification_status": "not_assessed"
+    },
+    {
+      "key": "ai_location_awareness",
+      "release_unit": "production_core",
+      "purpose": "Market, branch, service-area, and location context.",
+      "implementation_requirement": "mandatory_for_production_core",
+      "merchant_configurable": true,
+      "configured_default": "Off",
+      "initial_effective_state": "Blocked",
+      "initial_reason_code": "implementation_not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "context.location_policy"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "defined by actor-capability-action matrix and each tool contract",
+      "model_tools": [
+        "context.get_branch_profile",
+        "context.resolve_market",
+        "context.resolve_location"
+      ],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "allowed only when separately authorized and proposal permits",
+      "off_or_blocked_behavior": "remove active controls, prompts, cards, tools, routes and new writes; expire confirmations; preserve native WooCommerce",
+      "degraded_behavior": "only a declared tested fallback preserving authority and quality floor; never regex/keyword/fixed dialogue",
+      "certification_status": "not_assessed"
+    },
+    {
+      "key": "ai_time_awareness",
+      "release_unit": "production_core",
+      "purpose": "Authoritative time, hours, calendars, cutoffs, and freshness.",
+      "implementation_requirement": "mandatory_for_production_core",
+      "merchant_configurable": true,
+      "configured_default": "Off",
+      "initial_effective_state": "Blocked",
+      "initial_reason_code": "implementation_not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "clock.authoritative",
+        "context.iana_time_zone"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "defined by actor-capability-action matrix and each tool contract",
+      "model_tools": [
+        "context.get_runtime_clock",
+        "context.get_business_status",
+        "context.get_calendar_events",
+        "context.get_campaign_context"
+      ],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "allowed only when separately authorized and proposal permits",
+      "off_or_blocked_behavior": "remove active controls, prompts, cards, tools, routes and new writes; expire confirmations; preserve native WooCommerce",
+      "degraded_behavior": "only a declared tested fallback preserving authority and quality floor; never regex/keyword/fixed dialogue",
+      "certification_status": "not_assessed"
+    },
+    {
+      "key": "ai_multimodal_understanding",
+      "release_unit": "production_core",
+      "purpose": "Combined text, voice, image, document, quote, reference, and location interpretation.",
+      "implementation_requirement": "mandatory_for_production_core",
+      "merchant_configurable": true,
+      "configured_default": "Off",
+      "initial_effective_state": "Blocked",
+      "initial_reason_code": "implementation_not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "media.protected_pipeline",
+        "provider.required_modalities.ready"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "defined by actor-capability-action matrix and each tool contract",
+      "model_tools": [
+        "media.validate_upload",
+        "media.transcribe_audio",
+        "media.understand_audio",
+        "media.analyze_image",
+        "media.run_ocr",
+        "media.analyze_document",
+        "media.match_catalog_image",
+        "media.analyze_service_evidence",
+        "media.get_protected_attachment"
+      ],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "allowed only when separately authorized and proposal permits",
+      "off_or_blocked_behavior": "remove active controls, prompts, cards, tools, routes and new writes; expire confirmations; preserve native WooCommerce",
+      "degraded_behavior": "only a declared tested fallback preserving authority and quality floor; never regex/keyword/fixed dialogue",
+      "certification_status": "not_assessed"
+    },
+    {
+      "key": "ai_proactive_next_action",
+      "release_unit": "production_core",
+      "purpose": "Evidence-based, frequency-limited next-step suggestions that respect refusal and consent.",
+      "implementation_requirement": "mandatory_for_production_core",
+      "merchant_configurable": true,
+      "configured_default": "Off",
+      "initial_effective_state": "Blocked",
+      "initial_reason_code": "implementation_not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "ai_semantic_orchestration",
+        "conversation.refusal_state"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "defined by actor-capability-action matrix and each tool contract",
+      "model_tools": [],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "allowed only when separately authorized and proposal permits",
+      "off_or_blocked_behavior": "remove active controls, prompts, cards, tools, routes and new writes; expire confirmations; preserve native WooCommerce",
+      "degraded_behavior": "only a declared tested fallback preserving authority and quality floor; never regex/keyword/fixed dialogue",
+      "certification_status": "not_assessed"
+    },
+    {
+      "key": "ai_human_handoff",
+      "release_unit": "production_core",
+      "purpose": "Customer-requested and policy-driven handoff.",
+      "implementation_requirement": "mandatory_for_production_core",
+      "merchant_configurable": true,
+      "configured_default": "Off",
+      "initial_effective_state": "Blocked",
+      "initial_reason_code": "implementation_not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "service.handoff_queue"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "defined by actor-capability-action matrix and each tool contract",
+      "model_tools": [
+        "handoff.request_human",
+        "handoff.get_status"
+      ],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "allowed only when separately authorized and proposal permits",
+      "off_or_blocked_behavior": "remove active controls, prompts, cards, tools, routes and new writes; expire confirmations; preserve native WooCommerce",
+      "degraded_behavior": "only a declared tested fallback preserving authority and quality floor; never regex/keyword/fixed dialogue",
+      "certification_status": "not_assessed"
+    },
+    {
+      "key": "commerce_product_assistance",
+      "release_unit": "production_core",
+      "purpose": "Discovery, questions, recommendation, and exact product/variation resolution.",
+      "implementation_requirement": "mandatory_for_production_core",
+      "merchant_configurable": true,
+      "configured_default": "Off",
+      "initial_effective_state": "Blocked",
+      "initial_reason_code": "implementation_not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "ai_semantic_orchestration",
+        "catalog.woocommerce_public_contract"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "defined by actor-capability-action matrix and each tool contract",
+      "model_tools": [
+        "catalog.search_products",
+        "catalog.search_facets",
+        "catalog.get_product",
+        "catalog.get_variations",
+        "catalog.resolve_variation",
+        "catalog.get_live_offer",
+        "catalog.get_stock",
+        "catalog.get_branch_availability",
+        "catalog.check_purchasability",
+        "catalog.get_compatibility",
+        "catalog.get_related_products",
+        "catalog.find_alternatives",
+        "catalog.compare_products",
+        "catalog.resolve_product_reference",
+        "catalog.match_product_image",
+        "requirements.get",
+        "requirements.propose_update",
+        "recommendation.retrieve_candidates",
+        "recommendation.apply_hard_filters",
+        "recommendation.rank",
+        "recommendation.diversify",
+        "recommendation.explain",
+        "recommendation.tune"
+      ],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "allowed only when separately authorized and proposal permits",
+      "off_or_blocked_behavior": "remove active controls, prompts, cards, tools, routes and new writes; expire confirmations; preserve native WooCommerce",
+      "degraded_behavior": "only a declared tested fallback preserving authority and quality floor; never regex/keyword/fixed dialogue",
+      "certification_status": "not_assessed"
+    },
+    {
+      "key": "commerce_cart",
+      "release_unit": "production_core",
+      "purpose": "Authoritative conversational cart.",
+      "implementation_requirement": "mandatory_for_production_core",
+      "merchant_configurable": true,
+      "configured_default": "Off",
+      "initial_effective_state": "Blocked",
+      "initial_reason_code": "implementation_not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "commerce_product_assistance",
+        "woocommerce.cart_session"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "defined by actor-capability-action matrix and each tool contract",
+      "model_tools": [
+        "cart.get",
+        "cart.resolve_line",
+        "cart.preview_mutation_plan",
+        "cart.execute_mutation_plan",
+        "cart.add_item",
+        "cart.update_quantity",
+        "cart.remove_item",
+        "cart.replace_item",
+        "cart.clear_preview",
+        "cart.clear_confirmed",
+        "cart.apply_coupon",
+        "cart.remove_coupon",
+        "cart.recalculate"
+      ],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "allowed only when separately authorized and proposal permits",
+      "off_or_blocked_behavior": "remove active controls, prompts, cards, tools, routes and new writes; expire confirmations; preserve native WooCommerce",
+      "degraded_behavior": "only a declared tested fallback preserving authority and quality floor; never regex/keyword/fixed dialogue",
+      "certification_status": "not_assessed"
+    },
+    {
+      "key": "commerce_chat_checkout",
+      "release_unit": "production_core",
+      "purpose": "Persistent conversation-native checkout.",
+      "implementation_requirement": "mandatory_for_production_core",
+      "merchant_configurable": true,
+      "configured_default": "Off",
+      "initial_effective_state": "Blocked",
+      "initial_reason_code": "implementation_not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "commerce_cart",
+        "ai_conversation_focus",
+        "ai_conversation_memory",
+        "policy.commerce_require_authentication"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "defined by actor-capability-action matrix and each tool contract",
+      "model_tools": [
+        "checkout.get_journey_state",
+        "checkout.classify_cart_fulfillment",
+        "checkout.get_fulfillment_modes",
+        "checkout.select_fulfillment_mode",
+        "checkout.get_shipping_contact",
+        "checkout.update_shipping_contact",
+        "checkout.get_billing_contact",
+        "checkout.update_billing_contact",
+        "checkout.get_pickup_locations",
+        "checkout.select_pickup_location",
+        "checkout.get_required_fields",
+        "checkout.update_required_fields",
+        "checkout.get_acknowledgements",
+        "address.get_saved",
+        "address.autocomplete",
+        "address.reverse_geocode",
+        "address.validate",
+        "checkout.get_shipping_packages",
+        "checkout.get_shipping_methods",
+        "checkout.select_shipping_method",
+        "checkout.get_payment_methods",
+        "checkout.select_payment_method",
+        "payment.get_offline_instructions",
+        "checkout.calculate",
+        "checkout.get_preview",
+        "checkout.invalidate_dependent_state",
+        "confirmation.create",
+        "confirmation.validate",
+        "order.place_confirmed",
+        "payment.create_gateway_handoff",
+        "payment.resume_gateway_result",
+        "payment.verify_order_state"
+      ],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "allowed only when separately authorized and proposal permits",
+      "off_or_blocked_behavior": "remove active controls, prompts, cards, tools, routes and new writes; expire confirmations; preserve native WooCommerce",
+      "degraded_behavior": "only a declared tested fallback preserving authority and quality floor; never regex/keyword/fixed dialogue",
+      "certification_status": "not_assessed"
+    },
+    {
+      "key": "commerce_order_service",
+      "release_unit": "production_core",
+      "purpose": "Owned-order read, tracking, and action availability.",
+      "implementation_requirement": "mandatory_for_production_core",
+      "merchant_configurable": true,
+      "configured_default": "Off",
+      "initial_effective_state": "Blocked",
+      "initial_reason_code": "implementation_not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "identity.ownership",
+        "woocommerce.customer_action_matrix"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "defined by actor-capability-action matrix and each tool contract",
+      "model_tools": [
+        "orders.list_customer_orders",
+        "orders.resolve_customer_order",
+        "orders.get_customer_order",
+        "orders.get_item_context",
+        "orders.get_tracking",
+        "orders.get_invoice",
+        "orders.get_customer_action_matrix",
+        "orders.validate_reorder",
+        "orders.execute_reorder",
+        "orders.validate_change",
+        "orders.preview_change",
+        "orders.get_financial_adjustment_options",
+        "orders.execute_confirmed_change",
+        "orders.validate_cancellation",
+        "orders.execute_confirmed_cancellation"
+      ],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "allowed only when separately authorized and proposal permits",
+      "off_or_blocked_behavior": "remove active controls, prompts, cards, tools, routes and new writes; expire confirmations; preserve native WooCommerce",
+      "degraded_behavior": "only a declared tested fallback preserving authority and quality floor; never regex/keyword/fixed dialogue",
+      "certification_status": "not_assessed"
+    },
+    {
+      "key": "service_crm",
+      "release_unit": "production_core",
+      "purpose": "Customer-owned staff-review cases.",
+      "implementation_requirement": "mandatory_for_production_core",
+      "merchant_configurable": true,
+      "configured_default": "Off",
+      "initial_effective_state": "Blocked",
+      "initial_reason_code": "implementation_not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "identity.ownership",
+        "confirmation.service",
+        "queue.health"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "defined by actor-capability-action matrix and each tool contract",
+      "model_tools": [
+        "crm.get_case_types",
+        "crm.find_open_case",
+        "crm.create_draft",
+        "crm.submit_confirmed_case",
+        "crm.list_customer_cases",
+        "crm.get_customer_case",
+        "crm.update_customer_case",
+        "crm.add_customer_message",
+        "crm.add_evidence"
+      ],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "allowed only when separately authorized and proposal permits",
+      "off_or_blocked_behavior": "remove active controls, prompts, cards, tools, routes and new writes; expire confirmations; preserve native WooCommerce",
+      "degraded_behavior": "only a declared tested fallback preserving authority and quality floor; never regex/keyword/fixed dialogue",
+      "certification_status": "not_assessed"
+    },
+    {
+      "key": "payment_offline_review",
+      "release_unit": "production_core",
+      "purpose": "Offline evidence submission and review.",
+      "implementation_requirement": "mandatory_for_production_core",
+      "merchant_configurable": true,
+      "configured_default": "Off",
+      "initial_effective_state": "Blocked",
+      "initial_reason_code": "implementation_not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "service_crm",
+        "media.protected_pipeline",
+        "payment.eligible_offline_method",
+        "queue.health"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "defined by actor-capability-action matrix and each tool contract",
+      "model_tools": [
+        "payment_review.create_or_update_draft",
+        "payment_review.submit_confirmed_evidence",
+        "payment_review.get_status",
+        "payment_review.resubmit_evidence"
+      ],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "allowed only when separately authorized and proposal permits",
+      "off_or_blocked_behavior": "remove active controls, prompts, cards, tools, routes and new writes; expire confirmations; preserve native WooCommerce",
+      "degraded_behavior": "only a declared tested fallback preserving authority and quality floor; never regex/keyword/fixed dialogue",
+      "certification_status": "not_assessed"
+    },
+    {
+      "key": "chat_message_quoting",
+      "release_unit": "production_core",
+      "purpose": "Same-conversation reply quote.",
+      "implementation_requirement": "mandatory_for_production_core",
+      "merchant_configurable": true,
+      "configured_default": "Off",
+      "initial_effective_state": "Blocked",
+      "initial_reason_code": "implementation_not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "conversation.retained_visible_messages"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "defined by actor-capability-action matrix and each tool contract",
+      "model_tools": [],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "allowed only when separately authorized and proposal permits",
+      "off_or_blocked_behavior": "remove active controls, prompts, cards, tools, routes and new writes; expire confirmations; preserve native WooCommerce",
+      "degraded_behavior": "only a declared tested fallback preserving authority and quality floor; never regex/keyword/fixed dialogue",
+      "certification_status": "not_assessed"
+    },
+    {
+      "key": "chat_product_references",
+      "release_unit": "production_core",
+      "purpose": "Product reference attached to a message.",
+      "implementation_requirement": "mandatory_for_production_core",
+      "merchant_configurable": true,
+      "configured_default": "Off",
+      "initial_effective_state": "Blocked",
+      "initial_reason_code": "implementation_not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "commerce_product_assistance",
+        "conversation.historical_rendering"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "defined by actor-capability-action matrix and each tool contract",
+      "model_tools": [],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "allowed only when separately authorized and proposal permits",
+      "off_or_blocked_behavior": "remove active controls, prompts, cards, tools, routes and new writes; expire confirmations; preserve native WooCommerce",
+      "degraded_behavior": "only a declared tested fallback preserving authority and quality floor; never regex/keyword/fixed dialogue",
+      "certification_status": "not_assessed"
+    },
+    {
+      "key": "operations_human_console",
+      "release_unit": "production_core",
+      "purpose": "Protected monitoring and staff operations.",
+      "implementation_requirement": "mandatory_for_production_core",
+      "merchant_configurable": true,
+      "configured_default": "Off",
+      "initial_effective_state": "Blocked",
+      "initial_reason_code": "implementation_not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "identity.capabilities",
+        "audit.storage"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "defined by actor-capability-action matrix and each tool contract",
+      "model_tools": [],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "allowed only when separately authorized and proposal permits",
+      "off_or_blocked_behavior": "remove active controls, prompts, cards, tools, routes and new writes; expire confirmations; preserve native WooCommerce",
+      "degraded_behavior": "only a declared tested fallback preserving authority and quality floor; never regex/keyword/fixed dialogue",
+      "certification_status": "not_assessed"
+    },
+    {
+      "key": "shopper_guest_checkout",
+      "release_unit": "optional_module",
+      "purpose": "Conversational guest checkout",
+      "implementation_requirement": "release_separable_but_complete_before_exposure",
+      "merchant_configurable": true,
+      "configured_default": "Off",
+      "initial_effective_state": "Off",
+      "initial_reason_code": "not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "commerce_chat_checkout",
+        "policy.commerce_require_authentication.off",
+        "woocommerce.guest_checkout",
+        "gateway.compatibility"
+      ],
+      "incompatible_with": [
+        "policy.commerce_require_authentication.on"
+      ],
+      "required_actors_and_capabilities": "module contract required before certification",
+      "model_tools": [],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "only authorized retained history where the module contract permits",
+      "off_or_blocked_behavior": "absent from active UI, model tools, routes, jobs, webhooks, setup and claims",
+      "degraded_behavior": "Login or standard WooCommerce checkout.",
+      "certification_status": "not_certified"
+    },
+    {
+      "key": "shopper_saved_shortlist",
+      "release_unit": "optional_module",
+      "purpose": "Saved shortlist and resume",
+      "implementation_requirement": "release_separable_but_complete_before_exposure",
+      "merchant_configurable": true,
+      "configured_default": "Off",
+      "initial_effective_state": "Off",
+      "initial_reason_code": "not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "commerce_product_assistance",
+        "persistence.actor_scoped"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "module contract required before certification",
+      "model_tools": [],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "only authorized retained history where the module contract permits",
+      "off_or_blocked_behavior": "absent from active UI, model tools, routes, jobs, webhooks, setup and claims",
+      "degraded_behavior": "Continue without persistent shortlist.",
+      "certification_status": "not_certified"
+    },
+    {
+      "key": "shopper_delivery_preview",
+      "release_unit": "optional_module",
+      "purpose": "Early delivery and total estimate",
+      "implementation_requirement": "release_separable_but_complete_before_exposure",
+      "merchant_configurable": true,
+      "configured_default": "Off",
+      "initial_effective_state": "Off",
+      "initial_reason_code": "not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "commerce_product_assistance",
+        "woocommerce.calculation"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "module contract required before certification",
+      "model_tools": [],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "only authorized retained history where the module contract permits",
+      "off_or_blocked_behavior": "absent from active UI, model tools, routes, jobs, webhooks, setup and claims",
+      "degraded_behavior": "State that a reliable estimate is unavailable.",
+      "certification_status": "not_certified"
+    },
+    {
+      "key": "shopper_persistent_comparison",
+      "release_unit": "optional_module",
+      "purpose": "Persistent comparison",
+      "implementation_requirement": "release_separable_but_complete_before_exposure",
+      "merchant_configurable": true,
+      "configured_default": "Off",
+      "initial_effective_state": "Off",
+      "initial_reason_code": "not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "commerce_product_assistance",
+        "conversation.historical_rendering"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "module contract required before certification",
+      "model_tools": [],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "only authorized retained history where the module contract permits",
+      "off_or_blocked_behavior": "absent from active UI, model tools, routes, jobs, webhooks, setup and claims",
+      "degraded_behavior": "Temporary comparison only.",
+      "certification_status": "not_certified"
+    },
+    {
+      "key": "shopper_recommendation_tuning",
+      "release_unit": "optional_module",
+      "purpose": "Shopper ranking controls",
+      "implementation_requirement": "release_separable_but_complete_before_exposure",
+      "merchant_configurable": true,
+      "configured_default": "Off",
+      "initial_effective_state": "Off",
+      "initial_reason_code": "not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "commerce_product_assistance"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "module contract required before certification",
+      "model_tools": [],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "only authorized retained history where the module contract permits",
+      "off_or_blocked_behavior": "absent from active UI, model tools, routes, jobs, webhooks, setup and claims",
+      "degraded_behavior": "Ordinary recommendation flow.",
+      "certification_status": "not_certified"
+    },
+    {
+      "key": "shopper_address_autocomplete",
+      "release_unit": "optional_module",
+      "purpose": "Address suggestions",
+      "implementation_requirement": "release_separable_but_complete_before_exposure",
+      "merchant_configurable": true,
+      "configured_default": "Off",
+      "initial_effective_state": "Off",
+      "initial_reason_code": "not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "commerce_chat_checkout",
+        "provider.address.ready",
+        "manual_address_fallback"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "module contract required before certification",
+      "model_tools": [],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "only authorized retained history where the module contract permits",
+      "off_or_blocked_behavior": "absent from active UI, model tools, routes, jobs, webhooks, setup and claims",
+      "degraded_behavior": "Manual entry.",
+      "certification_status": "not_certified"
+    },
+    {
+      "key": "shopper_review_summaries",
+      "release_unit": "optional_module",
+      "purpose": "Grounded review summaries",
+      "implementation_requirement": "release_separable_but_complete_before_exposure",
+      "merchant_configurable": true,
+      "configured_default": "Off",
+      "initial_effective_state": "Off",
+      "initial_reason_code": "not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "ai_merchant_knowledge",
+        "reviews.approved_source"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "module contract required before certification",
+      "model_tools": [],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "only authorized retained history where the module contract permits",
+      "off_or_blocked_behavior": "absent from active UI, model tools, routes, jobs, webhooks, setup and claims",
+      "degraded_behavior": "Native ratings/reviews without AI summary.",
+      "certification_status": "not_certified"
+    },
+    {
+      "key": "shopper_product_alerts",
+      "release_unit": "optional_module",
+      "purpose": "Stock/price alerts",
+      "implementation_requirement": "release_separable_but_complete_before_exposure",
+      "merchant_configurable": true,
+      "configured_default": "Off",
+      "initial_effective_state": "Off",
+      "initial_reason_code": "not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "commerce_product_assistance",
+        "notification.channel",
+        "queue.health",
+        "consent.alerts"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "module contract required before certification",
+      "model_tools": [],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "only authorized retained history where the module contract permits",
+      "off_or_blocked_behavior": "absent from active UI, model tools, routes, jobs, webhooks, setup and claims",
+      "degraded_behavior": "No subscription; ordinary product assistance.",
+      "certification_status": "not_certified"
+    },
+    {
+      "key": "shopper_guided_bundles",
+      "release_unit": "optional_module",
+      "purpose": "Compatible bundle/setup builder",
+      "implementation_requirement": "release_separable_but_complete_before_exposure",
+      "merchant_configurable": true,
+      "configured_default": "Off",
+      "initial_effective_state": "Off",
+      "initial_reason_code": "not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "commerce_product_assistance",
+        "catalog.compatibility_evidence",
+        "commerce_cart"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "module contract required before certification",
+      "model_tools": [],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "only authorized retained history where the module contract permits",
+      "off_or_blocked_behavior": "absent from active UI, model tools, routes, jobs, webhooks, setup and claims",
+      "degraded_behavior": "Individual grounded recommendations.",
+      "certification_status": "not_certified"
+    },
+    {
+      "key": "shopper_gift_mode",
+      "release_unit": "optional_module",
+      "purpose": "Gift-shopping journey",
+      "implementation_requirement": "release_separable_but_complete_before_exposure",
+      "merchant_configurable": true,
+      "configured_default": "Off",
+      "initial_effective_state": "Off",
+      "initial_reason_code": "not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "commerce_product_assistance"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "module contract required before certification",
+      "model_tools": [],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "only authorized retained history where the module contract permits",
+      "off_or_blocked_behavior": "absent from active UI, model tools, routes, jobs, webhooks, setup and claims",
+      "degraded_behavior": "Ordinary product discovery.",
+      "certification_status": "not_certified"
+    },
+    {
+      "key": "shopper_reorder_subscriptions",
+      "release_unit": "optional_module",
+      "purpose": "Reorder and subscription assistance",
+      "implementation_requirement": "release_separable_but_complete_before_exposure",
+      "merchant_configurable": true,
+      "configured_default": "Off",
+      "initial_effective_state": "Off",
+      "initial_reason_code": "not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "commerce_order_service",
+        "subscriptions.approved_adapter"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "module contract required before certification",
+      "model_tools": [
+        "subscriptions.get_customer_subscriptions",
+        "subscriptions.preview_action",
+        "subscriptions.execute_confirmed_action"
+      ],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "only authorized retained history where the module contract permits",
+      "off_or_blocked_behavior": "absent from active UI, model tools, routes, jobs, webhooks, setup and claims",
+      "degraded_behavior": "Validated one-time reorder or unavailable state.",
+      "certification_status": "not_certified"
+    },
+    {
+      "key": "shopper_post_purchase",
+      "release_unit": "optional_module",
+      "purpose": "Product setup/care/support",
+      "implementation_requirement": "release_separable_but_complete_before_exposure",
+      "merchant_configurable": true,
+      "configured_default": "Off",
+      "initial_effective_state": "Off",
+      "initial_reason_code": "not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "commerce_order_service",
+        "knowledge.approved_product_docs"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "module contract required before certification",
+      "model_tools": [],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "only authorized retained history where the module contract permits",
+      "off_or_blocked_behavior": "absent from active UI, model tools, routes, jobs, webhooks, setup and claims",
+      "degraded_behavior": "Approved docs or human support.",
+      "certification_status": "not_certified"
+    },
+    {
+      "key": "shopper_returns_exchange",
+      "release_unit": "optional_module",
+      "purpose": "Guided return/exchange",
+      "implementation_requirement": "release_separable_but_complete_before_exposure",
+      "merchant_configurable": true,
+      "configured_default": "Off",
+      "initial_effective_state": "Off",
+      "initial_reason_code": "not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "commerce_order_service",
+        "returns.approved_adapter_or_crm"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "module contract required before certification",
+      "model_tools": [
+        "refund.preview_adjustment",
+        "refund.execute_authorized_adjustment",
+        "returns.get_eligibility",
+        "returns.preview_request",
+        "returns.submit_confirmed_request"
+      ],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "only authorized retained history where the module contract permits",
+      "off_or_blocked_behavior": "absent from active UI, model tools, routes, jobs, webhooks, setup and claims",
+      "degraded_behavior": "CRM or standard return path.",
+      "certification_status": "not_certified"
+    },
+    {
+      "key": "shopper_loyalty_rewards",
+      "release_unit": "optional_module",
+      "purpose": "Loyalty balance and redemption",
+      "implementation_requirement": "release_separable_but_complete_before_exposure",
+      "merchant_configurable": true,
+      "configured_default": "Off",
+      "initial_effective_state": "Off",
+      "initial_reason_code": "not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "commerce_chat_checkout",
+        "loyalty.approved_adapter"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "module contract required before certification",
+      "model_tools": [
+        "loyalty.get_balance",
+        "loyalty.get_redemption_options",
+        "loyalty.execute_confirmed_redemption"
+      ],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "only authorized retained history where the module contract permits",
+      "off_or_blocked_behavior": "absent from active UI, model tools, routes, jobs, webhooks, setup and claims",
+      "degraded_behavior": "Normal cart/checkout without loyalty action.",
+      "certification_status": "not_certified"
+    },
+    {
+      "key": "shopper_shareable_decisions",
+      "release_unit": "optional_module",
+      "purpose": "Secure share links",
+      "implementation_requirement": "release_separable_but_complete_before_exposure",
+      "merchant_configurable": true,
+      "configured_default": "Off",
+      "initial_effective_state": "Off",
+      "initial_reason_code": "not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "conversation.historical_rendering",
+        "sharing.protected_storage"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "module contract required before certification",
+      "model_tools": [],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "only authorized retained history where the module contract permits",
+      "off_or_blocked_behavior": "absent from active UI, model tools, routes, jobs, webhooks, setup and claims",
+      "degraded_behavior": "Account-only or no sharing.",
+      "certification_status": "not_certified"
+    },
+    {
+      "key": "ai_customer_preference_memory",
+      "release_unit": "optional_module",
+      "purpose": "Consented durable preferences",
+      "implementation_requirement": "release_separable_but_complete_before_exposure",
+      "merchant_configurable": true,
+      "configured_default": "Off",
+      "initial_effective_state": "Off",
+      "initial_reason_code": "not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "ai_conversation_memory",
+        "privacy.published_durable_memory_policy",
+        "consent.durable_memory"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "module contract required before certification",
+      "model_tools": [
+        "memory.list_customer_preferences",
+        "memory.propose_preference_write",
+        "memory.mark_preference_superseded",
+        "memory.delete_customer_preference"
+      ],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "only authorized retained history where the module contract permits",
+      "off_or_blocked_behavior": "absent from active UI, model tools, routes, jobs, webhooks, setup and claims",
+      "degraded_behavior": "Current conversation only.",
+      "certification_status": "not_certified"
+    },
+    {
+      "key": "ai_spoken_responses",
+      "release_unit": "optional_module",
+      "purpose": "TTS/realtime voice output",
+      "implementation_requirement": "release_separable_but_complete_before_exposure",
+      "merchant_configurable": true,
+      "configured_default": "Off",
+      "initial_effective_state": "Off",
+      "initial_reason_code": "not_certified",
+      "allowed_effective_states": [
+        "On",
+        "Off",
+        "Blocked",
+        "Degraded"
+      ],
+      "dependencies": [
+        "ai_multimodal_understanding",
+        "provider.speech_or_live.ready",
+        "text_response_parity"
+      ],
+      "incompatible_with": [],
+      "required_actors_and_capabilities": "module contract required before certification",
+      "model_tools": [
+        "speech.synthesize",
+        "voice.start_realtime_session",
+        "voice.end_realtime_session"
+      ],
+      "rest_routes": [],
+      "jobs": [],
+      "ui_components": [],
+      "historical_reads_when_off": "only authorized retained history where the module contract permits",
+      "off_or_blocked_behavior": "absent from active UI, model tools, routes, jobs, webhooks, setup and claims",
+      "degraded_behavior": "Full text response.",
+      "certification_status": "not_certified"
+    }
+  ]
+}

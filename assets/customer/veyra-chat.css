@@ -1,0 +1,875 @@
+:root {
+    --veyra-brand: #0c4a46;
+    --veyra-brand-strong: #073632;
+    --veyra-accent: #a83f1d;
+    --veyra-surface: #fffdf9;
+    --veyra-surface-muted: #f4f1ea;
+    --veyra-surface-raised: #ffffff;
+    --veyra-ink: #182120;
+    --veyra-ink-soft: #52605e;
+    --veyra-border: #d8dfdc;
+    --veyra-danger: #a72020;
+    --veyra-success: #176c45;
+    --veyra-warning: #8a5a00;
+    --veyra-focus: #0b6bbf;
+    --veyra-radius-sm: 0.75rem;
+    --veyra-radius-md: 1rem;
+    --veyra-radius-lg: 1.4rem;
+    --veyra-shadow: 0 1.25rem 4rem rgb(13 42 39 / 22%);
+    --veyra-safe-bottom: env(safe-area-inset-bottom, 0px);
+    --veyra-safe-top: env(safe-area-inset-top, 0px);
+}
+
+.veyra-chat,
+.veyra-chat *,
+.veyra-chat *::before,
+.veyra-chat *::after {
+    box-sizing: border-box;
+}
+
+.veyra-chat {
+    --veyra-safe-inline-end: env(safe-area-inset-right, 0px);
+    color: var(--veyra-ink);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 1rem;
+    line-height: 1.45;
+    text-align: start;
+}
+
+.veyra-chat[dir="rtl"] {
+    --veyra-safe-inline-end: env(safe-area-inset-left, 0px);
+}
+
+.veyra-chat button,
+.veyra-chat textarea,
+.veyra-chat input {
+    color: inherit;
+    font: inherit;
+}
+
+.veyra-chat button {
+    touch-action: manipulation;
+}
+
+.veyra-chat [hidden] {
+    display: none !important;
+}
+
+.veyra-chat__sr-only {
+    position: absolute !important;
+    inline-size: 1px !important;
+    block-size: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+.veyra-chat__launcher {
+    position: fixed;
+    z-index: 999980;
+    inset-inline-end: max(1rem, var(--veyra-safe-inline-end));
+    inset-block-end: max(1rem, var(--veyra-safe-bottom));
+    display: inline-flex;
+    min-block-size: 3.5rem;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.5rem 1rem 0.5rem 0.55rem;
+    border: 1px solid rgb(255 255 255 / 22%);
+    border-radius: 999px;
+    background: var(--veyra-brand-strong);
+    box-shadow: 0 0.8rem 2.5rem rgb(7 54 50 / 35%);
+    color: #ffffff;
+    cursor: pointer;
+}
+
+[dir="rtl"] .veyra-chat__launcher {
+    padding: 0.5rem 0.55rem 0.5rem 1rem;
+}
+
+.veyra-chat__launcher-mark,
+.veyra-chat__avatar {
+    display: inline-grid;
+    flex: 0 0 auto;
+    place-items: center;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #f6c7a9, #dc7046);
+    color: #35160d;
+    font-weight: 800;
+}
+
+.veyra-chat__launcher-mark {
+    inline-size: 2.45rem;
+    block-size: 2.45rem;
+}
+
+.veyra-chat__launcher-label {
+    font-weight: 720;
+}
+
+.veyra-chat__panel {
+    z-index: 999990;
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr) auto auto auto auto;
+    inline-size: min(27rem, calc(100vw - 2rem));
+    block-size: min(45rem, calc(100dvh - 2rem - var(--veyra-safe-top) - var(--veyra-safe-bottom)));
+    min-block-size: 28rem;
+    overflow: hidden;
+    border: 1px solid var(--veyra-border);
+    border-radius: var(--veyra-radius-lg);
+    background: var(--veyra-surface);
+    box-shadow: var(--veyra-shadow);
+    isolation: isolate;
+}
+
+.veyra-chat--launcher .veyra-chat__panel,
+.veyra-chat--panel .veyra-chat__panel {
+    position: fixed;
+    inset-inline-end: max(1rem, var(--veyra-safe-inline-end));
+    inset-block-end: max(1rem, var(--veyra-safe-bottom));
+}
+
+.veyra-chat--full .veyra-chat__panel {
+    inline-size: 100%;
+    max-inline-size: 72rem;
+    block-size: min(54rem, 100dvh);
+    margin-inline: auto;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.veyra-chat--embedded .veyra-chat__panel {
+    inline-size: 100%;
+    block-size: min(46rem, 80dvh);
+    box-shadow: none;
+}
+
+.veyra-chat__header {
+    display: flex;
+    min-block-size: 4.75rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: calc(0.65rem + var(--veyra-safe-top)) 0.85rem 0.65rem;
+    border-block-end: 1px solid var(--veyra-border);
+    background: var(--veyra-surface-raised);
+}
+
+.veyra-chat__identity {
+    display: flex;
+    min-inline-size: 0;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.veyra-chat__avatar {
+    inline-size: 2.65rem;
+    block-size: 2.65rem;
+}
+
+.veyra-chat__identity-copy {
+    display: grid;
+    min-inline-size: 0;
+    gap: 0.08rem;
+}
+
+.veyra-chat__title-line {
+    display: flex;
+    min-inline-size: 0;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.veyra-chat__title {
+    overflow: hidden;
+    color: var(--veyra-ink);
+    font-size: 1rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.veyra-chat__ai-badge,
+.veyra-message__badge {
+    display: inline-flex;
+    min-block-size: 1.25rem;
+    align-items: center;
+    padding-inline: 0.4rem;
+    border: 1px solid #9bc0bc;
+    border-radius: 999px;
+    background: #e4f3f1;
+    color: #174e49;
+    font-size: 0.7rem;
+    font-weight: 750;
+    letter-spacing: 0.02em;
+}
+
+.veyra-chat__disclosure {
+    display: -webkit-box;
+    overflow: hidden;
+    color: var(--veyra-ink-soft);
+    font-size: 0.75rem;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.veyra-chat__header-actions {
+    display: flex;
+    flex: 0 0 auto;
+    gap: 0.15rem;
+}
+
+.veyra-chat__icon-button,
+.veyra-chat__send,
+.veyra-chat__stop,
+.veyra-chat__jump,
+.veyra-chat__primary-button,
+.veyra-chat__secondary-button,
+.veyra-card__action,
+.veyra-chat__quick-reply {
+    min-inline-size: 2.75rem;
+    min-block-size: 2.75rem;
+    border-radius: 0.75rem;
+    cursor: pointer;
+}
+
+.veyra-chat__icon-button {
+    display: inline-grid;
+    place-items: center;
+    border: 0;
+    background: transparent;
+    color: var(--veyra-ink-soft);
+    font-size: 1.4rem;
+}
+
+.veyra-chat__icon-button:hover {
+    background: var(--veyra-surface-muted);
+    color: var(--veyra-ink);
+}
+
+.veyra-chat__connection {
+    padding: 0.55rem 0.9rem;
+    border-block-end: 1px solid #ead5a7;
+    background: #fff4d9;
+    color: #624200;
+    font-size: 0.82rem;
+}
+
+.veyra-chat__main {
+    position: relative;
+    min-block-size: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scroll-behavior: smooth;
+    scrollbar-gutter: stable;
+    background:
+        radial-gradient(circle at 20% 10%, rgb(12 74 70 / 5%), transparent 27%),
+        var(--veyra-surface);
+}
+
+.veyra-chat__history-control {
+    display: flex;
+    justify-content: center;
+    padding: 0.7rem 0.75rem 0;
+}
+
+.veyra-chat__timeline {
+    display: flex;
+    min-block-size: 100%;
+    flex-direction: column;
+    gap: 0.45rem;
+    padding: 1rem 0.8rem 1.25rem;
+    margin: 0;
+    list-style: none;
+}
+
+.veyra-chat__empty {
+    display: grid;
+    max-inline-size: 21rem;
+    place-items: center;
+    align-content: center;
+    gap: 0.35rem;
+    margin: auto;
+    color: var(--veyra-ink-soft);
+    text-align: center;
+}
+
+.veyra-chat__empty strong {
+    color: var(--veyra-ink);
+    font-size: 1.08rem;
+}
+
+.veyra-chat__empty-mark {
+    display: grid;
+    inline-size: 3.25rem;
+    block-size: 3.25rem;
+    place-items: center;
+    margin-block-end: 0.35rem;
+    border: 1px solid #b6d2cf;
+    border-radius: 1.15rem;
+    background: #e9f5f3;
+    color: var(--veyra-brand);
+    font-size: 1.35rem;
+}
+
+.veyra-message {
+    display: grid;
+    max-inline-size: min(88%, 35rem);
+    gap: 0.3rem;
+    overflow-wrap: anywhere;
+}
+
+.veyra-message--shopper {
+    align-self: flex-end;
+}
+
+.veyra-message--ai,
+.veyra-message--human,
+.veyra-message--system {
+    align-self: flex-start;
+}
+
+.veyra-message__meta {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding-inline: 0.25rem;
+    color: var(--veyra-ink-soft);
+    font-size: 0.7rem;
+}
+
+.veyra-message--shopper .veyra-message__meta {
+    justify-content: flex-end;
+}
+
+.veyra-message__bubble {
+    padding: 0.65rem 0.78rem;
+    border: 1px solid var(--veyra-border);
+    border-radius: 1rem 1rem 1rem 0.35rem;
+    background: var(--veyra-surface-raised);
+    white-space: pre-wrap;
+}
+
+[dir="rtl"] .veyra-message__bubble {
+    border-radius: 1rem 1rem 0.35rem 1rem;
+}
+
+.veyra-message--shopper .veyra-message__bubble {
+    border-color: #0c4a46;
+    border-radius: 1rem 1rem 0.35rem 1rem;
+    background: var(--veyra-brand);
+    color: #ffffff;
+}
+
+[dir="rtl"] .veyra-message--shopper .veyra-message__bubble {
+    border-radius: 1rem 1rem 1rem 0.35rem;
+}
+
+.veyra-message--system .veyra-message__bubble {
+    border-style: dashed;
+    background: #f7f4ed;
+    color: #3d4a48;
+}
+
+.veyra-message[data-state="failed"] .veyra-message__bubble {
+    border-color: #d59696;
+}
+
+.veyra-message__status {
+    color: var(--veyra-ink-soft);
+    font-size: 0.7rem;
+}
+
+.veyra-message__quote {
+    display: grid;
+    gap: 0.15rem;
+    padding: 0.55rem 0.65rem;
+    border-inline-start: 0.22rem solid var(--veyra-brand);
+    border-radius: 0.45rem;
+    background: var(--veyra-surface-muted);
+    color: var(--veyra-ink);
+    font-size: 0.8rem;
+}
+
+.veyra-message__quote button {
+    min-block-size: 2.75rem;
+    border: 0;
+    background: transparent;
+    color: var(--veyra-brand);
+    text-align: start;
+    cursor: pointer;
+}
+
+.veyra-message__references,
+.veyra-message__components {
+    display: grid;
+    gap: 0.55rem;
+}
+
+.veyra-message__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+
+.veyra-message__reply {
+    min-block-size: 2.75rem;
+    padding-inline: 0.7rem;
+    border: 0;
+    border-radius: 0.65rem;
+    background: transparent;
+    color: var(--veyra-brand);
+    cursor: pointer;
+}
+
+.veyra-chat__separator {
+    align-self: center;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    background: rgb(82 96 94 / 10%);
+    color: var(--veyra-ink-soft);
+    font-size: 0.72rem;
+}
+
+.veyra-card {
+    display: grid;
+    gap: 0.65rem;
+    overflow: hidden;
+    padding: 0.75rem;
+    border: 1px solid var(--veyra-border);
+    border-radius: var(--veyra-radius-md);
+    background: var(--veyra-surface-raised);
+    box-shadow: 0 0.25rem 0.9rem rgb(24 33 32 / 7%);
+}
+
+.veyra-card__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.7rem;
+}
+
+.veyra-card__title {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.3;
+}
+
+.veyra-card__eyebrow,
+.veyra-card__stamp {
+    color: var(--veyra-ink-soft);
+    font-size: 0.7rem;
+}
+
+.veyra-card__status {
+    flex: 0 0 auto;
+    padding: 0.2rem 0.48rem;
+    border-radius: 999px;
+    background: #edf1ef;
+    color: #35433f;
+    font-size: 0.72rem;
+    font-weight: 650;
+}
+
+.veyra-card__status[data-tone="success"] {
+    background: #e3f4ea;
+    color: var(--veyra-success);
+}
+
+.veyra-card__status[data-tone="warning"] {
+    background: #fff1cc;
+    color: #6d4700;
+}
+
+.veyra-card__status[data-tone="danger"] {
+    background: #fbe4e4;
+    color: var(--veyra-danger);
+}
+
+.veyra-card__product-layout {
+    display: grid;
+    grid-template-columns: 4.5rem minmax(0, 1fr);
+    gap: 0.7rem;
+}
+
+.veyra-card__image {
+    inline-size: 4.5rem;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border: 1px solid var(--veyra-border);
+    border-radius: 0.75rem;
+    background: var(--veyra-surface-muted);
+}
+
+.veyra-card__details,
+.veyra-card__list,
+.veyra-card__totals {
+    display: grid;
+    gap: 0.3rem;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.veyra-card__fact,
+.veyra-card__total {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.veyra-card__fact span:first-child,
+.veyra-card__total span:first-child {
+    color: var(--veyra-ink-soft);
+}
+
+.veyra-card__total--strong {
+    padding-block-start: 0.45rem;
+    border-block-start: 1px solid var(--veyra-border);
+    font-weight: 750;
+}
+
+.veyra-card__notice {
+    padding: 0.5rem 0.6rem;
+    border-radius: 0.55rem;
+    background: #fff4d9;
+    color: #624200;
+    font-size: 0.78rem;
+}
+
+.veyra-card__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
+
+.veyra-card__action,
+.veyra-chat__primary-button {
+    padding-inline: 0.85rem;
+    border: 1px solid var(--veyra-brand);
+    background: var(--veyra-brand);
+    color: #ffffff;
+    font-weight: 650;
+}
+
+.veyra-card__action--secondary,
+.veyra-chat__secondary-button {
+    padding-inline: 0.85rem;
+    border: 1px solid var(--veyra-border);
+    background: var(--veyra-surface-raised);
+    color: var(--veyra-ink);
+}
+
+.veyra-chat__jump {
+    position: sticky;
+    inset-inline-start: 50%;
+    inset-block-end: 0.5rem;
+    translate: -50% 0;
+    padding-inline: 0.85rem;
+    border: 1px solid var(--veyra-border);
+    background: var(--veyra-surface-raised);
+    box-shadow: 0 0.25rem 1rem rgb(24 33 32 / 15%);
+}
+
+[dir="rtl"] .veyra-chat__jump {
+    translate: 50% 0;
+}
+
+.veyra-chat__activity {
+    min-block-size: 1.7rem;
+    padding: 0.3rem 0.9rem;
+    color: var(--veyra-ink-soft);
+    font-size: 0.78rem;
+}
+
+.veyra-chat__quick-replies {
+    display: flex;
+    gap: 0.45rem;
+    overflow-x: auto;
+    padding: 0.25rem 0.8rem 0.55rem;
+    scrollbar-width: thin;
+}
+
+.veyra-chat__quick-reply {
+    flex: 0 0 auto;
+    padding-inline: 0.85rem;
+    border: 1px solid #8eb4b0;
+    background: #f2fbfa;
+    color: var(--veyra-brand-strong);
+}
+
+.veyra-chat__draft-context {
+    display: grid;
+    gap: 0.35rem;
+    padding: 0.45rem 0.75rem 0;
+    border-block-start: 1px solid var(--veyra-border);
+    background: var(--veyra-surface-raised);
+}
+
+.veyra-chat__draft-quote {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.45rem 0.55rem;
+    border-inline-start: 0.22rem solid var(--veyra-brand);
+    border-radius: 0.5rem;
+    background: var(--veyra-surface-muted);
+}
+
+.veyra-chat__draft-context-copy {
+    display: grid;
+    min-inline-size: 0;
+    font-size: 0.78rem;
+}
+
+.veyra-chat__draft-context-copy span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.veyra-chat__draft-context-copy small {
+    color: var(--veyra-ink-soft);
+}
+
+.veyra-chat__draft-references {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.veyra-chat__draft-reference {
+    display: inline-flex;
+    min-block-size: 2.75rem;
+    align-items: center;
+    gap: 0.3rem;
+    padding-inline: 0.65rem 0.25rem;
+    border: 1px solid var(--veyra-border);
+    border-radius: 999px;
+    background: var(--veyra-surface-muted);
+    font-size: 0.75rem;
+}
+
+.veyra-chat__composer {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 0.45rem;
+    padding: 0.55rem 0.65rem calc(0.55rem + var(--veyra-safe-bottom));
+    border-block-start: 1px solid var(--veyra-border);
+    background: var(--veyra-surface-raised);
+}
+
+.veyra-chat__textarea {
+    inline-size: 100%;
+    min-block-size: 2.75rem;
+    max-block-size: 9rem;
+    resize: none;
+    padding: 0.65rem 0.75rem;
+    overflow-y: auto;
+    border: 1px solid #aeb8b5;
+    border-radius: 1rem;
+    background: #ffffff;
+    line-height: 1.35;
+}
+
+.veyra-chat__textarea::placeholder {
+    color: #697572;
+}
+
+.veyra-chat__send,
+.veyra-chat__stop {
+    display: inline-flex;
+    min-inline-size: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    padding-inline: 0.8rem;
+    border: 1px solid var(--veyra-brand);
+    background: var(--veyra-brand);
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.veyra-chat__stop {
+    border-color: #be8787;
+    background: #fff1f1;
+    color: #7d1919;
+}
+
+.veyra-chat__send-icon {
+    display: none;
+}
+
+.veyra-chat__error {
+    min-block-size: 0;
+    padding-inline: 0.75rem;
+    background: var(--veyra-surface-raised);
+    color: var(--veyra-danger);
+    font-size: 0.78rem;
+}
+
+.veyra-chat__error:not(:empty) {
+    padding-block-end: calc(0.45rem + var(--veyra-safe-bottom));
+}
+
+.veyra-chat__confirm {
+    inline-size: min(28rem, calc(100vw - 2rem));
+    max-block-size: min(80dvh, 40rem);
+    padding: 0;
+    overflow: visible;
+    border: 0;
+    border-radius: var(--veyra-radius-lg);
+    background: transparent;
+}
+
+.veyra-chat__confirm::backdrop {
+    background: rgb(8 25 23 / 64%);
+    backdrop-filter: blur(2px);
+}
+
+.veyra-chat__confirm-card {
+    display: grid;
+    gap: 0.8rem;
+    max-block-size: min(80dvh, 40rem);
+    padding: 1rem;
+    overflow-y: auto;
+    border: 1px solid var(--veyra-border);
+    border-radius: var(--veyra-radius-lg);
+    background: var(--veyra-surface-raised);
+}
+
+.veyra-chat__confirm-card h3,
+.veyra-chat__confirm-card p {
+    margin: 0;
+}
+
+.veyra-chat__confirm-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.veyra-chat button:disabled,
+.veyra-chat textarea:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+.veyra-chat :is(button, textarea, [tabindex]):focus-visible {
+    outline: 3px solid var(--veyra-focus);
+    outline-offset: 2px;
+}
+
+.veyra-chat__status-dot {
+    display: inline-block;
+    inline-size: 0.45rem;
+    block-size: 0.45rem;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+body.veyra-chat-open {
+    overflow: hidden;
+}
+
+@media (max-width: 43.75rem), (max-height: 40rem) {
+    .veyra-chat--launcher .veyra-chat__panel,
+    .veyra-chat--panel .veyra-chat__panel {
+        inset: 0;
+        inline-size: 100vw;
+        block-size: 100dvh;
+        min-block-size: 0;
+        border: 0;
+        border-radius: 0;
+    }
+
+    .veyra-chat__launcher-label {
+        display: none;
+    }
+
+    .veyra-chat__launcher {
+        inline-size: 3.5rem;
+        padding: 0.5rem;
+    }
+
+    .veyra-message {
+        max-inline-size: 92%;
+    }
+
+    .veyra-chat__send {
+        padding-inline: 0;
+        border-radius: 50%;
+    }
+
+    .veyra-chat__send-label {
+        position: absolute;
+        inline-size: 1px;
+        block-size: 1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+    }
+
+    .veyra-chat__send-icon {
+        display: inline;
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 21rem) {
+    .veyra-chat__header {
+        padding-inline: 0.5rem;
+    }
+
+    .veyra-chat__avatar {
+        inline-size: 2.25rem;
+        block-size: 2.25rem;
+    }
+
+    .veyra-chat__header-actions {
+        gap: 0;
+    }
+
+    .veyra-chat__icon-button {
+        min-inline-size: 2.75rem;
+    }
+
+    .veyra-card__product-layout {
+        grid-template-columns: 3.5rem minmax(0, 1fr);
+    }
+
+    .veyra-card__image {
+        inline-size: 3.5rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .veyra-chat *,
+    .veyra-chat *::before,
+    .veyra-chat *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+@media (forced-colors: active) {
+    .veyra-chat__panel,
+    .veyra-message__bubble,
+    .veyra-card,
+    .veyra-chat__composer {
+        border: 1px solid CanvasText;
+    }
+
+    .veyra-chat__ai-badge,
+    .veyra-card__status {
+        border: 1px solid CanvasText;
+    }
+}

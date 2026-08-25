@@ -1,0 +1,120 @@
+{
+  "schema_version": "1.0.0",
+  "proposal_version": "4.1",
+  "count": 28,
+  "default_role_grants": "none_defined_by_design_package",
+  "capabilities": [
+    {
+      "capability": "manage_veyra_settings",
+      "minimum_authority": "Manage general settings that do not imply customer-content access or sensitive execution."
+    },
+    {
+      "capability": "manage_veyra_agent",
+      "minimum_authority": "Draft, simulate, publish, schedule, and roll back Agent Studio configuration."
+    },
+    {
+      "capability": "manage_veyra_context_knowledge",
+      "minimum_authority": "Manage knowledge, culture, market, branch, location, time, and memory policy."
+    },
+    {
+      "capability": "manage_veyra_experience",
+      "minimum_authority": "Manage and publish Experience Studio configuration."
+    },
+    {
+      "capability": "manage_veyra_features",
+      "minimum_authority": "Manage Commerce Control Center configured states and dependencies."
+    },
+    {
+      "capability": "manage_veyra_models",
+      "minimum_authority": "Configure Google Gemini and approved alternative provider routes, credentials references, fallbacks, budgets, and health tests."
+    },
+    {
+      "capability": "view_veyra_dashboard",
+      "minimum_authority": "View privacy-minimized operational summaries."
+    },
+    {
+      "capability": "view_veyra_conversations",
+      "minimum_authority": "View permitted customer-visible conversation history."
+    },
+    {
+      "capability": "view_veyra_customer_identity",
+      "minimum_authority": "View separately protected customer identity/contact data."
+    },
+    {
+      "capability": "view_veyra_attachments",
+      "minimum_authority": "View authorized protected attachments."
+    },
+    {
+      "capability": "play_veyra_audio",
+      "minimum_authority": "Play authorized customer audio and view permitted transcripts."
+    },
+    {
+      "capability": "join_veyra_conversations",
+      "minimum_authority": "Accept or join an authorized human handoff."
+    },
+    {
+      "capability": "pause_veyra_ai",
+      "minimum_authority": "Pause or resume AI for permitted conversations."
+    },
+    {
+      "capability": "send_veyra_support_messages",
+      "minimum_authority": "Send customer-visible staff messages."
+    },
+    {
+      "capability": "add_veyra_internal_notes",
+      "minimum_authority": "Add staff-only notes that can never render to customers."
+    },
+    {
+      "capability": "view_veyra_crm",
+      "minimum_authority": "Read permitted CRM cases and customer-visible history."
+    },
+    {
+      "capability": "manage_veyra_assigned_cases",
+      "minimum_authority": "Assign and update permitted cases without executing commerce mutations."
+    },
+    {
+      "capability": "decide_veyra_cases",
+      "minimum_authority": "Approve or reject eligible service requests according to policy."
+    },
+    {
+      "capability": "execute_veyra_case_actions",
+      "minimum_authority": "Execute a separately authorized, revalidated, and confirmed commerce action resulting from a case."
+    },
+    {
+      "capability": "view_veyra_payment_evidence",
+      "minimum_authority": "View protected payment evidence and unverified extraction."
+    },
+    {
+      "capability": "decide_veyra_payment_reviews",
+      "minimum_authority": "Request information, approve, reject, supersede, expire, or close eligible reviews."
+    },
+    {
+      "capability": "execute_veyra_payment_transitions",
+      "minimum_authority": "Execute a separately authorized and confirmed WooCommerce transition after review."
+    },
+    {
+      "capability": "view_veyra_analytics",
+      "minimum_authority": "View permitted analytics and evaluations."
+    },
+    {
+      "capability": "view_veyra_audit",
+      "minimum_authority": "View protected audit records."
+    },
+    {
+      "capability": "export_veyra_conversations",
+      "minimum_authority": "Export permitted conversation and related personal data."
+    },
+    {
+      "capability": "erase_veyra_data",
+      "minimum_authority": "Perform eligible privacy deletion or anonymization."
+    },
+    {
+      "capability": "manage_veyra_retention",
+      "minimum_authority": "Manage retention and legal-hold policy."
+    },
+    {
+      "capability": "manage_veyra_roles",
+      "minimum_authority": "Grant Veyra capabilities to roles or users."
+    }
+  ]
+}

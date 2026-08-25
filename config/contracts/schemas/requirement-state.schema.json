@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://veyra.invalid/contracts/schemas/requirement-state.schema.json",
+  "title": "Actor-owned conversation requirement state",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "conversation_id",
+    "actor_type",
+    "actor_id",
+    "resource_version",
+    "state_hash",
+    "requirements",
+    "last_source_message_id",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "conversation_id": { "$ref": "common.schema.json#/$defs/opaqueId" },
+    "actor_type": { "enum": ["guest", "customer"] },
+    "actor_id": { "$ref": "common.schema.json#/$defs/opaqueId" },
+    "resource_version": { "type": "integer", "minimum": 0 },
+    "state_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "requirements": {
+      "type": "array",
+      "maxItems": 64,
+      "items": { "$ref": "#/$defs/criterion" }
+    },
+    "last_source_message_id": {
+      "oneOf": [
+        { "$ref": "common.schema.json#/$defs/opaqueId" },
+        { "type": "null" }
+      ]
+    },
+    "created_at": { "$ref": "common.schema.json#/$defs/utcInstant" },
+    "updated_at": { "$ref": "common.schema.json#/$defs/utcInstant" }
+  },
+  "$defs": {
+    "criterion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "field",
+        "operator",
+        "value",
+        "strength",
+        "status",
+        "verification",
+        "source",
+        "supersedes",
+        "superseded_by",
+        "version",
+        "created_at",
+        "updated_at",
+        "status_source_message_id"
+      ],
+      "properties": {
+        "id": { "type": "string", "pattern": "^req_[a-f0-9]{32}$" },
+        "field": {
+          "enum": [
+            "budget",
+            "quantity",
+            "unit",
+            "use_case",
+            "recipient",
+            "compatibility",
+            "location",
+            "timing",
+            "already_owned",
+            "product_type",
+            "category",
+            "attribute",
+            "product_id",
+            "stock",
+            "purchasable",
+            "exclusion",
+            "preference"
+          ]
+        },
+        "operator": {
+          "enum": [
+            "equals",
+            "not_equals",
+            "max",
+            "min",
+            "in",
+            "not_in",
+            "contains",
+            "excludes",
+            "requires",
+            "before",
+            "after",
+            "any_of"
+          ]
+        },
+        "value": {},
+        "strength": { "enum": ["hard", "soft"] },
+        "status": { "enum": ["active", "proposed", "unknown", "disputed", "superseded"] },
+        "verification": { "const": "shopper_message_exact_excerpt" },
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "message_id",
+            "excerpt_sha256",
+            "excerpt_offset_bytes",
+            "excerpt_length_bytes",
+            "source_kind"
+          ],
+          "properties": {
+            "message_id": { "$ref": "common.schema.json#/$defs/opaqueId" },
+            "excerpt_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+            "excerpt_offset_bytes": { "type": "integer", "minimum": 0 },
+            "excerpt_length_bytes": { "type": "integer", "minimum": 1, "maximum": 2000 },
+            "source_kind": { "const": "customer_visible_message" }
+          }
+        },
+        "supersedes": {
+          "type": "array",
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^req_[a-f0-9]{32}$" }
+        },
+        "superseded_by": {
+          "oneOf": [
+            { "type": "string", "pattern": "^(?:req_[a-f0-9]{32}|removed)$" },
+            { "type": "null" }
+          ]
+        },
+        "version": { "type": "integer", "minimum": 1 },
+        "created_at": { "$ref": "common.schema.json#/$defs/utcInstant" },
+        "updated_at": { "$ref": "common.schema.json#/$defs/utcInstant" },
+        "status_source_message_id": {
+          "oneOf": [
+            { "$ref": "common.schema.json#/$defs/opaqueId" },
+            { "type": "null" }
+          ]
+        }
+      }
+    }
+  },
+  "x-invariants": [
+    "The state hash is SHA-256 over canonical JSON for the complete ordered requirement history.",
+    "Every mutation compares both resource_version and state_hash and changes the complete head once.",
+    "Recommendations load this actor-owned head; a client or model never supplies requirement records or ranking scores."
+  ]
+}

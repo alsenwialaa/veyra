@@ -1,0 +1,405 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://veyra.invalid/contracts/schemas/context-bundle.schema.json",
+  "title": "Per-turn provider Context Bundle",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "bundle_id", "bundle_version", "conversation_id",
+    "turn_message_id", "actor_scope", "purpose", "focus",
+    "foreground_journey", "paused_journey_ids", "recent_visible_message_refs",
+    "conversation_memory_refs", "summary_ref", "authoritative_state_refs",
+    "durable_preference_refs", "knowledge_evidence_refs", "modalities",
+    "selected_data", "source_manifest", "selection_manifest", "privacy",
+    "limits", "assembled_at", "expires_at"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.1.0" },
+    "bundle_id": { "$ref": "#/$defs/opaqueId" },
+    "bundle_version": { "const": 1 },
+    "conversation_id": { "$ref": "#/$defs/opaqueId" },
+    "turn_message_id": { "$ref": "#/$defs/opaqueId" },
+    "actor_scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["site_id", "actor_type", "actor_id"],
+      "properties": {
+        "site_id": { "$ref": "#/$defs/opaqueId" },
+        "actor_type": { "enum": ["guest", "customer", "support", "payment_reviewer", "manager", "administrator"] },
+        "actor_id": { "$ref": "#/$defs/opaqueId" }
+      }
+    },
+    "purpose": { "type": "string", "minLength": 1, "maxLength": 160 },
+    "focus": { "oneOf": [{ "$ref": "#/$defs/focus" }, { "type": "null" }] },
+    "foreground_journey": { "oneOf": [{ "$ref": "#/$defs/journey" }, { "type": "null" }] },
+    "paused_journey_ids": { "$ref": "#/$defs/journeyIdList20" },
+    "recent_visible_message_refs": {
+      "type": "array", "maxItems": 24, "uniqueItems": true,
+      "items": { "$ref": "#/$defs/opaqueId" }
+    },
+    "conversation_memory_refs": { "type": "array", "maxItems": 0 },
+    "summary_ref": { "type": "null" },
+    "authoritative_state_refs": {
+      "type": "array", "maxItems": 100,
+      "items": { "$ref": "#/$defs/resourceReference" }
+    },
+    "durable_preference_refs": { "type": "array", "maxItems": 0 },
+    "knowledge_evidence_refs": { "type": "array", "maxItems": 0 },
+    "modalities": {
+      "type": "array", "maxItems": 20,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["type", "source_id", "classification", "uncertainty_preserved"],
+        "properties": {
+          "type": { "enum": ["text", "reply_quote", "product_reference"] },
+          "source_id": { "$ref": "#/$defs/opaqueId" },
+          "classification": { "$ref": "common.schema.json#/$defs/dataClassification" },
+          "uncertainty_preserved": { "const": true }
+        }
+      }
+    },
+    "selected_data": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "current_input", "recent_visible_messages", "conversation_memory",
+        "requirement_state", "validated_summary", "runtime_context",
+        "authoritative_state"
+      ],
+      "properties": {
+        "current_input": { "$ref": "#/$defs/currentInput" },
+        "recent_visible_messages": {
+          "type": "array", "maxItems": 24,
+          "items": { "$ref": "#/$defs/visibleMessage" }
+        },
+        "conversation_memory": { "type": "array", "maxItems": 0 },
+        "requirement_state": {
+          "oneOf": [{ "$ref": "#/$defs/requirementProjection" }, { "type": "null" }]
+        },
+        "validated_summary": { "type": "null" },
+        "runtime_context": { "$ref": "#/$defs/runtimeContext" },
+        "authoritative_state": { "$ref": "#/$defs/authoritativeState" }
+      }
+    },
+    "source_manifest": {
+      "type": "array", "maxItems": 100,
+      "items": { "$ref": "#/$defs/sourceManifestEntry" }
+    },
+    "selection_manifest": { "$ref": "#/$defs/selectionManifest" },
+    "privacy": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "provider_route_id", "route_manifest_version", "transmission_authorized",
+        "decision_code", "purpose", "allowed_data_classes", "redactions_applied"
+      ],
+      "properties": {
+        "provider_route_id": { "$ref": "#/$defs/opaqueId" },
+        "route_manifest_version": { "$ref": "#/$defs/opaqueId" },
+        "transmission_authorized": { "type": "boolean" },
+        "decision_code": { "$ref": "#/$defs/opaqueId" },
+        "purpose": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "allowed_data_classes": {
+          "type": "array", "uniqueItems": true,
+          "items": { "$ref": "common.schema.json#/$defs/dataClassification" }
+        },
+        "redactions_applied": {
+          "type": "array", "maxItems": 30,
+          "items": { "type": "string", "minLength": 1, "maxLength": 160 }
+        }
+      }
+    },
+    "limits": {
+      "type": "object", "additionalProperties": false,
+      "required": ["max_bytes", "actual_bytes", "max_items", "actual_items"],
+      "properties": {
+        "max_bytes": { "type": "integer", "minimum": 4096, "maximum": 1048576 },
+        "actual_bytes": { "type": "integer", "minimum": 1 },
+        "max_items": { "type": "integer", "minimum": 8, "maximum": 1000 },
+        "actual_items": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "assembled_at": { "$ref": "common.schema.json#/$defs/utcInstant" },
+    "expires_at": { "$ref": "common.schema.json#/$defs/utcInstant" }
+  },
+  "$defs": {
+    "opaqueId": {
+      "type": "string", "minLength": 8, "maxLength": 191,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "journeyId": {
+      "type": "string", "minLength": 8, "maxLength": 36,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "journeyIdList20": {
+      "type": "array", "maxItems": 20, "uniqueItems": true,
+      "items": { "$ref": "#/$defs/journeyId" }
+    },
+    "focusedResource": {
+      "type": "object", "additionalProperties": false,
+      "required": ["resource_type", "resource_id"],
+      "properties": {
+        "resource_type": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "resource_id": { "$ref": "#/$defs/opaqueId" }
+      }
+    },
+    "resourceReference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["resource_type", "resource_id", "resource_version", "ownership_state", "authority_source"],
+      "properties": {
+        "resource_type": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "resource_id": { "$ref": "#/$defs/opaqueId" },
+        "resource_version": { "oneOf": [{ "type": "integer", "minimum": 0 }, { "type": "string", "minLength": 1, "maxLength": 128 }] },
+        "ownership_state": { "enum": ["owned", "authorized_public"] },
+        "authority_source": { "type": "string", "minLength": 1, "maxLength": 120 }
+      }
+    },
+    "focus": {
+      "type": "object", "additionalProperties": false,
+      "required": ["version", "foreground_journey_id", "focused_resources", "pending_question", "unresolved_references", "source_message_id", "updated_at"],
+      "properties": {
+        "version": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "foreground_journey_id": { "oneOf": [{ "$ref": "#/$defs/journeyId" }, { "type": "null" }] },
+        "focused_resources": { "type": "array", "maxItems": 20, "items": { "$ref": "#/$defs/focusedResource" } },
+        "pending_question": { "oneOf": [{ "$ref": "#/$defs/pendingQuestion" }, { "type": "null" }] },
+        "unresolved_references": { "type": "array", "maxItems": 10, "uniqueItems": true, "items": { "$ref": "#/$defs/opaqueId" } },
+        "source_message_id": { "$ref": "#/$defs/opaqueId" },
+        "updated_at": { "$ref": "common.schema.json#/$defs/utcInstant" }
+      }
+    },
+    "pendingQuestion": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "journey_id", "step_id", "message_id", "answer_schema", "allowed_choice_ids", "focused_resources", "sensitivity", "created_at", "expires_at", "dependency_versions", "version"],
+      "properties": {
+        "id": { "$ref": "#/$defs/opaqueId" },
+        "journey_id": { "$ref": "#/$defs/journeyId" },
+        "step_id": { "type": "string", "minLength": 1, "maxLength": 96 },
+        "message_id": { "$ref": "#/$defs/opaqueId" },
+        "answer_schema": { "type": "object", "additionalProperties": false, "required": ["type"], "properties": { "type": { "enum": ["string", "integer", "number", "boolean", "object", "array"] }, "enum": { "type": "array", "maxItems": 16 } } },
+        "allowed_choice_ids": { "type": "array", "maxItems": 8, "uniqueItems": true, "items": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$" } },
+        "focused_resources": { "type": "array", "maxItems": 20, "items": { "$ref": "#/$defs/focusedResource" } },
+        "sensitivity": { "enum": ["informational", "state_changing", "confirmation_sensitive"] },
+        "created_at": { "$ref": "common.schema.json#/$defs/utcInstant" },
+        "expires_at": { "$ref": "common.schema.json#/$defs/utcInstant" },
+        "dependency_versions": {
+          "oneOf": [
+            { "type": "object", "minProperties": 1, "maxProperties": 6, "additionalProperties": { "type": ["string", "integer"] } },
+            { "type": "array", "maxItems": 0 }
+          ]
+        },
+        "version": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "journey": {
+      "type": "object", "additionalProperties": false,
+      "required": ["journey_id", "type", "version", "status", "current_step", "resume_step", "open_question_ids", "related_resources", "dependency_versions", "last_verified_checkpoint"],
+      "properties": {
+        "journey_id": { "$ref": "#/$defs/journeyId" },
+        "type": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "version": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "status": { "enum": ["active", "paused", "blocked", "completed", "cancelled"] },
+        "current_step": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "resume_step": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "open_question_ids": { "type": "array", "maxItems": 30, "uniqueItems": true, "items": { "$ref": "#/$defs/opaqueId" } },
+        "related_resources": { "type": "array", "maxItems": 20, "items": { "$ref": "#/$defs/focusedResource" } },
+        "dependency_versions": {
+          "oneOf": [
+            { "type": "object", "minProperties": 1, "maxProperties": 30, "additionalProperties": { "type": ["string", "integer"] } },
+            { "type": "array", "maxItems": 0 }
+          ]
+        },
+        "last_verified_checkpoint": { "type": ["string", "null"], "minLength": 1, "maxLength": 191 }
+      }
+    },
+    "currentInput": {
+      "type": "object", "additionalProperties": false,
+      "required": ["message_id", "text", "reply_quote", "product_reference_bindings", "quick_reply_hint"],
+      "properties": {
+        "message_id": { "$ref": "#/$defs/opaqueId" },
+        "text": { "type": "string", "minLength": 1, "maxLength": 12000 },
+        "reply_quote": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object", "additionalProperties": false,
+              "required": ["message_id", "sender_type", "text", "created_at"],
+              "properties": {
+                "message_id": { "$ref": "#/$defs/opaqueId" },
+                "sender_type": { "enum": ["customer", "ai", "staff", "system"] },
+                "text": { "type": "string", "maxLength": 4000 },
+                "created_at": { "$ref": "common.schema.json#/$defs/utcInstant" }
+              }
+            }
+          ]
+        },
+        "product_reference_bindings": {
+          "type": "array", "maxItems": 3, "uniqueItems": true,
+          "items": { "$ref": "#/$defs/productReferenceBinding" }
+        },
+        "quick_reply_hint": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object", "additionalProperties": false,
+              "required": ["schema_version", "choice_id", "pending_question_id"],
+              "properties": {
+                "schema_version": { "const": "veyra.answer_binding.v1" },
+                "choice_id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$" },
+                "pending_question_id": { "$ref": "#/$defs/opaqueId" }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "productReferenceBinding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "reference_id", "source_message_id", "product_id", "variation_id"],
+      "properties": {
+        "schema_version": { "const": "veyra.product_reference_binding.v1" },
+        "reference_id": { "$ref": "#/$defs/opaqueId" },
+        "source_message_id": { "$ref": "#/$defs/opaqueId" },
+        "product_id": { "type": "integer", "minimum": 1 },
+        "variation_id": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "visibleMessage": {
+      "type": "object", "additionalProperties": false,
+      "required": ["message_id", "sender_type", "text", "language", "direction", "reply_to_message_id", "created_at"],
+      "properties": {
+        "message_id": { "$ref": "#/$defs/opaqueId" },
+        "sender_type": { "enum": ["customer", "ai", "staff", "system"] },
+        "text": { "type": "string", "maxLength": 12000 },
+        "language": { "type": "string", "minLength": 1, "maxLength": 35 },
+        "direction": { "enum": ["ltr", "rtl"] },
+        "reply_to_message_id": { "oneOf": [{ "$ref": "#/$defs/opaqueId" }, { "type": "null" }] },
+        "created_at": { "$ref": "common.schema.json#/$defs/utcInstant" }
+      }
+    },
+    "requirementProjection": {
+      "type": "object", "additionalProperties": false,
+      "required": ["scope", "resource_version", "state_hash", "active_requirements", "durable_preference_memory_used"],
+      "properties": {
+        "scope": { "const": "current_conversation_only" },
+        "resource_version": { "type": "integer", "minimum": 0 },
+        "state_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "active_requirements": { "type": "array", "maxItems": 64, "items": { "allOf": [{ "$ref": "requirement-state.schema.json#/$defs/criterion" }, { "type": "object", "properties": { "status": { "const": "active" } } }] } },
+        "durable_preference_memory_used": { "const": false }
+      }
+    },
+    "runtimeContext": {
+      "type": "object", "additionalProperties": false,
+      "required": ["version", "utc", "local", "timezone", "locale", "feature_states"],
+      "properties": {
+        "version": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "utc": { "$ref": "common.schema.json#/$defs/utcInstant" },
+        "local": { "$ref": "common.schema.json#/$defs/utcInstant" },
+        "timezone": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "locale": { "type": "string", "minLength": 1, "maxLength": 35 },
+        "feature_states": { "type": "object", "minProperties": 1, "maxProperties": 64, "additionalProperties": { "enum": ["On", "Off", "Degraded", "Blocked"] } }
+      }
+    },
+    "authoritativeState": {
+      "type": "object", "additionalProperties": false,
+      "required": ["version", "freshness", "cart"],
+      "properties": {
+        "version": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "freshness": { "enum": ["current", "stale", "unknown"] },
+        "cart": {
+          "type": "object", "additionalProperties": false,
+          "required": ["available", "hash", "item_count", "lines", "currency", "total", "lines_truncated"],
+          "properties": {
+            "available": { "type": "boolean" },
+            "hash": { "type": ["string", "null"], "maxLength": 128 },
+            "item_count": { "type": "integer", "minimum": 0 },
+            "lines": {
+              "type": "array", "maxItems": 50,
+              "items": {
+                "type": "object", "additionalProperties": false,
+                "required": ["line_id", "product_id", "variation_id", "name", "quantity"],
+                "properties": {
+                  "line_id": { "type": "string", "minLength": 1, "maxLength": 191 },
+                  "product_id": { "type": "integer", "minimum": 1 },
+                  "variation_id": { "type": "integer", "minimum": 0 },
+                  "name": { "type": "string", "minLength": 1, "maxLength": 500 },
+                  "quantity": { "type": "number", "exclusiveMinimum": 0 }
+                }
+              }
+            },
+            "currency": { "type": ["string", "null"], "pattern": "^[A-Z]{3}$" },
+            "total": { "type": ["string", "null"], "maxLength": 80 },
+            "lines_truncated": { "type": "boolean" }
+          },
+          "allOf": [{
+            "if": { "properties": { "available": { "const": false } }, "required": ["available"] },
+            "then": {
+              "properties": {
+                "hash": { "type": "null" },
+                "item_count": { "const": 0 },
+                "lines": { "type": "array", "maxItems": 0 },
+                "currency": { "type": "null" },
+                "total": { "type": "null" }
+              }
+            }
+          }]
+        }
+      }
+    },
+    "sourceManifestEntry": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source", "version", "freshness", "classification", "actor_scope_validated", "section", "authority", "purpose", "selection_reason"],
+      "properties": {
+        "source": {
+          "type": "object", "additionalProperties": false,
+          "required": ["source_class", "source_id", "source_version", "source_message_id"],
+          "properties": {
+            "source_class": { "enum": ["woocommerce", "shopper_statement", "historical_snapshot", "validated_state", "runtime_context"] },
+            "source_id": { "$ref": "#/$defs/opaqueId" },
+            "source_version": { "oneOf": [{ "type": "integer", "minimum": 0 }, { "type": "string", "minLength": 1, "maxLength": 128 }] },
+            "source_message_id": { "oneOf": [{ "$ref": "#/$defs/opaqueId" }, { "type": "null" }] }
+          }
+        },
+        "version": { "oneOf": [{ "type": "integer", "minimum": 0 }, { "type": "string", "minLength": 1, "maxLength": 128 }] },
+        "freshness": { "$ref": "common.schema.json#/$defs/freshness" },
+        "classification": { "$ref": "common.schema.json#/$defs/dataClassification" },
+        "actor_scope_validated": { "const": true },
+        "section": { "enum": ["current_input", "focus", "foreground_journey", "paused_journeys", "recent_visible_messages", "conversation_memory", "requirement_state", "validated_summary", "runtime_context", "authoritative_state", "durable_preferences", "knowledge_evidence", "modalities"] },
+        "authority": { "enum": ["shopper_statement", "historical", "validated", "authoritative"] },
+        "purpose": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "selection_reason": { "type": "string", "minLength": 1, "maxLength": 160 }
+      }
+    },
+    "selectionManifest": {
+      "type": "object", "additionalProperties": false,
+      "required": ["included_count", "excluded_count", "truncated", "sections"],
+      "properties": {
+        "included_count": { "type": "integer", "minimum": 0 },
+        "excluded_count": { "type": "integer", "minimum": 0 },
+        "truncated": { "type": "boolean" },
+        "sections": {
+          "type": "array", "minItems": 13, "maxItems": 13,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["section", "available_count", "included_count", "excluded_count", "truncated", "selection_reasons", "exclusion_reasons"],
+            "properties": {
+              "section": { "enum": ["current_input", "focus", "foreground_journey", "paused_journeys", "recent_visible_messages", "conversation_memory", "requirement_state", "validated_summary", "runtime_context", "authoritative_state", "durable_preferences", "knowledge_evidence", "modalities"] },
+              "available_count": { "type": "integer", "minimum": 0 },
+              "included_count": { "type": "integer", "minimum": 0 },
+              "excluded_count": { "type": "integer", "minimum": 0 },
+              "truncated": { "type": "boolean" },
+              "selection_reasons": { "type": "array", "maxItems": 20, "items": { "type": "string", "minLength": 1, "maxLength": 160 } },
+              "exclusion_reasons": { "type": "array", "maxItems": 20, "items": { "type": "string", "minLength": 1, "maxLength": 160 } }
+            }
+          }
+        }
+      }
+    }
+  },
+  "x-invariants": [
+    "The runtime validator rejects every missing or additional field and binds the actor, turn, route, purpose, limits, and transmission decision.",
+    "actual_bytes is the byte length of canonical JSON for the complete bundle including the stable actual_bytes value.",
+    "Raw actor identifiers, message render/evidence metadata, unvalidated memory/summary, attachments, locations, full transcript, catalog, and order history are not transmitted.",
+    "The provider payload is transient. Only a non-content bundle correlation reference is written with a message; durable full-manifest persistence remains an explicit release blocker.",
+    "Each of the thirteen selection sections appears exactly once; included/excluded totals, source coverage, references, and authoritative availability are reconciled by the runtime contract.",
+    "Only a Context Bundle issued by the runtime attestor is eligible for transmission; the send-time gate reruns the runtime contract against the current route policy.",
+    "The provider adapter transmits only an attested, closed phase envelope whose finalized provider-specific body is canonically identical to the gate's expected body and within the route byte limit."
+  ]
+}

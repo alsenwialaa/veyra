@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://veyra.invalid/contracts/schemas/ai-response.schema.json",
+  "title": "Provider-independent AI Response proposal",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "language", "direction", "segments", "component_intentions", "uncertainties", "assumptions", "evidence_claim_ids", "quick_actions", "state_update_proposals", "handoff_summary"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "language": { "type": "string", "minLength": 2, "maxLength": 35 },
+    "direction": { "enum": ["ltr", "rtl", "mixed"] },
+    "segments": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 30,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "text", "claim_ids", "operation_result_ids"],
+        "properties": {
+          "type": { "enum": ["answer", "verified_result", "uncertainty", "clarification", "confirmation_prompt", "handoff", "next_step"] },
+          "text": { "type": "string", "minLength": 1, "maxLength": 4000 },
+          "claim_ids": { "type": "array", "maxItems": 50, "items": { "$ref": "common.schema.json#/$defs/opaqueId" } },
+          "operation_result_ids": { "type": "array", "maxItems": 20, "items": { "$ref": "common.schema.json#/$defs/opaqueId" } }
+        }
+      }
+    },
+    "component_intentions": {
+      "type": "array",
+      "maxItems": 30,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["component_type", "server_resource_refs", "purpose"],
+        "properties": {
+          "component_type": { "type": "string", "minLength": 1, "maxLength": 80 },
+          "server_resource_refs": { "type": "array", "maxItems": 30, "items": { "$ref": "common.schema.json#/$defs/resourceRef" } },
+          "purpose": { "type": "string", "maxLength": 240 }
+        }
+      }
+    },
+    "uncertainties": { "type": "array", "maxItems": 30, "items": { "type": "string", "maxLength": 500 } },
+    "assumptions": { "type": "array", "maxItems": 30, "items": { "type": "string", "maxLength": 500 } },
+    "evidence_claim_ids": { "type": "array", "maxItems": 100, "items": { "$ref": "common.schema.json#/$defs/opaqueId" } },
+    "quick_actions": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["action_id", "label", "semantic_value", "side_effect"],
+        "properties": {
+          "action_id": { "$ref": "common.schema.json#/$defs/opaqueId" },
+          "label": { "type": "string", "maxLength": 120 },
+          "semantic_value": {},
+          "side_effect": { "const": false }
+        }
+      }
+    },
+    "state_update_proposals": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["focus", "journey", "conversation_memory", "summary", "durable_preferences"],
+      "properties": {
+        "focus": { "type": ["object", "null"] },
+        "journey": { "type": ["object", "null"] },
+        "conversation_memory": { "type": ["object", "null"] },
+        "summary": { "type": ["object", "null"] },
+        "durable_preferences": { "type": "array", "maxItems": 20, "items": { "type": "object" } }
+      }
+    },
+    "handoff_summary": { "type": ["object", "null"] }
+  },
+  "x-invariants": ["Components reference server data and do not carry model-invented commerce truth.", "Success text is deliverable only after operation-result verification.", "Quick actions are semantic inputs and never pre-authorized side effects."]
+}

@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://veyra.invalid/contracts/feature-contract.schema.json",
+  "title": "Veyra feature registry entry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["key", "release_unit", "purpose", "implementation_requirement", "merchant_configurable", "configured_default", "initial_effective_state", "initial_reason_code", "allowed_effective_states", "dependencies", "incompatible_with", "required_actors_and_capabilities", "model_tools", "rest_routes", "jobs", "ui_components", "historical_reads_when_off", "off_or_blocked_behavior", "degraded_behavior", "certification_status"],
+  "properties": {
+    "key": { "type": "string", "pattern": "^[a-z][a-z0-9_]+$" },
+    "release_unit": { "enum": ["production_core", "optional_module"] },
+    "purpose": { "type": "string", "minLength": 1 },
+    "implementation_requirement": { "enum": ["mandatory_for_production_core", "release_separable_but_complete_before_exposure"] },
+    "merchant_configurable": { "type": "boolean" },
+    "configured_default": { "enum": ["On", "Off"] },
+    "initial_effective_state": { "enum": ["On", "Off", "Blocked", "Degraded"] },
+    "initial_reason_code": { "type": "string", "minLength": 1 },
+    "allowed_effective_states": {
+      "type": "array",
+      "const": ["On", "Off", "Blocked", "Degraded"]
+    },
+    "dependencies": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+    "incompatible_with": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+    "required_actors_and_capabilities": { "type": "string", "minLength": 1 },
+    "model_tools": { "type": "array", "uniqueItems": true, "items": { "type": "string", "pattern": "^[a-z_]+\\.[a-z_]+$" } },
+    "rest_routes": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+    "jobs": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+    "ui_components": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+    "historical_reads_when_off": { "type": "string", "minLength": 1 },
+    "off_or_blocked_behavior": { "type": "string", "minLength": 1 },
+    "degraded_behavior": { "type": "string", "minLength": 1 },
+    "certification_status": { "enum": ["not_assessed", "not_certified", "certified", "failed"] }
+  }
+}

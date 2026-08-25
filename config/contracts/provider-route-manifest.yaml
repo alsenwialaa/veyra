@@ -1,0 +1,142 @@
+manifest:
+  version: "2026.08.25.1-design"
+  proposal_version: "4.1"
+  status: "design_only"
+  generated_at: "2026-08-25T00:00:00Z"
+  approved_by: null
+  source_verification_date: "2026-08-25"
+  default_provider: "google_gemini"
+  activation_remote_calls: false
+
+source_review:
+  official_sources:
+    - "https://ai.google.dev/gemini-api/docs"
+    - "https://ai.google.dev/gemini-api/docs/interactions-overview"
+    - "https://ai.google.dev/gemini-api/docs/function-calling"
+    - "https://ai.google.dev/gemini-api/docs/structured-output"
+    - "https://ai.google.dev/gemini-api/docs/models"
+    - "https://ai.google.dev/gemini-api/docs/changelog"
+    - "https://ai.google.dev/gemini-api/docs/interactions-breaking-changes-may-2026"
+  observed_api_surface:
+    display_name: "Gemini Interactions API"
+    lifecycle_observation: "The current steps-based Interactions contract and stable model listing were rechecked in the 2026-08-25 official-source review"
+    observed_candidate_endpoint: "https://generativelanguage.googleapis.com/v1beta/interactions"
+    decision_status: "Proposed"
+  observed_model_family:
+    display_name: "Gemini 3.7 Flash"
+    observed_candidate_model_id: "gemini-3.7-flash"
+    release_selected_exact_model_id: null
+    decision_status: "observed_candidate_not_release_selected"
+  warning: "Observations are not route certification. Recheck official documentation and run exact-ID capability/evaluation tests for every release."
+
+routes:
+  - route_id: "default_text_tool_orchestration"
+    capability: "text_tool_orchestration"
+    provider: "google_gemini"
+    adapter_contract: "GeminiProviderAdapter@1"
+    adapter_version: null
+    api_surface:
+      candidate: "interactions"
+      approved: false
+    endpoint_region: null
+    exact_model_id: null
+    observed_candidate_endpoint: "https://generativelanguage.googleapis.com/v1beta/interactions"
+    observed_candidate_model_id: "gemini-3.7-flash"
+    candidate_model_family_display_name: "Gemini 3.7 Flash"
+    credential_reference: null
+    quality_floor:
+      critical_safety_commerce_pass_rate: 1.0
+      high_priority_ai_minimum_pass_rate: 0.95
+      unnecessary_repeated_question_maximum_rate: 0.02
+      qualified_naturalness_cultural_minimum_acceptance: 0.90
+      hard_requirement_preservation_rate: 1.0
+      fabricated_success_maximum_count: 0
+      short_reply_minimum_pass_rate: 0.95
+      sensitive_short_reply_safety_rate: 1.0
+      cross_customer_leakage_maximum_count: 0
+    budgets:
+      timeout_ms: 25000
+      max_provider_calls: 3
+      max_tool_calls: 8
+      max_context_bytes: 65536
+      max_context_items: 256
+      max_request_bytes: 524288
+      max_response_bytes: 524288
+      max_cost_per_turn: null
+      decision_status: "candidate_bounds_not_release_certified"
+    context_bundle:
+      wire_schema_version: "1.1.0"
+      bundle_version: 1
+      candidate_max_bytes: 65536
+      candidate_max_items: 256
+      candidate_ttl_seconds: 300
+      shopper_purpose: "shopper_commerce_assistance"
+      runtime_enforcement: "implemented_not_live_certified"
+      durable_manifest_persistence: "implemented_not_live_certified"
+      snapshot_consistency_certified: false
+    privacy:
+      request_storage: false
+      data_region: null
+      allowed_data_classes: []
+      candidate_minimization_classes:
+        - "internal"
+        - "personal"
+        - "commerce_confidential"
+      notice_or_consent_policy: null
+      transmission_enabled: false
+      prohibited_data_filter_certified: false
+      prohibited_data_filter_evidence: "implemented_fail_closed_not_live_certified"
+      provider_result_projection_certified: false
+      provider_result_projection_evidence: "partial_closed_profiles_only_not_live_certified"
+      woocommerce_actor_binding_certified: false
+      decision_status: "Open"
+    required_capabilities:
+      structured_output: true
+      function_calling: true
+      modalities:
+        - "text"
+    readiness:
+      checked_at: null
+      fresh_until: null
+      maximum_age_seconds: 86400
+      status: "Unconfigured"
+      resolved_model_id: null
+      capability_results: []
+      latency_ms: null
+      safe_error_code: "provider_unconfigured"
+      evidence: null
+      remediation: "Save a protected credential reference, approve endpoint/region/privacy settings and exact model ID, then run the bounded readiness test through the same adapter path used at runtime."
+    publication:
+      state: "draft"
+      published_version: null
+      receives_shopper_traffic: false
+    fallback:
+      enabled: false
+      route_id: null
+      disclosure: null
+      decision_status: "Open"
+    evaluation:
+      dataset_version: null
+      result: "Not run"
+      evidence: null
+    deprecation:
+      reviewed_at: "2026-08-25"
+      known_shutdown_date: null
+      replacement_route: null
+
+constraints:
+  exact_model_ids_only_in_release_manifest_and_published_route_configuration: true
+  model_ids_must_not_appear_in_domain_code: true
+  provider_specific_fields_end_at_adapter: true
+  activation_remote_calls: false
+  shopper_transmission_requires_explicit_published_configuration_and_privacy_gate: true
+  runtime_and_admin_test_use_same_adapter: true
+  fallback_must_be_explicit_published_and_disclosed: true
+  hidden_regex_keyword_canned_or_fixed_dialogue_fallback: false
+  ordinary_ci_uses_fake_or_recorded_provider_contracts: true
+  readiness_states:
+    - "Unconfigured"
+    - "Testing"
+    - "Ready"
+    - "Degraded"
+    - "Blocked"

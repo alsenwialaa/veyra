@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://veyra.invalid/contracts/schemas/ai-plan.schema.json",
+  "title": "Provider-independent AI Plan proposal",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "plan_id", "steps", "stop_conditions", "fallback", "budgets"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "plan_id": { "$ref": "common.schema.json#/$defs/opaqueId" },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 30,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["step_id", "order", "kind", "tool_name", "tool_version", "proposed_arguments", "classification", "depends_on", "confirmation_requirement", "on_success", "on_failure"],
+        "properties": {
+          "step_id": { "$ref": "common.schema.json#/$defs/opaqueId" },
+          "order": { "type": "integer", "minimum": 1, "maximum": 30 },
+          "kind": { "enum": ["tool", "clarify", "prepare_confirmation", "respond", "handoff", "stop"] },
+          "tool_name": { "type": ["string", "null"], "pattern": "^[a-z_]+\\.[a-z_]+$" },
+          "tool_version": { "type": ["string", "null"], "pattern": "^[1-9][0-9]*\\.[0-9]+\\.[0-9]+$" },
+          "proposed_arguments": { "type": ["object", "null"] },
+          "classification": { "enum": ["read", "write", "sensitive_write", "advisory", "conversation"] },
+          "depends_on": { "type": "array", "maxItems": 20, "items": { "$ref": "common.schema.json#/$defs/opaqueId" } },
+          "confirmation_requirement": { "enum": ["none", "preview_and_confirm", "already_confirmed_requires_validation"] },
+          "on_success": { "type": "string", "maxLength": 240 },
+          "on_failure": { "enum": ["stop", "clarify", "safe_fallback", "handoff", "repair_within_budget"] }
+        }
+      }
+    },
+    "stop_conditions": { "type": "array", "minItems": 1, "maxItems": 30, "items": { "type": "string", "maxLength": 240 } },
+    "fallback": { "enum": ["clarify", "truthful_block", "declared_degraded_mode", "human_handoff"] },
+    "budgets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_provider_calls", "max_tool_calls", "max_repair_loops", "deadline_ms"],
+      "properties": {
+        "max_provider_calls": { "type": "integer", "minimum": 1 },
+        "max_tool_calls": { "type": "integer", "minimum": 0 },
+        "max_repair_loops": { "type": "integer", "minimum": 0 },
+        "deadline_ms": { "type": "integer", "minimum": 1 }
+      }
+    }
+  },
+  "x-invariants": ["Every tool/argument is proposed and reselected from the server-authorized registry.", "Plan order never bypasses confirmation or current-state gates."]
+}

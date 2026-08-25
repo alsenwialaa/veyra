@@ -1,0 +1,502 @@
+:root {
+    --veyra-admin-brand: #0c4a46;
+    --veyra-admin-brand-strong: #073632;
+    --veyra-admin-accent: #a83f1d;
+    --veyra-admin-ink: #17211f;
+    --veyra-admin-muted: #596662;
+    --veyra-admin-surface: #ffffff;
+    --veyra-admin-subtle: #f4f6f4;
+    --veyra-admin-border: #d6ddda;
+    --veyra-admin-focus: #0b6bbf;
+    --veyra-admin-danger: #9d2020;
+}
+
+.veyra-admin,
+.veyra-admin *,
+.veyra-admin *::before,
+.veyra-admin *::after {
+    box-sizing: border-box;
+}
+
+.veyra-admin {
+    max-inline-size: 94rem;
+    color: var(--veyra-admin-ink);
+    font-size: 0.95rem;
+}
+
+.veyra-admin [hidden] {
+    display: none !important;
+}
+
+.veyra-admin__masthead {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.25rem;
+    padding: 1.6rem;
+    margin-block: 1.25rem 1rem;
+    border-radius: 1rem;
+    background:
+        radial-gradient(circle at 90% 15%, rgb(242 173 129 / 25%), transparent 30%),
+        linear-gradient(135deg, #073632, #0c4a46 62%, #12615b);
+    color: #ffffff;
+}
+
+.veyra-admin__masthead h1 {
+    margin: 0.1rem 0 0.35rem;
+    color: #ffffff;
+    font-size: clamp(1.65rem, 3vw, 2.4rem);
+    line-height: 1.12;
+}
+
+.veyra-admin__eyebrow {
+    margin: 0;
+    color: #cbe3e0;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.veyra-admin__lede {
+    max-inline-size: 48rem;
+    margin: 0;
+    color: #e8f3f1;
+    font-size: 1rem;
+}
+
+.veyra-admin__version-state {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 0.65rem;
+    border: 1px solid rgb(255 255 255 / 26%);
+    border-radius: 999px;
+    background: rgb(0 0 0 / 16%);
+    color: #ffffff;
+}
+
+.veyra-admin__state,
+.veyra-admin__lock {
+    display: inline-flex;
+    min-block-size: 1.65rem;
+    align-items: center;
+    padding-inline: 0.55rem;
+    border-radius: 999px;
+    background: #e8edeb;
+    color: #35433f;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.veyra-admin__state[data-tone="ready"],
+.veyra-admin__state[data-tone="published"] {
+    background: #dff2e7;
+    color: #145d3c;
+}
+
+.veyra-admin__state[data-tone="blocked"],
+.veyra-admin__state[data-tone="error"] {
+    background: #fae3e3;
+    color: #8a1d1d;
+}
+
+.veyra-admin__state[data-tone="degraded"],
+.veyra-admin__state[data-tone="warning"] {
+    background: #fff0c7;
+    color: #664300;
+}
+
+.veyra-admin__notice,
+.veyra-admin__alert {
+    padding: 0.75rem 0.9rem;
+    margin-block-end: 0.75rem;
+    border-inline-start: 0.3rem solid var(--veyra-admin-brand);
+    border-radius: 0.35rem;
+    background: #eef8f6;
+}
+
+.veyra-admin__alert {
+    border-inline-start-color: var(--veyra-admin-danger);
+    background: #fff0f0;
+    color: var(--veyra-admin-danger);
+}
+
+.veyra-admin__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(17rem, 20rem);
+    align-items: start;
+    gap: 1rem;
+}
+
+.veyra-admin[data-mode="read-only"] .veyra-admin__layout {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.veyra-admin__workspace,
+.veyra-admin__publication,
+.veyra-admin__panel,
+.veyra-admin__health-card,
+.veyra-admin__form fieldset {
+    border: 1px solid var(--veyra-admin-border);
+    border-radius: 0.8rem;
+    background: var(--veyra-admin-surface);
+    box-shadow: 0 0.2rem 0.9rem rgb(23 33 31 / 5%);
+}
+
+.veyra-admin__workspace {
+    min-inline-size: 0;
+    padding: 1rem;
+}
+
+.veyra-admin__form {
+    display: grid;
+    gap: 1rem;
+}
+
+.veyra-admin__form fieldset,
+.veyra-admin__panel {
+    min-inline-size: 0;
+    padding: 1rem;
+}
+
+.veyra-admin__form legend {
+    padding-inline: 0.4rem;
+    color: var(--veyra-admin-brand-strong);
+    font-size: 1rem;
+    font-weight: 750;
+}
+
+.veyra-admin__field-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.9rem;
+}
+
+.veyra-admin__field-grid label,
+.veyra-admin__dialog label {
+    display: grid;
+    gap: 0.35rem;
+    font-weight: 650;
+}
+
+.veyra-admin__field--wide {
+    grid-column: 1 / -1;
+}
+
+.veyra-admin :is(input[type="text"], input[type="number"], input[type="datetime-local"], select, textarea) {
+    inline-size: 100%;
+    min-block-size: 2.75rem;
+    border-color: #aab6b2;
+    border-radius: 0.45rem;
+}
+
+.veyra-admin label small,
+.veyra-admin .description,
+.veyra-admin__panel-heading p {
+    margin: 0;
+    color: var(--veyra-admin-muted);
+    font-weight: 400;
+}
+
+.veyra-admin__check {
+    display: flex;
+    min-block-size: 2.75rem;
+    align-items: flex-start;
+    gap: 0.55rem;
+    margin-block-start: 0.75rem;
+}
+
+.veyra-admin__check input {
+    flex: 0 0 auto;
+    margin-block-start: 0.18rem;
+}
+
+.veyra-admin__panel-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-block-end: 0.85rem;
+}
+
+.veyra-admin__panel-heading h2,
+.veyra-admin__health-card h2,
+.veyra-admin__publication h2 {
+    margin: 0 0 0.2rem;
+    color: var(--veyra-admin-ink);
+    font-size: 1.05rem;
+}
+
+.veyra-admin__facts,
+.veyra-admin__version-list {
+    display: grid;
+    gap: 0;
+    margin: 0;
+}
+
+.veyra-admin__facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-block-start: 1px solid var(--veyra-admin-border);
+    border-inline-start: 1px solid var(--veyra-admin-border);
+}
+
+.veyra-admin__facts div,
+.veyra-admin__version-list div {
+    display: grid;
+    gap: 0.2rem;
+    padding: 0.7rem;
+}
+
+.veyra-admin__facts div {
+    border-block-end: 1px solid var(--veyra-admin-border);
+    border-inline-end: 1px solid var(--veyra-admin-border);
+}
+
+.veyra-admin__facts dt,
+.veyra-admin__version-list dt {
+    color: var(--veyra-admin-muted);
+    font-size: 0.75rem;
+}
+
+.veyra-admin__facts dd,
+.veyra-admin__version-list dd {
+    margin: 0;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.veyra-admin__credential {
+    display: grid;
+    gap: 0.6rem;
+    padding-block-start: 1rem;
+}
+
+.veyra-admin__credential > label {
+    display: grid;
+    gap: 0.35rem;
+    max-inline-size: 42rem;
+    font-weight: 650;
+}
+
+.veyra-admin__credential-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.veyra-admin__truth-grid,
+.veyra-admin__fixture-grid,
+.veyra-admin__health-grid,
+.veyra-admin__work-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
+}
+
+.veyra-admin__truth-grid {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.veyra-admin__truth-grid li {
+    display: flex;
+    min-block-size: 2.75rem;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 0.65rem;
+    border: 1px solid #b9d3c9;
+    border-radius: 0.5rem;
+    background: #eef8f3;
+    color: #17583f;
+}
+
+.veyra-admin__table-wrap {
+    inline-size: 100%;
+    overflow-x: auto;
+}
+
+.veyra-admin__table {
+    min-inline-size: 42rem;
+}
+
+.veyra-admin__table th,
+.veyra-admin__table td {
+    vertical-align: top;
+}
+
+.veyra-admin__health-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-block-end: 1rem;
+}
+
+.veyra-admin__health-card {
+    min-block-size: 8rem;
+    padding: 1rem;
+}
+
+.veyra-admin__health-card p {
+    color: var(--veyra-admin-muted);
+}
+
+.veyra-admin__work-grid > div {
+    min-inline-size: 0;
+    padding: 0.8rem;
+    border: 1px solid var(--veyra-admin-border);
+    border-radius: 0.6rem;
+    background: var(--veyra-admin-subtle);
+}
+
+.veyra-admin__work-grid h3 {
+    margin-block-start: 0;
+    font-size: 0.95rem;
+}
+
+.veyra-admin__publication {
+    position: sticky;
+    inset-block-start: 3rem;
+    padding: 1rem;
+}
+
+.veyra-admin__version-list div {
+    grid-template-columns: minmax(0, 1fr) auto;
+    border-block-end: 1px solid var(--veyra-admin-border);
+}
+
+.veyra-admin__dirty {
+    padding: 0.6rem;
+    border-radius: 0.45rem;
+    background: var(--veyra-admin-subtle);
+    color: var(--veyra-admin-muted);
+}
+
+.veyra-admin__dirty[data-dirty="true"] {
+    background: #fff0c7;
+    color: #664300;
+}
+
+.veyra-admin__action-stack {
+    display: grid;
+    gap: 0.5rem;
+    margin-block-end: 0.8rem;
+}
+
+.veyra-admin .button {
+    min-block-size: 2.75rem;
+    align-content: center;
+}
+
+.veyra-admin .button-primary {
+    border-color: var(--veyra-admin-brand-strong);
+    background: var(--veyra-admin-brand);
+}
+
+.veyra-admin .button-primary:hover,
+.veyra-admin .button-primary:focus {
+    border-color: #041f1d;
+    background: var(--veyra-admin-brand-strong);
+}
+
+.veyra-admin__dialog {
+    inline-size: min(32rem, calc(100vw - 2rem));
+    padding: 0;
+    border: 1px solid var(--veyra-admin-border);
+    border-radius: 0.8rem;
+}
+
+.veyra-admin__dialog::backdrop {
+    background: rgb(10 28 26 / 60%);
+}
+
+.veyra-admin__dialog form {
+    display: grid;
+    gap: 1rem;
+    padding: 1.2rem;
+}
+
+.veyra-admin__dialog h2,
+.veyra-admin__dialog p {
+    margin: 0;
+}
+
+.veyra-admin__dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.veyra-admin :is(button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 3px solid var(--veyra-admin-focus);
+    outline-offset: 2px;
+    box-shadow: none;
+}
+
+@media (max-width: 68rem) {
+    .veyra-admin__layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .veyra-admin__publication {
+        position: static;
+    }
+
+    .veyra-admin__health-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 48rem) {
+    .veyra-admin {
+        margin-inline-end: 0.75rem;
+    }
+
+    .veyra-admin__masthead {
+        flex-direction: column;
+        padding: 1.1rem;
+    }
+
+    .veyra-admin__version-state {
+        align-self: stretch;
+        justify-content: space-between;
+    }
+
+    .veyra-admin__workspace {
+        padding: 0.75rem;
+    }
+
+    .veyra-admin__field-grid,
+    .veyra-admin__facts,
+    .veyra-admin__truth-grid,
+    .veyra-admin__fixture-grid,
+    .veyra-admin__health-grid,
+    .veyra-admin__work-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .veyra-admin__panel-heading {
+        flex-direction: column;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .veyra-admin *,
+    .veyra-admin *::before,
+    .veyra-admin *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+@media (forced-colors: active) {
+    .veyra-admin__workspace,
+    .veyra-admin__publication,
+    .veyra-admin__panel,
+    .veyra-admin__health-card,
+    .veyra-admin__form fieldset {
+        border: 1px solid CanvasText;
+    }
+}

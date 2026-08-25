@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://veyra.invalid/contracts/schemas/common.schema.json",
+  "title": "Veyra common contract definitions",
+  "$defs": {
+    "opaqueId": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "journeyId": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 36,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^[1-9][0-9]*\\.[0-9]+\\.[0-9]+$"
+    },
+    "utcInstant": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "actorScope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["site_id", "actor_type", "actor_id"],
+      "properties": {
+        "site_id": {
+          "oneOf": [
+            { "$ref": "#/$defs/opaqueId" },
+            { "type": "integer", "minimum": 1 }
+          ]
+        },
+        "actor_type": {
+          "enum": ["guest", "customer", "support", "payment_reviewer", "manager", "administrator", "system"]
+        },
+        "actor_id": { "$ref": "#/$defs/opaqueId" },
+        "customer_id": {
+          "oneOf": [{ "$ref": "#/$defs/opaqueId" }, { "type": "null" }]
+        },
+        "guest_session_id": {
+          "oneOf": [{ "$ref": "#/$defs/opaqueId" }, { "type": "null" }]
+        }
+      }
+    },
+    "resourceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["resource_type", "resource_id", "resource_version", "ownership_state"],
+      "properties": {
+        "resource_type": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "resource_id": { "$ref": "#/$defs/opaqueId" },
+        "resource_version": { "type": "integer", "minimum": 0 },
+        "ownership_state": { "enum": ["unresolved", "owned", "authorized_public", "authorized_staff_scope"] },
+        "authority_source": { "type": "string", "maxLength": 120 }
+      }
+    },
+    "sourceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_class", "source_id", "source_version"],
+      "properties": {
+        "source_class": {
+          "enum": ["woocommerce", "approved_adapter", "published_policy", "verified_account", "shopper_statement", "historical_snapshot", "model_interpretation", "model_hypothesis"]
+        },
+        "source_id": { "$ref": "#/$defs/opaqueId" },
+        "source_version": { "type": ["string", "integer"], "maxLength": 128 },
+        "source_message_id": {
+          "oneOf": [{ "$ref": "#/$defs/opaqueId" }, { "type": "null" }]
+        }
+      }
+    },
+    "dataClassification": {
+      "enum": ["public", "internal", "personal", "sensitive_personal", "commerce_confidential", "protected_file", "credential_reference"]
+    },
+    "verificationState": {
+      "enum": ["proposed", "validated", "authoritative", "stale", "disputed", "rejected"]
+    },
+    "freshness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "observed_at"],
+      "properties": {
+        "state": { "enum": ["fresh", "stale", "unknown", "expired"] },
+        "observed_at": { "$ref": "#/$defs/utcInstant" },
+        "valid_until": {
+          "oneOf": [{ "$ref": "#/$defs/utcInstant" }, { "type": "null" }]
+        },
+        "source_version": { "type": ["string", "integer", "null"] },
+        "stale_reason": { "type": ["string", "null"], "maxLength": 240 }
+      }
+    },
+    "dependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key", "version", "required_freshness"],
+      "properties": {
+        "key": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "version": { "type": ["string", "integer"] },
+        "required_freshness": { "enum": ["fresh", "not_expired", "historical_only"] }
+      }
+    },
+    "typedValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value_type", "value", "verification", "source", "freshness", "classification"],
+      "properties": {
+        "value_type": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "value": {},
+        "verification": { "$ref": "#/$defs/verificationState" },
+        "confidence": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+        "source": { "$ref": "#/$defs/sourceRef" },
+        "freshness": { "$ref": "#/$defs/freshness" },
+        "classification": { "$ref": "#/$defs/dataClassification" },
+        "supersedes_id": {
+          "oneOf": [{ "$ref": "#/$defs/opaqueId" }, { "type": "null" }]
+        }
+      }
+    },
+    "invalidation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state"],
+      "properties": {
+        "state": { "enum": ["valid", "invalidated", "expired"] },
+        "reason_code": { "type": ["string", "null"], "maxLength": 120 },
+        "invalidated_at": {
+          "oneOf": [{ "$ref": "#/$defs/utcInstant" }, { "type": "null" }]
+        },
+        "invalidated_by_version": { "type": ["string", "integer", "null"] }
+      }
+    }
+  }
+}

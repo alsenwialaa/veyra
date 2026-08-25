@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://veyra.invalid/contracts/schemas/journey-state.schema.json",
+  "title": "Journey State",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "journey_id", "resource_version", "conversation_id", "actor_scope", "journey_type", "status", "foreground", "current_step", "resume_point", "fields", "missing_fields", "pending_out_of_order_values", "stale_dependencies", "open_question_ids", "related_resources", "confirmation_ids", "last_verified_checkpoint", "created_at", "updated_at"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "journey_id": { "$ref": "common.schema.json#/$defs/journeyId" },
+    "resource_version": { "type": "integer", "minimum": 1 },
+    "conversation_id": { "$ref": "common.schema.json#/$defs/opaqueId" },
+    "actor_scope": { "$ref": "common.schema.json#/$defs/actorScope" },
+    "journey_type": { "type": "string", "minLength": 1, "maxLength": 80 },
+    "status": { "enum": ["active", "paused", "blocked", "completed", "cancelled", "expired"] },
+    "foreground": { "type": "boolean" },
+    "current_step": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "resume_point": { "type": "string", "minLength": 1, "maxLength": 160 },
+    "fields": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["key", "value", "dependencies"],
+        "properties": {
+          "key": { "type": "string", "minLength": 1, "maxLength": 160 },
+          "value": { "$ref": "common.schema.json#/$defs/typedValue" },
+          "dependencies": { "type": "array", "maxItems": 30, "items": { "$ref": "common.schema.json#/$defs/dependency" } }
+        }
+      }
+    },
+    "missing_fields": { "type": "array", "maxItems": 100, "uniqueItems": true, "items": { "type": "string", "maxLength": 160 } },
+    "pending_out_of_order_values": { "type": "array", "maxItems": 100, "items": { "$ref": "common.schema.json#/$defs/typedValue" } },
+    "stale_dependencies": { "type": "array", "maxItems": 100, "items": { "$ref": "common.schema.json#/$defs/dependency" } },
+    "open_question_ids": { "type": "array", "maxItems": 30, "uniqueItems": true, "items": { "$ref": "common.schema.json#/$defs/opaqueId" } },
+    "related_resources": { "type": "array", "maxItems": 100, "items": { "$ref": "common.schema.json#/$defs/resourceRef" } },
+    "confirmation_ids": { "type": "array", "maxItems": 20, "uniqueItems": true, "items": { "$ref": "common.schema.json#/$defs/opaqueId" } },
+    "last_verified_checkpoint": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["checkpoint_id", "step", "verified_at", "resource_versions", "result_code"],
+          "properties": {
+            "checkpoint_id": { "$ref": "common.schema.json#/$defs/opaqueId" },
+            "step": { "type": "string", "maxLength": 120 },
+            "verified_at": { "$ref": "common.schema.json#/$defs/utcInstant" },
+            "resource_versions": { "type": "array", "maxItems": 50, "items": { "$ref": "common.schema.json#/$defs/resourceRef" } },
+            "result_code": { "type": "string", "maxLength": 120 }
+          }
+        }
+      ]
+    },
+    "created_at": { "$ref": "common.schema.json#/$defs/utcInstant" },
+    "updated_at": { "$ref": "common.schema.json#/$defs/utcInstant" }
+  },
+  "x-invariants": [
+    "Only one journey per conversation may be foreground.",
+    "Corrections invalidate only dependent fields and resume from the earliest safe incomplete step.",
+    "Commerce-sensitive fields are revalidated after resume."
+  ]
+}

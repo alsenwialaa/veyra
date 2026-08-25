@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://veyra.invalid/contracts/schemas/evidence-ledger.schema.json",
+  "title": "Material claim evidence ledger",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "ledger_id", "conversation_id", "actor_scope", "claims", "created_at"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "ledger_id": { "$ref": "common.schema.json#/$defs/opaqueId" },
+    "conversation_id": { "$ref": "common.schema.json#/$defs/opaqueId" },
+    "actor_scope": { "$ref": "common.schema.json#/$defs/actorScope" },
+    "claims": {
+      "type": "array",
+      "maxItems": 300,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["claim_id", "claim_type", "typed_value", "evidence", "verification_state", "customer_visibility"],
+        "properties": {
+          "claim_id": { "$ref": "common.schema.json#/$defs/opaqueId" },
+          "claim_type": { "type": "string", "minLength": 1, "maxLength": 120 },
+          "typed_value": { "$ref": "common.schema.json#/$defs/typedValue" },
+          "evidence": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 30,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["evidence_type", "source", "resource_ref", "operation_result_id", "assumption_label"],
+              "properties": {
+                "evidence_type": { "enum": ["authoritative_tool_result", "published_merchant_source", "explicit_shopper_statement", "historical_snapshot", "labeled_assumption"] },
+                "source": { "$ref": "common.schema.json#/$defs/sourceRef" },
+                "resource_ref": { "oneOf": [{ "$ref": "common.schema.json#/$defs/resourceRef" }, { "type": "null" }] },
+                "operation_result_id": { "oneOf": [{ "$ref": "common.schema.json#/$defs/opaqueId" }, { "type": "null" }] },
+                "assumption_label": { "type": ["string", "null"], "maxLength": 240 }
+              }
+            }
+          },
+          "verification_state": { "enum": ["unverified", "verified", "stale", "conflicting", "insufficient"] },
+          "customer_visibility": { "enum": ["visible", "internal_reference_only"] }
+        }
+      }
+    },
+    "created_at": { "$ref": "common.schema.json#/$defs/utcInstant" }
+  }
+}

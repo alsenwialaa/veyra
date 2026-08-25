@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://veyra.invalid/contracts/schemas/verification-result.schema.json",
+  "title": "Machine-readable response verification result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "verification_id", "response_id", "status", "checks", "verified_claim_ids", "blocked_claim_ids", "created_at"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "verification_id": { "$ref": "common.schema.json#/$defs/opaqueId" },
+    "response_id": { "$ref": "common.schema.json#/$defs/opaqueId" },
+    "status": { "enum": ["passed", "failed", "repair_required"] },
+    "checks": {
+      "type": "array",
+      "minItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["check", "status", "reason_code", "claim_ids"],
+        "properties": {
+          "check": { "enum": ["latest_goal_answered", "subgoals_complete_or_pending", "commerce_claims_current", "policy_claims_approved", "hard_requirements_preserved", "tool_results_exact", "stale_not_current", "culture_location_time_format_correct", "no_protected_trait_or_manipulation", "confirmation_and_disclosure_present"] },
+          "status": { "enum": ["pass", "fail", "not_applicable"] },
+          "reason_code": { "type": ["string", "null"], "maxLength": 120 },
+          "claim_ids": { "type": "array", "maxItems": 100, "items": { "$ref": "common.schema.json#/$defs/opaqueId" } }
+        }
+      }
+    },
+    "verified_claim_ids": { "type": "array", "maxItems": 300, "uniqueItems": true, "items": { "$ref": "common.schema.json#/$defs/opaqueId" } },
+    "blocked_claim_ids": { "type": "array", "maxItems": 300, "uniqueItems": true, "items": { "$ref": "common.schema.json#/$defs/opaqueId" } },
+    "created_at": { "$ref": "common.schema.json#/$defs/utcInstant" }
+  }
+}

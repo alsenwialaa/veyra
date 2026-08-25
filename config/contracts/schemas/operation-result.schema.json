@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://veyra.invalid/contracts/schemas/operation-result.schema.json",
+  "title": "Authoritative operation result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "operation_result_id", "operation", "status", "result_code", "authoritative_version", "changed_resources", "unchanged_resources", "failed_elements", "warnings", "retry_safety", "correlation_id", "audit_reference", "observed_at"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "operation_result_id": { "$ref": "common.schema.json#/$defs/opaqueId" },
+    "operation": { "type": "string", "minLength": 1, "maxLength": 160 },
+    "status": { "enum": ["succeeded", "failed", "partial", "uncertain", "blocked", "stale", "conflict"] },
+    "result_code": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "authoritative_version": { "type": ["string", "integer", "null"] },
+    "changed_resources": { "type": "array", "maxItems": 100, "items": { "$ref": "common.schema.json#/$defs/resourceRef" } },
+    "unchanged_resources": { "type": "array", "maxItems": 100, "items": { "$ref": "common.schema.json#/$defs/resourceRef" } },
+    "failed_elements": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["element_id", "error_code", "safe_details"],
+        "properties": {
+          "element_id": { "type": "string", "maxLength": 160 },
+          "error_code": { "type": "string", "maxLength": 120 },
+          "safe_details": { "type": "object" }
+        }
+      }
+    },
+    "warnings": { "type": "array", "maxItems": 50, "items": { "type": "string", "maxLength": 500 } },
+    "safe_customer_message_data": { "type": "object" },
+    "retry_safety": { "enum": ["safe", "unsafe", "reconcile_first", "not_applicable"] },
+    "correlation_id": { "$ref": "common.schema.json#/$defs/opaqueId" },
+    "audit_reference": { "oneOf": [{ "$ref": "common.schema.json#/$defs/opaqueId" }, { "type": "null" }] },
+    "observed_at": { "$ref": "common.schema.json#/$defs/utcInstant" }
+  },
+  "x-invariants": ["Customer-visible success may be built only from a succeeded verified result.", "Partial and uncertain results name exact known effects."]
+}

@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://veyra.invalid/contracts/schemas/conversation-focus.schema.json",
+  "title": "Conversation Focus",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "focus_id", "resource_version", "conversation_id", "actor_scope", "foreground_journey_id", "focused_resources", "pending_question_id", "expected_answer_schema_ref", "unresolved_references", "sensitivity", "source_message_id", "created_at", "expires_at", "dependencies", "invalidation"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "focus_id": { "$ref": "common.schema.json#/$defs/opaqueId" },
+    "resource_version": { "type": "integer", "minimum": 1 },
+    "conversation_id": { "$ref": "common.schema.json#/$defs/opaqueId" },
+    "actor_scope": { "$ref": "common.schema.json#/$defs/actorScope" },
+    "foreground_journey_id": {
+      "oneOf": [{ "$ref": "common.schema.json#/$defs/journeyId" }, { "type": "null" }]
+    },
+    "focused_resources": {
+      "type": "array",
+      "maxItems": 20,
+      "items": { "$ref": "common.schema.json#/$defs/resourceRef" }
+    },
+    "pending_question_id": {
+      "oneOf": [{ "$ref": "common.schema.json#/$defs/opaqueId" }, { "type": "null" }]
+    },
+    "expected_answer_schema_ref": { "type": ["string", "null"], "maxLength": 240 },
+    "unresolved_references": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["text", "candidate_resource_ids", "state"],
+        "properties": {
+          "text": { "type": "string", "maxLength": 240 },
+          "candidate_resource_ids": { "type": "array", "maxItems": 8, "items": { "$ref": "common.schema.json#/$defs/opaqueId" } },
+          "state": { "enum": ["proposed", "ambiguous", "unresolved"] }
+        }
+      }
+    },
+    "sensitivity": { "enum": ["informational", "state_changing", "confirmation_sensitive"] },
+    "source_message_id": {
+      "oneOf": [{ "$ref": "common.schema.json#/$defs/opaqueId" }, { "type": "null" }]
+    },
+    "created_at": { "$ref": "common.schema.json#/$defs/utcInstant" },
+    "expires_at": {
+      "oneOf": [{ "$ref": "common.schema.json#/$defs/utcInstant" }, { "type": "null" }]
+    },
+    "dependencies": { "type": "array", "maxItems": 40, "items": { "$ref": "common.schema.json#/$defs/dependency" } },
+    "invalidation": { "$ref": "common.schema.json#/$defs/invalidation" }
+  },
+  "x-invariants": [
+    "Only one valid focus record may be current for a conversation.",
+    "Focus controls relevance and never overrides factual authority.",
+    "A paused journey cannot receive an ambiguous short reply without explicit reference."
+  ]
+}

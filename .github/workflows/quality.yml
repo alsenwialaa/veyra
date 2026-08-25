@@ -1,0 +1,175 @@
+name: Candidate quality checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  wordpress-plugin-check:
+    name: WordPress Plugin Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run WordPress security, performance, accessibility, and repository checks
+        uses: wordpress/plugin-check-action@v1.1.9
+        with:
+          build-dir: './'
+          exclude-directories: |
+            .github
+            docs
+            scripts
+            tests
+          ignore-warnings: 'true'
+          include-experimental: 'false'
+          wp-version: '7.1'
+
+  deterministic-contracts:
+    name: PHP ${{ matrix.php }} deterministic contracts
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.1', '8.2', '8.3', '8.4']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          tools: composer:v2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Validate Composer metadata
+        run: composer validate --strict --no-check-publish
+
+      - name: Install test dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Audit Composer dependencies
+        run: composer audit --no-interaction
+
+      - name: Parse every PHP source and test file
+        run: find . -type f -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l
+
+      - name: Parse every JavaScript source and test file
+        run: find assets scripts tests -type f \( -name '*.js' -o -name '*.mjs' \) -print0 | xargs -0 -n1 node --check
+
+      - name: Verify static release contracts
+        run: python3 scripts/verify_release.py
+
+      - name: Run PHP and JavaScript contract suites
+        run: composer test:all
+
+  phpunit-coverage:
+    name: PHPUnit coverage evidence
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: pcov
+          tools: composer:v2
+
+      - name: Install test dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Run PHPUnit with a machine-readable coverage report
+        run: |
+          mkdir -p build
+          vendor/bin/phpunit -c phpunit.xml.dist --coverage-clover build/phpunit-coverage.xml
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: veyra-phpunit-coverage
+          path: build/phpunit-coverage.xml
+          if-no-files-found: error
+
+  php-static-analysis:
+    name: PHPStan production-source analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+          tools: composer:v2
+
+      - name: Install analysis dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Analyze production PHP
+        run: composer analyse
+
+  json-schema-contracts:
+    name: Draft 2020-12 schema and registry contracts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install pinned schema-validation runtime
+        run: npm install --ignore-scripts
+
+      - name: Compile every schema and validate governed registries
+        run: npm run test:schemas
+
+  package-smoke:
+    name: Deterministic package smoke test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build source and installable archives twice
+        run: |
+          python3 scripts/package_release.py --output build/first
+          python3 scripts/package_release.py --output build/second
+
+      - name: Prove byte-for-byte package reproducibility
+        run: |
+          for archive in build/first/*.zip; do
+            cmp "$archive" "build/second/$(basename "$archive")"
+          done
+
+      - name: Reject unsafe archive paths
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path, PurePosixPath
+          from zipfile import ZipFile
+
+          for archive_path in sorted(Path('build/first').glob('*.zip')):
+              with ZipFile(archive_path) as archive:
+                  names = archive.namelist()
+                  assert names, f'{archive_path} is empty'
+                  for name in names:
+                      path = PurePosixPath(name)
+                      assert not path.is_absolute(), f'absolute path in {archive_path}: {name}'
+                      assert '..' not in path.parts, f'traversal path in {archive_path}: {name}'
+                      assert path.parts[0] == 'veyra-ai-commerce-agent', f'wrong root in {archive_path}: {name}'
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: veyra-candidate-packages
+          path: build/first/*.zip
+          if-no-files-found: error

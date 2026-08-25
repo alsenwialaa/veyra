@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0.0",
+  "manifest_version": "1.0.0",
+  "product": "Veyra AI Commerce Agent for WooCommerce",
+  "working_plugin_slug": "veyra-ai-commerce-agent",
+  "proposal": {
+    "title": "Veyra AI Commerce Agent for WooCommerce — Production Product and Engineering Proposal",
+    "uploaded_filename": "Veyra_AI_Commerce_Agent_for_WooCommerce_Production_Proposal_v4.1_Final(6).md",
+    "document_version": "4.1",
+    "document_date": "2026-08-24",
+    "sha256": "44baae2afb053580028c2d8ae3372669c0a8d71d5a2c4990f899ef9d8b51b95b",
+    "bytes": 168832,
+    "lines": 3379,
+    "canonical_anchor_count": 35,
+    "definition_of_done_count": 64,
+    "required_logical_tool_count": 155,
+    "capability_count": 28,
+    "production_core_feature_count": 20,
+    "optional_module_count": 17
+  },
+  "verification": {
+    "verified_at": "2026-08-25",
+    "matches_engineering_skill_canonical_copy": true,
+    "status": "verified"
+  }
+}

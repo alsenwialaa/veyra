@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://veyra.invalid/contracts/schemas/conversation-memory.schema.json",
+  "title": "Conversation Memory",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "memory_id", "resource_version", "conversation_id", "actor_scope", "items", "open_loops", "active_journey_ids", "paused_journey_ids", "last_checkpoint_id", "created_at", "updated_at"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "memory_id": { "$ref": "common.schema.json#/$defs/opaqueId" },
+    "resource_version": { "type": "integer", "minimum": 1 },
+    "conversation_id": { "$ref": "common.schema.json#/$defs/opaqueId" },
+    "actor_scope": { "$ref": "common.schema.json#/$defs/actorScope" },
+    "items": {
+      "type": "array",
+      "maxItems": 500,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["memory_item_id", "category", "key", "typed_value", "state", "source_message_ids", "superseded_by_id", "retention_policy_ref"],
+        "properties": {
+          "memory_item_id": { "$ref": "common.schema.json#/$defs/opaqueId" },
+          "category": { "enum": ["hard_requirement", "soft_preference", "exclusion", "decision", "correction", "refusal", "focused_entity", "open_loop", "journey_checkpoint", "verified_result", "uncertainty"] },
+          "key": { "type": "string", "minLength": 1, "maxLength": 160 },
+          "typed_value": { "$ref": "common.schema.json#/$defs/typedValue" },
+          "state": { "enum": ["active", "superseded", "invalidated", "expired", "erased"] },
+          "source_message_ids": { "type": "array", "minItems": 1, "maxItems": 30, "uniqueItems": true, "items": { "$ref": "common.schema.json#/$defs/opaqueId" } },
+          "superseded_by_id": { "oneOf": [{ "$ref": "common.schema.json#/$defs/opaqueId" }, { "type": "null" }] },
+          "retention_policy_ref": { "type": "string", "minLength": 1, "maxLength": 160 }
+        }
+      }
+    },
+    "open_loops": { "type": "array", "maxItems": 100, "uniqueItems": true, "items": { "$ref": "common.schema.json#/$defs/opaqueId" } },
+    "active_journey_ids": { "type": "array", "maxItems": 20, "uniqueItems": true, "items": { "$ref": "common.schema.json#/$defs/journeyId" } },
+    "paused_journey_ids": { "type": "array", "maxItems": 20, "uniqueItems": true, "items": { "$ref": "common.schema.json#/$defs/journeyId" } },
+    "last_checkpoint_id": { "oneOf": [{ "$ref": "common.schema.json#/$defs/opaqueId" }, { "type": "null" }] },
+    "created_at": { "$ref": "common.schema.json#/$defs/utcInstant" },
+    "updated_at": { "$ref": "common.schema.json#/$defs/utcInstant" }
+  },
+  "x-invariants": [
+    "Conversation Memory is mandatory operational continuity and is distinct from Durable Preference Memory.",
+    "Only deterministic validation commits model-proposed updates.",
+    "No hidden reasoning, secrets, inferred protected traits, or unrelated customer state is allowed."
+  ]
+}

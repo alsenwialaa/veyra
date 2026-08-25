@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://veyra.invalid/contracts/schemas/pending-question.schema.json",
+  "title": "Pending Question",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "question_id", "resource_version", "conversation_id", "actor_scope", "journey_id", "step_id", "visible_question_message_id", "expected_answer", "allowed_choices", "focused_resources", "sensitivity", "created_at", "updated_at", "expires_at", "dependencies", "status", "binding", "invalidation"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "question_id": { "$ref": "common.schema.json#/$defs/opaqueId" },
+    "resource_version": { "type": "integer", "minimum": 1 },
+    "conversation_id": { "$ref": "common.schema.json#/$defs/opaqueId" },
+    "actor_scope": { "$ref": "common.schema.json#/$defs/actorScope" },
+    "journey_id": { "$ref": "common.schema.json#/$defs/journeyId" },
+    "step_id": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "visible_question_message_id": { "$ref": "common.schema.json#/$defs/opaqueId" },
+    "expected_answer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_id", "schema_version", "answer_type", "additional_properties"],
+      "properties": {
+        "schema_id": { "type": "string", "minLength": 1, "maxLength": 240 },
+        "schema_version": { "$ref": "common.schema.json#/$defs/schemaVersion" },
+        "answer_type": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "additional_properties": { "const": false },
+        "constraints": { "type": "object", "maxProperties": 30 }
+      }
+    },
+    "allowed_choices": {
+      "type": "array",
+      "maxItems": 30,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["choice_id", "label", "resource_ref"],
+        "properties": {
+          "choice_id": { "$ref": "common.schema.json#/$defs/opaqueId" },
+          "label": { "type": "string", "maxLength": 240 },
+          "resource_ref": {
+            "oneOf": [{ "$ref": "common.schema.json#/$defs/resourceRef" }, { "type": "null" }]
+          }
+        }
+      }
+    },
+    "focused_resources": { "type": "array", "maxItems": 20, "items": { "$ref": "common.schema.json#/$defs/resourceRef" } },
+    "sensitivity": { "enum": ["informational", "state_changing", "confirmation_sensitive"] },
+    "created_at": { "$ref": "common.schema.json#/$defs/utcInstant" },
+    "updated_at": { "$ref": "common.schema.json#/$defs/utcInstant" },
+    "expires_at": { "oneOf": [{ "$ref": "common.schema.json#/$defs/utcInstant" }, { "type": "null" }] },
+    "dependencies": { "type": "array", "maxItems": 40, "items": { "$ref": "common.schema.json#/$defs/dependency" } },
+    "status": { "enum": ["open", "answered", "invalidated", "expired", "cancelled"] },
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "shopper_message_id", "proposed_value", "validated_value", "validated_target", "reason_code"],
+      "properties": {
+        "state": { "enum": ["none", "proposed", "validated", "rejected", "ambiguous"] },
+        "shopper_message_id": { "oneOf": [{ "$ref": "common.schema.json#/$defs/opaqueId" }, { "type": "null" }] },
+        "proposed_value": {},
+        "validated_value": {},
+        "validated_target": { "oneOf": [{ "$ref": "common.schema.json#/$defs/resourceRef" }, { "type": "null" }] },
+        "reason_code": { "type": ["string", "null"], "maxLength": 120 }
+      }
+    },
+    "invalidation": { "$ref": "common.schema.json#/$defs/invalidation" }
+  },
+  "x-invariants": [
+    "Silence, time passage, background audio, OCR, and image content cannot answer a question.",
+    "A confirmation-sensitive answer must additionally satisfy the confirmation contract.",
+    "A bare number is validated against this question's answer schema, never a global quantity rule."
+  ]
+}

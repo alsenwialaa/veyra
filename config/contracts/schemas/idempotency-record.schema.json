@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://veyra.invalid/contracts/schemas/idempotency-record.schema.json",
+  "title": "Idempotent write record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "record_id", "resource_version", "actor_scope", "action", "resource_scope_hash", "key_digest", "canonical_payload_hash", "state", "operation_result_id", "authoritative_operation_id", "correlation_id", "created_at", "expires_at", "last_reconciled_at"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "record_id": { "$ref": "common.schema.json#/$defs/opaqueId" },
+    "resource_version": { "type": "integer", "minimum": 1 },
+    "actor_scope": { "$ref": "common.schema.json#/$defs/actorScope" },
+    "action": { "type": "string", "pattern": "^[a-z_]+\\.[a-z_]+$" },
+    "resource_scope_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "key_digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "canonical_payload_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "state": { "enum": ["claimed", "in_progress", "succeeded", "failed_retryable", "failed_terminal", "uncertain", "reconciled"] },
+    "operation_result_id": { "oneOf": [{ "$ref": "common.schema.json#/$defs/opaqueId" }, { "type": "null" }] },
+    "authoritative_operation_id": { "type": ["string", "null"], "maxLength": 160 },
+    "correlation_id": { "$ref": "common.schema.json#/$defs/opaqueId" },
+    "created_at": { "$ref": "common.schema.json#/$defs/utcInstant" },
+    "expires_at": { "$ref": "common.schema.json#/$defs/utcInstant" },
+    "last_reconciled_at": { "oneOf": [{ "$ref": "common.schema.json#/$defs/utcInstant" }, { "type": "null" }] }
+  },
+  "x-invariants": ["Same key with a different canonical payload fails without side effect.", "Uncertain state is reconciled against authority before retry."]
+}

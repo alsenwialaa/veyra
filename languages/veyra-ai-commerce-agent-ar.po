@@ -1,0 +1,329 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Veyra AI Commerce Agent for WooCommerce 0.1.2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-24 00:00+0000\n"
+"PO-Revision-Date: 2026-08-24 00:00+0300\n"
+"Last-Translator: Veyra Engineering\n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+"X-Domain: veyra-ai-commerce-agent\n"
+
+msgid "Open Veyra chat"
+msgstr "فتح محادثة فيرا"
+
+msgid "Close chat"
+msgstr "إغلاق المحادثة"
+
+msgid "Back"
+msgstr "رجوع"
+
+msgid "Conversation history"
+msgstr "سجل المحادثة"
+
+msgid "New conversation"
+msgstr "محادثة جديدة"
+
+msgid "Load older messages"
+msgstr "تحميل رسائل أقدم"
+
+msgid "Jump to latest"
+msgstr "الانتقال إلى الأحدث"
+
+msgid "Conversation timeline"
+msgstr "تسلسل المحادثة"
+
+msgid "How can I help?"
+msgstr "كيف أقدر أساعدك؟"
+
+msgid "Ask naturally about products, your cart, checkout, an order, or support."
+msgstr "اسأل بطريقتك عن المنتجات أو السلة أو إتمام الطلب أو طلب سابق أو الدعم."
+
+msgid "Message Veyra"
+msgstr "مراسلة فيرا"
+
+msgid "Type a message…"
+msgstr "اكتب رسالتك…"
+
+msgid "Send"
+msgstr "إرسال"
+
+msgid "Sending message"
+msgstr "جارٍ إرسال الرسالة"
+
+msgid "Veyra is working on your request"
+msgstr "فيرا تعمل على طلبك"
+
+msgid "Stop response"
+msgstr "إيقاف الرد"
+
+msgid "Remove reply quote"
+msgstr "إزالة اقتباس الرد"
+
+msgid "Remove product reference"
+msgstr "إزالة مرجع المنتج"
+
+msgid "Reply"
+msgstr "رد"
+
+msgid "Ask about this product"
+msgstr "اسأل عن هذا المنتج"
+
+msgid "Quote will be verified when sent"
+msgstr "سيتم التحقق من الاقتباس عند الإرسال"
+
+msgid "Product reference will be verified when sent"
+msgstr "سيتم التحقق من مرجع المنتج عند الإرسال"
+
+msgid "Original message unavailable"
+msgstr "الرسالة الأصلية غير متاحة"
+
+msgid "Current state unavailable"
+msgstr "الحالة الحالية غير متاحة"
+
+msgid "You are offline. Your draft is saved; nothing will be sent automatically."
+msgstr "أنت غير متصل. حُفظت المسودة، ولن يُرسل شيء تلقائيًا."
+
+msgid "Connection restored. Refreshing this conversation without resending anything."
+msgstr "عاد الاتصال. يتم تحديث المحادثة دون إعادة إرسال أي شيء."
+
+msgid "Your session expired. Your draft is preserved; sign in or refresh before sending."
+msgstr "انتهت الجلسة. المسودة محفوظة؛ سجّل الدخول أو حدّث الصفحة قبل الإرسال."
+
+msgid "Delivery is uncertain. Refresh the conversation before deciding whether to send again."
+msgstr "نتيجة التسليم غير مؤكدة. حدّث المحادثة قبل أن تقرر إعادة الإرسال."
+
+msgid "The message was not accepted."
+msgstr "لم تُقبل الرسالة."
+
+msgid "Retry safely"
+msgstr "إعادة المحاولة بأمان"
+
+msgid "Retrying"
+msgstr "جارٍ إعادة المحاولة"
+
+msgid "Refresh conversation"
+msgstr "تحديث المحادثة"
+
+msgid "Response stopped"
+msgstr "تم إيقاف الرد"
+
+msgid "Confirm this action"
+msgstr "تأكيد هذا الإجراء"
+
+msgid "Confirm"
+msgstr "تأكيد"
+
+msgid "Cancel"
+msgstr "إلغاء"
+
+msgid "Shown as it appeared then"
+msgstr "معروض كما ظهر وقتها"
+
+msgid "Current state"
+msgstr "الحالة الحالية"
+
+msgid "AI"
+msgstr "ذكاء اصطناعي"
+
+msgid "Store team"
+msgstr "فريق المتجر"
+
+msgid "Store update"
+msgstr "تحديث من المتجر"
+
+msgid "Quick replies"
+msgstr "ردود سريعة"
+
+msgid "Product references"
+msgstr "مراجع المنتجات"
+
+msgid "You"
+msgstr "أنت"
+
+msgid "Yes"
+msgstr "نعم"
+
+msgid "No"
+msgstr "لا"
+
+msgid "Delivered to server"
+msgstr "تم التسليم إلى الخادم"
+
+msgid "Product"
+msgstr "المنتج"
+
+msgid "Product reference"
+msgstr "مرجع المنتج"
+
+msgid "Variation"
+msgstr "الخيار"
+
+msgid "Quantity"
+msgstr "الكمية"
+
+msgid "Shown price"
+msgstr "السعر المعروض"
+
+msgid "Shown stock"
+msgstr "المخزون المعروض"
+
+msgid "Why this fits"
+msgstr "لماذا يناسبك"
+
+msgid "Current stock"
+msgstr "المخزون الحالي"
+
+msgid "Purchasable"
+msgstr "متاح للشراء"
+
+msgid "Cart result"
+msgstr "نتيجة تعديل السلة"
+
+msgid "Changed"
+msgstr "تم تغييره"
+
+msgid "Unchanged"
+msgstr "لم يتغير"
+
+msgid "Could not change"
+msgstr "تعذر تغييره"
+
+msgid "Discounts"
+msgstr "الخصومات"
+
+msgid "Fees"
+msgstr "الرسوم"
+
+msgid "Tax"
+msgstr "الضريبة"
+
+msgid "Shipping"
+msgstr "الشحن"
+
+msgid "Current total"
+msgstr "الإجمالي الحالي"
+
+msgid "Checkout"
+msgstr "إتمام الطلب"
+
+msgid "Fulfillment"
+msgstr "طريقة الاستلام"
+
+msgid "Contact"
+msgstr "بيانات التواصل"
+
+msgid "Shipping method"
+msgstr "طريقة الشحن"
+
+msgid "Payment method"
+msgstr "طريقة الدفع"
+
+msgid "Subtotal"
+msgstr "المجموع الفرعي"
+
+msgid "Final total"
+msgstr "الإجمالي النهائي"
+
+msgid "Confirmation is unavailable until every material value is fresh and complete."
+msgstr "لا يتاح التأكيد حتى تكون كل البيانات المهمة حديثة ومكتملة."
+
+msgid "Order"
+msgstr "الطلب"
+
+msgid "Order number"
+msgstr "رقم الطلب"
+
+msgid "Order status"
+msgstr "حالة الطلب"
+
+msgid "Payment status"
+msgstr "حالة الدفع"
+
+msgid "Fulfillment status"
+msgstr "حالة التجهيز والتسليم"
+
+msgid "Tracking status"
+msgstr "حالة التتبع"
+
+msgid "CRM case"
+msgstr "طلب خدمة"
+
+msgid "Payment review"
+msgstr "مراجعة الدفع"
+
+msgid "Case"
+msgstr "طلب الخدمة"
+
+msgid "Review"
+msgstr "المراجعة"
+
+msgid "Submission status"
+msgstr "حالة الإرسال"
+
+msgid "Decision status"
+msgstr "حالة القرار"
+
+msgid "Execution status"
+msgstr "حالة التنفيذ"
+
+msgid "Current service status"
+msgstr "حالة الخدمة الحالية"
+
+msgid "A review decision is separate from any WooCommerce execution."
+msgstr "قرار المراجعة منفصل عن أي تنفيذ داخل ووكومرس."
+
+msgid "This confirmation expired. Refresh the conversation for a current summary."
+msgstr "انتهت صلاحية هذا التأكيد. حدّث المحادثة للحصول على ملخص حالي."
+
+msgid "Historical message content was preserved; refreshed state is shown separately."
+msgstr "حُفظ محتوى الرسالة التاريخي، وتظهر الحالة المحدثة بشكل منفصل."
+
+msgid "A message can reference at most three products."
+msgstr "يمكن للرسالة الإشارة إلى ثلاثة منتجات كحد أقصى."
+
+msgid "AI shopping assistant. Store staff may review retained conversations."
+msgstr "مساعد تسوق بالذكاء الاصطناعي. قد يراجع فريق المتجر المحادثات المحتفظ بها."
+
+msgid "Veyra is not fully available."
+msgstr "فيرا غير متاحة بالكامل."
+
+msgid "The Veyra request is not authorized for the current actor or state."
+msgstr "طلب فيرا غير مصرح به للمستخدم أو الحالة الحالية."
+
+msgid "This Veyra administration request is not authorized."
+msgstr "طلب إدارة فيرا هذا غير مصرح به."
+
+msgid "Loading authoritative state…"
+msgstr "جارٍ تحميل الحالة المعتمدة…"
+
+msgid "The authoritative service is unavailable. No change was made."
+msgstr "الخدمة المعتمدة غير متاحة. لم يُجرَ أي تغيير."
+
+msgid "Draft saved by the server."
+msgstr "حفظ الخادم المسودة."
+
+msgid "Validation completed."
+msgstr "اكتمل التحقق."
+
+msgid "Published version confirmed by the server."
+msgstr "أكد الخادم النسخة المنشورة."
+
+msgid "Rollback confirmed by the server."
+msgstr "أكد الخادم التراجع."
+
+msgid "The configuration changed elsewhere. Reload before continuing."
+msgstr "تغيّر الإعداد من مكان آخر. أعد التحميل قبل المتابعة."
+
+msgid "You are not authorized for this action."
+msgstr "لست مصرحًا لك بهذا الإجراء."
+
+msgid "Unsaved draft changes"
+msgstr "تغييرات المسودة غير محفوظة"
+
+msgid "Draft matches the loaded server version"
+msgstr "المسودة مطابقة لنسخة الخادم المحملة"

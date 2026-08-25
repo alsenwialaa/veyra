@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://veyra.invalid/contracts/schemas/validated-summary.schema.json",
+  "title": "Validated Conversation Summary",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "summary_id", "summary_version", "conversation_id", "actor_scope", "source_range", "source_state_versions", "hard_requirements", "exclusions", "decisions", "corrections", "refusals", "focused_resources", "journeys", "open_questions", "verified_results", "uncertainties", "validation", "created_at"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "summary_id": { "$ref": "common.schema.json#/$defs/opaqueId" },
+    "summary_version": { "type": "integer", "minimum": 1 },
+    "conversation_id": { "$ref": "common.schema.json#/$defs/opaqueId" },
+    "actor_scope": { "$ref": "common.schema.json#/$defs/actorScope" },
+    "source_range": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["first_message_id", "last_message_id", "message_count", "content_hash"],
+      "properties": {
+        "first_message_id": { "$ref": "common.schema.json#/$defs/opaqueId" },
+        "last_message_id": { "$ref": "common.schema.json#/$defs/opaqueId" },
+        "message_count": { "type": "integer", "minimum": 1 },
+        "content_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "source_state_versions": { "type": "array", "maxItems": 200, "items": { "$ref": "common.schema.json#/$defs/resourceRef" } },
+    "hard_requirements": { "type": "array", "maxItems": 100, "items": { "$ref": "common.schema.json#/$defs/typedValue" } },
+    "exclusions": { "type": "array", "maxItems": 100, "items": { "$ref": "common.schema.json#/$defs/typedValue" } },
+    "decisions": { "type": "array", "maxItems": 100, "items": { "$ref": "common.schema.json#/$defs/typedValue" } },
+    "corrections": { "type": "array", "maxItems": 100, "items": { "$ref": "common.schema.json#/$defs/typedValue" } },
+    "refusals": { "type": "array", "maxItems": 100, "items": { "$ref": "common.schema.json#/$defs/typedValue" } },
+    "focused_resources": { "type": "array", "maxItems": 50, "items": { "$ref": "common.schema.json#/$defs/resourceRef" } },
+    "journeys": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["journey_id", "status", "resume_point"],
+        "properties": {
+          "journey_id": { "$ref": "common.schema.json#/$defs/journeyId" },
+          "status": { "enum": ["foreground", "paused", "blocked", "completed", "cancelled"] },
+          "resume_point": { "type": "string", "maxLength": 160 }
+        }
+      }
+    },
+    "open_questions": { "type": "array", "maxItems": 30, "uniqueItems": true, "items": { "$ref": "common.schema.json#/$defs/opaqueId" } },
+    "verified_results": { "type": "array", "maxItems": 100, "items": { "$ref": "common.schema.json#/$defs/typedValue" } },
+    "uncertainties": { "type": "array", "maxItems": 100, "items": { "$ref": "common.schema.json#/$defs/typedValue" } },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "validated_at", "validator_version", "drift_reasons"],
+      "properties": {
+        "state": { "enum": ["valid", "drifted", "invalidated", "rebuild_required"] },
+        "validated_at": { "$ref": "common.schema.json#/$defs/utcInstant" },
+        "validator_version": { "$ref": "common.schema.json#/$defs/schemaVersion" },
+        "drift_reasons": { "type": "array", "maxItems": 50, "items": { "type": "string", "maxLength": 240 } }
+      }
+    },
+    "created_at": { "$ref": "common.schema.json#/$defs/utcInstant" }
+  },
+  "x-invariants": [
+    "Every material summary fact must be present in retained messages or validated state.",
+    "Source erasure or material state drift invalidates or rebuilds the summary.",
+    "A summary never becomes factual authority over current WooCommerce state."
+  ]
+}

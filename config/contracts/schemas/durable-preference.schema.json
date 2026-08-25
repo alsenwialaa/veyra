@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://veyra.invalid/contracts/schemas/durable-preference.schema.json",
+  "title": "Optional Durable Preference Memory item",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "preference_id", "resource_version", "actor_scope", "category", "key", "typed_value", "purpose", "visibility", "consent", "created_at", "last_confirmed_at", "review_at", "expires_at", "deletion_behavior", "state", "superseded_by_id"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "preference_id": { "$ref": "common.schema.json#/$defs/opaqueId" },
+    "resource_version": { "type": "integer", "minimum": 1 },
+    "actor_scope": { "$ref": "common.schema.json#/$defs/actorScope" },
+    "category": { "enum": ["language", "formality", "response_detail", "preferred_branch", "preferred_units", "voluntary_product_preference"] },
+    "key": { "type": "string", "minLength": 1, "maxLength": 160 },
+    "typed_value": { "$ref": "common.schema.json#/$defs/typedValue" },
+    "purpose": { "type": "string", "minLength": 1, "maxLength": 240 },
+    "visibility": { "enum": ["customer_visible", "customer_visible_and_correctable"] },
+    "consent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policy_version", "category_allowed", "consent_or_lawful_basis_ref"],
+      "properties": {
+        "policy_version": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "category_allowed": { "const": true },
+        "consent_or_lawful_basis_ref": { "type": "string", "minLength": 1, "maxLength": 160 }
+      }
+    },
+    "created_at": { "$ref": "common.schema.json#/$defs/utcInstant" },
+    "last_confirmed_at": { "$ref": "common.schema.json#/$defs/utcInstant" },
+    "review_at": { "$ref": "common.schema.json#/$defs/utcInstant" },
+    "expires_at": { "$ref": "common.schema.json#/$defs/utcInstant" },
+    "deletion_behavior": { "enum": ["erase", "anonymize", "retain_only_if_lawfully_required"] },
+    "state": { "enum": ["active", "superseded", "expired", "erased", "blocked"] },
+    "superseded_by_id": { "oneOf": [{ "$ref": "common.schema.json#/$defs/opaqueId" }, { "type": "null" }] }
+  },
+  "x-invariants": [
+    "The optional module is Off until a valid privacy/consent/category/retention/customer-control policy is published.",
+    "Current explicit shopper correction outranks an older durable preference.",
+    "Hidden reasoning, protected traits, secrets, temporary emotions, and unnecessary precise location are prohibited."
+  ]
+}

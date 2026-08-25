@@ -1,0 +1,191 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://veyra.invalid/contracts/universal-tool-contract.schema.json",
+  "title": "Veyra resolved logical tool contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["ordinal", "name", "version", "proposal_group", "owner_domain", "business_purpose", "classification", "design_status", "release_unit", "feature_keys", "model_exposure", "authorization", "input", "output", "state", "safety", "execution", "privacy", "customer_mapping", "compatibility", "tests", "traceability"],
+  "properties": {
+    "ordinal": { "type": "integer", "minimum": 1, "maximum": 155 },
+    "name": { "type": "string", "pattern": "^[a-z_]+\\.[a-z_]+$" },
+    "version": { "const": "1.0.0" },
+    "proposal_group": { "type": "string", "minLength": 1 },
+    "owner_domain": { "type": "string", "minLength": 1 },
+    "business_purpose": { "type": "string", "minLength": 1 },
+    "classification": { "enum": ["read", "write", "sensitive_write", "advisory"] },
+    "design_status": { "enum": ["contracted_not_implemented", "implemented_not_tested", "tested", "accepted", "failed"] },
+    "release_unit": { "enum": ["production_core", "optional_module"] },
+    "feature_keys": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string" } },
+    "model_exposure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["eligible", "actual_state"],
+      "properties": { "eligible": { "type": "boolean" }, "actual_state": { "type": "string", "minLength": 1 } }
+    },
+    "authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["allowed_actor_types", "authentication_required", "required_capabilities", "ownership_resolution", "market_branch_policy", "autonomy_policy", "consent_policy", "rate_limit_policy"],
+      "properties": {
+        "allowed_actor_types": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "enum": ["guest", "customer", "support", "payment_reviewer", "manager", "administrator", "system"] } },
+        "authentication_required": { "type": "boolean" },
+        "required_capabilities": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+        "ownership_resolution": { "type": "string", "minLength": 1 },
+        "market_branch_policy": { "type": "string", "minLength": 1 },
+        "autonomy_policy": { "type": "string", "minLength": 1 },
+        "consent_policy": { "type": "string", "minLength": 1 },
+        "rate_limit_policy": { "type": "string", "minLength": 1 }
+      }
+    },
+    "input": { "$ref": "#/$defs/input" },
+    "output": { "$ref": "#/$defs/output" },
+    "state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reads", "writes", "preconditions", "invalidates", "historical_snapshot_behavior"],
+      "properties": {
+        "reads": { "$ref": "#/$defs/stringList" },
+        "writes": { "$ref": "#/$defs/stringList" },
+        "preconditions": { "$ref": "#/$defs/nonEmptyStringList" },
+        "invalidates": { "$ref": "#/$defs/stringList" },
+        "historical_snapshot_behavior": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "safety": { "$ref": "#/$defs/safety" },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authoritative_service", "public_contract_requirement", "timeout_budget", "loop_call_budget", "compensation_behavior"],
+      "properties": {
+        "authoritative_service": { "$ref": "#/$defs/nonEmptyString" },
+        "public_contract_requirement": { "$ref": "#/$defs/nonEmptyString" },
+        "timeout_budget": { "$ref": "#/$defs/nonEmptyString" },
+        "loop_call_budget": { "$ref": "#/$defs/nonEmptyString" },
+        "compensation_behavior": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "privacy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["data_classification", "minimization", "external_transmission", "retention", "export", "erasure", "audit_fields", "prohibited_logs"],
+      "properties": {
+        "data_classification": { "$ref": "#/$defs/nonEmptyStringList" },
+        "minimization": { "$ref": "#/$defs/nonEmptyString" },
+        "external_transmission": { "$ref": "#/$defs/nonEmptyString" },
+        "retention": { "$ref": "#/$defs/nonEmptyString" },
+        "export": { "$ref": "#/$defs/nonEmptyString" },
+        "erasure": { "$ref": "#/$defs/nonEmptyString" },
+        "audit_fields": { "$ref": "#/$defs/stringList" },
+        "prohibited_logs": { "$ref": "#/$defs/stringList" }
+      }
+    },
+    "customer_mapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["success", "partial", "failure", "blocked", "stale", "retry_safety"],
+      "properties": {
+        "success": { "$ref": "#/$defs/nonEmptyString" },
+        "partial": { "$ref": "#/$defs/nonEmptyString" },
+        "failure": { "$ref": "#/$defs/nonEmptyString" },
+        "blocked": { "$ref": "#/$defs/nonEmptyString" },
+        "stale": { "$ref": "#/$defs/nonEmptyString" },
+        "retry_safety": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "compatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "approved_adapters", "deprecation_policy"],
+      "properties": {
+        "status": { "$ref": "#/$defs/nonEmptyString" },
+        "approved_adapters": { "$ref": "#/$defs/stringList" },
+        "deprecation_policy": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "tests": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contract", "authorization", "ownership", "current_state", "idempotency_concurrency", "failure_recovery", "integration"],
+      "properties": {
+        "contract": { "$ref": "#/$defs/stringList" },
+        "authorization": { "$ref": "#/$defs/stringList" },
+        "ownership": { "$ref": "#/$defs/stringList" },
+        "current_state": { "$ref": "#/$defs/stringList" },
+        "idempotency_concurrency": { "$ref": "#/$defs/stringList" },
+        "failure_recovery": { "$ref": "#/$defs/stringList" },
+        "integration": { "$ref": "#/$defs/stringList" }
+      }
+    },
+    "traceability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["proposal_sections", "anchors", "definition_of_done", "evidence_links"],
+      "properties": {
+        "proposal_sections": { "$ref": "#/$defs/nonEmptyStringList" },
+        "anchors": { "$ref": "#/$defs/stringList" },
+        "definition_of_done": { "$ref": "#/$defs/nonEmptyStringList" },
+        "evidence_links": { "$ref": "#/$defs/stringList" }
+      }
+    }
+  },
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4000
+    },
+    "stringList": {
+      "type": "array",
+      "maxItems": 300,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/nonEmptyString" }
+    },
+    "nonEmptyStringList": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 300,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/nonEmptyString" }
+    },
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_id", "schema_version", "additional_properties", "server_resolved_fields", "maximum_size"],
+      "properties": {
+        "schema_id": { "type": "string" },
+        "schema_version": { "const": "1.0.0" },
+        "additional_properties": { "const": false },
+        "server_resolved_fields": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+        "maximum_size": { "type": "string" }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_id", "schema_version", "authoritative_source", "result_codes", "error_codes", "freshness_required"],
+      "properties": {
+        "schema_id": { "type": "string" },
+        "schema_version": { "const": "1.0.0" },
+        "authoritative_source": { "type": "string" },
+        "result_codes": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string" } },
+        "error_codes": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string" } },
+        "freshness_required": { "type": "boolean" }
+      }
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["confirmation_required", "confirmation_action", "state_hash_fields", "idempotency_scope", "lock_or_version_strategy", "retry_policy", "uncertain_result_recovery", "transaction_boundary"],
+      "properties": {
+        "confirmation_required": { "type": "boolean" },
+        "confirmation_action": { "type": ["string", "null"] },
+        "state_hash_fields": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+        "idempotency_scope": { "type": "string" },
+        "lock_or_version_strategy": { "type": "string" },
+        "retry_policy": { "type": "string" },
+        "uncertain_result_recovery": { "type": "string" },
+        "transaction_boundary": { "type": "string" }
+      }
+    }
+  }
+}

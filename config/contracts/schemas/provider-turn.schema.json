@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://veyra.invalid/contracts/schemas/provider-turn.schema.json",
+  "title": "Provider-independent agent turn envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "turn_type", "language", "direction", "reply", "tool_calls", "proposed_updates", "evidence_requirements", "claims"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "turn_type": { "enum": ["plan", "response"] },
+    "language": { "type": "string", "maxLength": 24 },
+    "direction": { "enum": ["ltr", "rtl"] },
+    "reply": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text", "components"],
+      "properties": {
+        "text": { "type": "string", "maxLength": 12000 },
+        "components": { "type": "array", "maxItems": 20, "items": { "type": "object" } }
+      }
+    },
+    "tool_calls": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["call_id", "name", "version", "arguments"],
+        "properties": {
+          "call_id": { "type": "string", "minLength": 1, "maxLength": 80 },
+          "name": { "type": "string", "minLength": 1, "maxLength": 100 },
+          "version": { "const": "1.0.0" },
+          "arguments": { "type": "object" }
+        }
+      }
+    },
+    "proposed_updates": { "type": "object" },
+    "evidence_requirements": { "type": "array", "maxItems": 32, "items": { "type": "string" } },
+    "claims": { "type": "array", "maxItems": 64, "items": { "$ref": "#/$defs/claim" } }
+  },
+  "$defs": {
+    "sourcePointer": {
+      "type": "string",
+      "minLength": 5,
+      "maxLength": 512,
+      "pattern": "^/(?:data|changed_resources)(?:/(?:[^~/]|~[01])*)*$"
+    },
+    "dataPointer": {
+      "type": "string",
+      "minLength": 5,
+      "maxLength": 512,
+      "pattern": "^/data(?:/(?:[^~/]|~[01])*)*$"
+    },
+    "assertedValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "string_value", "integer_value", "number_value", "boolean_value", "currency", "currency_source_path"],
+      "properties": {
+        "kind": { "enum": ["string", "integer", "number", "boolean", "null", "money", "resource"] },
+        "string_value": { "type": ["string", "null"], "maxLength": 12000 },
+        "integer_value": { "type": ["integer", "null"] },
+        "number_value": { "type": ["number", "null"] },
+        "boolean_value": { "type": ["boolean", "null"] },
+        "currency": { "type": ["string", "null"] },
+        "currency_source_path": { "oneOf": [{ "$ref": "#/$defs/dataPointer" }, { "type": "null" }] }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "kind": { "const": "money" } }, "required": ["kind"] },
+          "then": {
+            "properties": {
+              "string_value": { "type": "string", "maxLength": 64, "pattern": "^-?\\d+(?:\\.\\d+)?$" },
+              "integer_value": { "type": "null" },
+              "number_value": { "type": "null" },
+              "boolean_value": { "type": "null" },
+              "currency": { "type": "string", "pattern": "^[A-Z]{3}$" }
+            }
+          },
+          "else": { "properties": { "currency": { "type": "null" }, "currency_source_path": { "type": "null" } } }
+        },
+        { "if": { "properties": { "kind": { "const": "string" } }, "required": ["kind"] }, "then": { "properties": { "string_value": { "type": "string", "maxLength": 12000 }, "integer_value": { "type": "null" }, "number_value": { "type": "null" }, "boolean_value": { "type": "null" } } } },
+        { "if": { "properties": { "kind": { "const": "integer" } }, "required": ["kind"] }, "then": { "properties": { "string_value": { "type": "null" }, "integer_value": { "type": "integer" }, "number_value": { "type": "null" }, "boolean_value": { "type": "null" } } } },
+        { "if": { "properties": { "kind": { "const": "number" } }, "required": ["kind"] }, "then": { "properties": { "string_value": { "type": "null" }, "integer_value": { "type": "null" }, "number_value": { "type": "number" }, "boolean_value": { "type": "null" } } } },
+        { "if": { "properties": { "kind": { "const": "boolean" } }, "required": ["kind"] }, "then": { "properties": { "string_value": { "type": "null" }, "integer_value": { "type": "null" }, "number_value": { "type": "null" }, "boolean_value": { "type": "boolean" } } } },
+        { "if": { "properties": { "kind": { "const": "null" } }, "required": ["kind"] }, "then": { "properties": { "string_value": { "type": "null" }, "integer_value": { "type": "null" }, "number_value": { "type": "null" }, "boolean_value": { "type": "null" } } } },
+        { "if": { "properties": { "kind": { "const": "resource" } }, "required": ["kind"] }, "then": { "properties": { "string_value": { "type": "string", "minLength": 1, "maxLength": 512 }, "integer_value": { "type": "null" }, "number_value": { "type": "null" }, "boolean_value": { "type": "null" } } } }
+      ]
+    },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim_id", "type", "status", "source_call_id", "source_path", "asserted_value"],
+      "properties": {
+        "claim_id": { "type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$" },
+        "type": { "type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[a-z][a-z0-9_]*$" },
+        "status": { "enum": ["proposed", "verified", "historical", "assumption", "unknown"] },
+        "source_call_id": { "type": ["string", "null"], "minLength": 1, "maxLength": 80 },
+        "source_path": { "oneOf": [{ "$ref": "#/$defs/sourcePointer" }, { "type": "null" }] },
+        "asserted_value": { "$ref": "#/$defs/assertedValue" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "source_call_id": { "type": "null" } }, "required": ["source_call_id"] },
+          "then": { "properties": { "source_path": { "type": "null" }, "asserted_value": { "type": "object", "properties": { "currency_source_path": { "type": "null" } } } } },
+          "else": { "properties": { "source_path": { "$ref": "#/$defs/sourcePointer" } } }
+        },
+        {
+          "if": { "properties": { "source_path": { "type": "null" } }, "required": ["source_path"] },
+          "then": { "properties": { "source_call_id": { "type": "null" } } },
+          "else": { "properties": { "source_call_id": { "type": "string", "minLength": 1 } } }
+        },
+        {
+          "if": { "properties": { "status": { "const": "verified" } }, "required": ["status"] },
+          "then": { "properties": { "source_call_id": { "type": "string", "minLength": 1 }, "source_path": { "$ref": "#/$defs/sourcePointer" } } }
+        },
+        {
+          "if": { "properties": { "status": { "const": "unknown" } }, "required": ["status"] },
+          "then": {
+            "properties": {
+              "source_call_id": { "type": "null" },
+              "source_path": { "type": "null" },
+              "asserted_value": {
+                "type": "object",
+                "properties": { "kind": { "const": "null" }, "string_value": { "type": "null" }, "integer_value": { "type": "null" }, "number_value": { "type": "null" }, "boolean_value": { "type": "null" }, "currency": { "type": "null" }, "currency_source_path": { "type": "null" } }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "status": { "const": "verified" }, "asserted_value": { "type": "object", "properties": { "kind": { "const": "money" } }, "required": ["kind"] } },
+            "required": ["status", "asserted_value"]
+          },
+          "then": { "properties": { "asserted_value": { "type": "object", "properties": { "currency_source_path": { "$ref": "#/$defs/dataPointer" } } } } }
+        },
+        {
+          "if": { "properties": { "type": { "const": "mutation_success" }, "status": { "const": "verified" } }, "required": ["type", "status"] },
+          "then": {
+            "properties": {
+              "source_path": { "type": "string", "pattern": "^/changed_resources/(?:0|[1-9][0-9]*)$" },
+              "asserted_value": { "type": "object", "properties": { "kind": { "const": "resource" } } }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "x-invariants": [
+    "A verified claim resolves source_path against the cited authoritative ToolResult data or changed_resources and exactly matches asserted_value.",
+    "A verified money claim resolves both its amount and currency paths against the same ToolResult.",
+    "A verified mutation_success cites and asserts the exact changed_resources entry.",
+    "After a succeeded or changed tool result, non-empty reply prose or a material component requires a non-empty claim list; semantic verification still evaluates all prose."
+  ]
+}

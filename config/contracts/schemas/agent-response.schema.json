@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://veyra.invalid/contracts/schemas/agent-response.schema.json",
+  "title": "Verified shopper response proposal envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "language", "direction", "reply", "proposed_updates", "evidence_requirements", "claims"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "language": { "type": "string", "minLength": 2, "maxLength": 35 },
+    "direction": { "enum": ["ltr", "rtl", "mixed"] },
+    "reply": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text", "components"],
+      "properties": {
+        "text": { "type": "string", "minLength": 1, "maxLength": 12000 },
+        "components": {
+          "type": "array",
+          "maxItems": 20,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type", "evidence_call_id", "label", "choices", "product_targets"],
+            "properties": {
+              "type": { "enum": ["product", "comparison", "cart", "checkout", "order", "crm", "payment_review", "branch", "hours", "notice", "choices"] },
+              "evidence_call_id": { "type": ["string", "null"], "maxLength": 80 },
+              "label": { "type": "string", "maxLength": 240 },
+              "product_targets": {
+                "type": "array",
+                "maxItems": 4,
+                "uniqueItems": true,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["product_id", "variation_id"],
+                  "properties": {
+                    "product_id": { "type": "integer", "minimum": 1 },
+                    "variation_id": { "type": "integer", "minimum": 0 }
+                  }
+                }
+              },
+              "choices": {
+                "type": "array",
+                "maxItems": 8,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["choice_id", "label", "semantic_value", "side_effect"],
+                  "properties": {
+                    "choice_id": { "type": "string", "minLength": 1, "maxLength": 128 },
+                    "label": { "type": "string", "minLength": 1, "maxLength": 120 },
+                    "semantic_value": {},
+                    "side_effect": { "const": false }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "proposed_updates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["focus", "memory", "summary", "journey", "durable_preferences"],
+      "properties": {
+        "focus": { "type": ["object", "null"] },
+        "memory": { "type": ["object", "null"] },
+        "summary": { "type": ["object", "null"] },
+        "journey": { "type": ["object", "null"] },
+        "durable_preferences": { "type": "array", "maxItems": 20, "items": { "type": "object" } }
+      }
+    },
+    "evidence_requirements": { "type": "array", "maxItems": 32, "items": { "type": "string", "maxLength": 240 } },
+    "claims": { "$ref": "provider-turn.schema.json#/properties/claims" }
+  },
+  "x-invariants": [
+    "A succeeded write may be stated only when its exact typed Tool Result and changed resources verify the claim.",
+    "The response proposal executes no state update.",
+    "Product and comparison components identify exact product_id and variation_id tuples from their cited authoritative catalog result."
+  ]
+}
