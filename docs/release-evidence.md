@@ -83,7 +83,7 @@ Implementation and fixture evidence cannot self-promote independent certificatio
 | Check | Result | Evidence boundary |
 |---|---|---|
 | Standalone PHP runner groups | 27/27 passed | Dependency-light local runtime |
-| Named domain scenarios | 242 passed, 0 failed | Count-bearing deterministic runners |
+| Named domain scenarios | 244 passed, 0 failed | Count-bearing deterministic runners |
 | Auxiliary PHP suites | Passed | Provider-safe projection, requirement repository, rendering, source-symbol sweep |
 | Provider transmission | 13/13 passed | Fakes; no live provider call |
 | Source-symbol load | 262/262 | Load/syntax evidence only |
@@ -95,7 +95,7 @@ Implementation and fixture evidence cannot self-promote independent certificatio
 | Heuristic audit | 0 critical, 16 high, 34 medium | Manually dispositioned; not an independent security audit |
 | Composer/PHPUnit, PHPStan, Plugin Check, coverage | Not run | CI jobs exist; no attributable pass recorded here |
 | Live platform/provider/browser matrices | Not run | Release-blocking |
-| Deterministic package double-build | Passed | Two byte-identical builds; 422-file source and 275-file installable archives |
+| Deterministic package double-build | Passed | Two byte-identical builds; 424-file source and 275-file installable archives |
 
 The standalone scripts ran through a PHP 8.2.32 WebAssembly runtime. The package requires PHP 8.1+, but supported-PHP-version testing remains unassessed.
 

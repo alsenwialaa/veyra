@@ -394,9 +394,20 @@ final class ChatRestController
 
     private function clientNetworkAddress(): string
     {
-        $address = $_SERVER['REMOTE_ADDR'] ?? '';
+        if (!isset($_SERVER['REMOTE_ADDR']) || !is_string($_SERVER['REMOTE_ADDR'])) {
+            return '';
+        }
 
-        return is_string($address) ? $address : '';
+        $rawAddress = wp_unslash($_SERVER['REMOTE_ADDR']);
+        if (!is_string($rawAddress)) {
+            return '';
+        }
+        $address = sanitize_text_field($rawAddress);
+        if (!hash_equals($rawAddress, $address)) {
+            return '';
+        }
+
+        return filter_var($address, FILTER_VALIDATE_IP) !== false ? $address : '';
     }
 
     /** @param mixed $body */

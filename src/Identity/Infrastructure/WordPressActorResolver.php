@@ -56,10 +56,7 @@ final class WordPressActorResolver implements ActorResolver
             return null;
         }
 
-        $rawToken = isset($_COOKIE[GuestSessionManager::COOKIE_NAME])
-            && is_string($_COOKIE[GuestSessionManager::COOKIE_NAME])
-            ? $_COOKIE[GuestSessionManager::COOKIE_NAME]
-            : null;
+        $rawToken = GuestCookieManager::readSessionToken();
         $context = $this->guestSessions->inspectFromRawToken($rawToken);
 
         if ($context === null) {

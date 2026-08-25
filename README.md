@@ -17,7 +17,7 @@ Install development dependencies with Composer, then run:
 ```bash
 composer validate --strict --no-check-publish
 composer install
-npm install
+npm ci
 composer test:all
 composer analyse
 npm test

@@ -6,7 +6,109 @@ use Veyra\Experience\Contract\MessagePayloadAssembler;
 use Veyra\Experience\Contract\ProductReferenceIdentity;
 use Veyra\Experience\Contract\RenderingPayload;
 use Veyra\Experience\Presentation\ChatRestController;
+use Veyra\Experience\Presentation\CustomerExperience;
 use Veyra\Http\CustomerMessagePresenter;
+
+$veyraCustomerPresentationCalls = [
+    'actions' => [],
+    'shortcodes' => [],
+    'registered_styles' => [],
+    'registered_scripts' => [],
+    'enqueued_styles' => [],
+    'enqueued_scripts' => [],
+    'inline_scripts' => [],
+];
+
+if (!function_exists('add_action')) {
+    function add_action(string $hook, callable $callback, int $priority = 10, int $acceptedArgs = 1): bool
+    {
+        global $veyraCustomerPresentationCalls;
+        $veyraCustomerPresentationCalls['actions'][] = [$hook, $callback, $priority, $acceptedArgs];
+        return true;
+    }
+}
+if (!function_exists('add_shortcode')) {
+    function add_shortcode(string $tag, callable $callback): bool
+    {
+        global $veyraCustomerPresentationCalls;
+        $veyraCustomerPresentationCalls['shortcodes'][] = [$tag, $callback];
+        return true;
+    }
+}
+if (!function_exists('plugins_url')) {
+    function plugins_url(string $path = '', string $plugin = ''): string
+    {
+        return 'https://shop.example/wp-content/plugins/veyra-ai-commerce-agent/' . ltrim($path, '/');
+    }
+}
+if (!function_exists('wp_register_style')) {
+    function wp_register_style(string $handle, string $src, array $dependencies = [], $version = false, string $media = 'all'): bool
+    {
+        global $veyraCustomerPresentationCalls;
+        $veyraCustomerPresentationCalls['registered_styles'][] = [$handle, $src, $dependencies, $version, $media];
+        return true;
+    }
+}
+if (!function_exists('wp_register_script')) {
+    function wp_register_script(string $handle, string $src, array $dependencies = [], $version = false, $arguments = false): bool
+    {
+        global $veyraCustomerPresentationCalls;
+        $veyraCustomerPresentationCalls['registered_scripts'][] = [$handle, $src, $dependencies, $version, $arguments];
+        return true;
+    }
+}
+if (!function_exists('wp_enqueue_style')) {
+    function wp_enqueue_style(string $handle): void
+    {
+        global $veyraCustomerPresentationCalls;
+        $veyraCustomerPresentationCalls['enqueued_styles'][] = $handle;
+    }
+}
+if (!function_exists('wp_enqueue_script')) {
+    function wp_enqueue_script(string $handle): void
+    {
+        global $veyraCustomerPresentationCalls;
+        $veyraCustomerPresentationCalls['enqueued_scripts'][] = $handle;
+    }
+}
+if (!function_exists('wp_add_inline_script')) {
+    function wp_add_inline_script(string $handle, string $data, string $position = 'after'): bool
+    {
+        global $veyraCustomerPresentationCalls;
+        $veyraCustomerPresentationCalls['inline_scripts'][] = [$handle, $data, $position];
+        return true;
+    }
+}
+if (!function_exists('rest_url')) {
+    function rest_url(string $path = ''): string
+    {
+        return 'https://shop.example/wp-json/' . ltrim($path, '/');
+    }
+}
+if (!function_exists('determine_locale')) {
+    function determine_locale(): string
+    {
+        return 'en_US';
+    }
+}
+if (!function_exists('is_rtl')) {
+    function is_rtl(): bool
+    {
+        return false;
+    }
+}
+if (!function_exists('is_user_logged_in')) {
+    function is_user_logged_in(): bool
+    {
+        return false;
+    }
+}
+if (!function_exists('__')) {
+    function __(string $text, string $domain = 'default'): string
+    {
+        return $text;
+    }
+}
 
 require_once dirname(__DIR__) . '/bootstrap.php';
 require_once __DIR__ . '/../../src/Experience/Contract/RenderingPayload.php';
@@ -196,5 +298,38 @@ $issues = $validator->validate([
     ],
 ]);
 veyraAssert(count(array_filter($issues, static fn (array $issue): bool => $issue['code'] === 'mandatory_truth_hidden')) === 2, 'Mandatory truth hiding must be rejected.');
+
+$customerExperience = new CustomerExperience(
+    dirname(__DIR__, 2) . '/veyra-ai-commerce-agent.php',
+    static fn (): array => [
+        'enabled' => true,
+        'mount_launcher' => true,
+        'ai_name' => 'Veyra test assistant',
+        'ai_disclosure' => 'Deterministic presentation fixture.',
+    ]
+);
+$customerExperience->register();
+$footerHooks = array_values(array_filter(
+    $veyraCustomerPresentationCalls['actions'],
+    static fn (array $hook): bool => $hook[0] === 'wp_footer'
+));
+veyraAssert(count($footerHooks) === 1, 'The customer launcher must register exactly one footer renderer.');
+veyraAssert($footerHooks[0][2] === 5, 'The customer launcher must render before WordPress prints footer scripts at priority 20.');
+
+$customerExperience->registerAssets();
+$registeredScript = $veyraCustomerPresentationCalls['registered_scripts'][0] ?? null;
+veyraAssert(is_array($registeredScript), 'The production customer script must be registered.');
+veyraAssert($registeredScript[0] === 'veyra-customer-experience', 'The registered customer script handle must be stable.');
+veyraAssert($registeredScript[4] === true, 'The customer script must remain in the WordPress footer group.');
+veyraAssert(
+    $veyraCustomerPresentationCalls['enqueued_scripts'] === ['veyra-customer-experience'],
+    'An enabled customer surface must enqueue the production client exactly once.'
+);
+$inlineScript = $veyraCustomerPresentationCalls['inline_scripts'][0] ?? null;
+veyraAssert(is_array($inlineScript) && $inlineScript[2] === 'before', 'The typed bootstrap must print before the customer client.');
+veyraAssert(
+    str_contains($inlineScript[1], 'veyra.customer_bootstrap.v1') && str_contains($inlineScript[1], 'Object.freeze'),
+    'The customer client must receive a frozen versioned bootstrap.'
+);
 
 fwrite(STDOUT, "Veyra PHP rendering contracts passed.\n");

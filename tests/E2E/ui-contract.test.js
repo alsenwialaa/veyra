@@ -4,6 +4,45 @@ const assert = require('node:assert/strict');
 const customer = require('../../assets/customer/veyra-chat.js');
 const admin = require('../../assets/admin/veyra-admin.js');
 
+const completeSurface = { dataset: {} };
+const lateSurface = { dataset: {} };
+let lateSurfaceComplete = false;
+let bootAttempts = 0;
+const mountDocument = {
+    querySelectorAll(selector) {
+        assert.equal(selector, '[data-veyra-chat]');
+        return [completeSurface, lateSurface];
+    }
+};
+const chatFactory = (root) => ({
+    boot() {
+        bootAttempts += 1;
+        return root === completeSurface || lateSurfaceComplete;
+    }
+});
+assert.equal(
+    customer.mountRoots(mountDocument, { enabled: true }, chatFactory),
+    1,
+    'a complete customer surface mounts once'
+);
+assert.equal(completeSurface.dataset.veyraMounted, 'true');
+assert.equal(lateSurface.dataset.veyraMounted, undefined, 'an incomplete late surface is not falsely marked mounted');
+assert.equal(
+    customer.mountRoots(mountDocument, { enabled: true }, chatFactory),
+    0,
+    'an already-mounted surface is idempotent while an incomplete surface remains retryable'
+);
+lateSurfaceComplete = true;
+assert.equal(
+    customer.mountRoots(mountDocument, { enabled: true }, chatFactory),
+    1,
+    'a late surface mounts when its required structure becomes available'
+);
+assert.equal(lateSurface.dataset.veyraMounted, 'true');
+assert.equal(customer.mountRoots(mountDocument, { enabled: true }, chatFactory), 0, 'mounted surfaces never bind twice');
+assert.equal(customer.mountRoots(mountDocument, { enabled: false }, chatFactory), 0, 'a disabled bootstrap never mounts');
+assert.equal(bootAttempts, 4, 'only unmounted candidates are booted and incomplete candidates remain retryable');
+
 const operation = {
     schema_version: 'veyra.operation.v1',
     status: 'succeeded',

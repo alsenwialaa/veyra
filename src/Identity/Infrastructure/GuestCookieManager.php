@@ -11,6 +11,30 @@ final class GuestCookieManager
 {
     public const CSRF_COOKIE_NAME = 'veyra_guest_csrf';
 
+    /** Read and strictly bound the opaque credential at the request boundary. */
+    public static function readSessionToken(): ?string
+    {
+        if (!isset($_COOKIE[GuestSessionManager::COOKIE_NAME])
+            || !is_string($_COOKIE[GuestSessionManager::COOKIE_NAME])
+        ) {
+            return null;
+        }
+
+        $rawToken = wp_unslash($_COOKIE[GuestSessionManager::COOKIE_NAME]);
+        if (!is_string($rawToken)) {
+            return null;
+        }
+        $token = sanitize_text_field($rawToken);
+
+        // Sanitization is a validation boundary, not a normalization step for
+        // credentials. Never let hostile text sanitize into another token.
+        if (!hash_equals($rawToken, $token)) {
+            return null;
+        }
+
+        return preg_match('/^[A-Za-z0-9_-]{32,192}$/D', $token) === 1 ? $token : null;
+    }
+
     public function issue(string $rawSessionToken, string $rawCsrfToken, UtcInstant $expiresAt): void
     {
         if (headers_sent()) {

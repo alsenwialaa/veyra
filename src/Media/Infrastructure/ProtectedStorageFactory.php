@@ -29,8 +29,17 @@ final class ProtectedStorageFactory
                 $publicRoots[] = constant($constant);
             }
         }
-        $documentRoot = $_SERVER['DOCUMENT_ROOT'] ?? null;
-        $documentRoot = is_string($documentRoot) ? trim($documentRoot) : '';
+        $rawDocumentRoot = isset($_SERVER['DOCUMENT_ROOT']) && is_string($_SERVER['DOCUMENT_ROOT'])
+            ? wp_unslash($_SERVER['DOCUMENT_ROOT'])
+            : '';
+        if (!is_string($rawDocumentRoot)) {
+            return null;
+        }
+        $documentRoot = sanitize_text_field($rawDocumentRoot);
+        if (!hash_equals($rawDocumentRoot, $documentRoot)) {
+            return null;
+        }
+        $documentRoot = trim($documentRoot);
         if ($documentRoot !== '' && self::absolutePath($documentRoot)) {
             $publicRoots[] = $documentRoot;
         }

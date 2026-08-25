@@ -497,7 +497,7 @@
 
         boot() {
             if (!this.panel || !this.form || !this.input || !this.timeline) {
-                return;
+                return false;
             }
             this.input.maxLength = Number(this.configuration.max_message_length || 4000);
             this.bindEvents();
@@ -506,6 +506,7 @@
             if (!this.panel.hidden) {
                 this.activatePanel(false);
             }
+            return true;
         }
 
         bindEvents() {
@@ -1936,30 +1937,74 @@
         productReferenceBindings
     });
 
+    function mountRoots(documentRoot, configuration, createChat) {
+        if (!documentRoot || typeof documentRoot.querySelectorAll !== 'function' ||
+            !isObject(configuration) || configuration.enabled !== true) {
+            return 0;
+        }
+        const factory = typeof createChat === 'function'
+            ? createChat
+            : (root, bootstrap) => new CustomerChat(root, bootstrap);
+        let mounted = 0;
+        documentRoot.querySelectorAll('[data-veyra-chat]').forEach((root) => {
+            if (!root || !isObject(root.dataset) || root.dataset.veyraMounted === 'true') {
+                return;
+            }
+            const chat = factory(root, configuration);
+            if (!chat || typeof chat.boot !== 'function' || chat.boot() !== true) {
+                return;
+            }
+            // Mark only a structurally complete, event-bound surface. An early
+            // parser/DOM-insertion pass can then be retried safely.
+            root.dataset.veyraMounted = 'true';
+            mounted += 1;
+        });
+        return mounted;
+    }
+
     global.VeyraChatContracts = contracts;
     if (typeof module !== 'undefined' && module.exports) {
-        module.exports = contracts;
+        // Keep the injectable factory out of the browser global contract while
+        // exposing the deterministic mounting boundary to the Node suite.
+        module.exports = Object.freeze({ ...contracts, mountRoots });
     }
 
     function mount() {
-        if (!global.document || !isObject(global.VeyraChatBootstrap) || global.VeyraChatBootstrap.enabled !== true) {
-            return;
-        }
-        global.document.querySelectorAll('[data-veyra-chat]').forEach((root) => {
-            if (root.dataset.veyraMounted === 'true') {
-                return;
-            }
-            root.dataset.veyraMounted = 'true';
-            const chat = new CustomerChat(root, global.VeyraChatBootstrap);
-            chat.boot();
-        });
+        return mountRoots(global.document, global.VeyraChatBootstrap);
     }
 
-    if (global.document) {
+    function installMountLifecycle() {
+        if (!global.document) {
+            return;
+        }
+
+        let observer = null;
+        const finish = () => {
+            mount();
+            if (observer) {
+                observer.disconnect();
+                observer = null;
+            }
+        };
+
+        // Cover footer/script strategy changes and parser-time surfaces without
+        // leaving a page-lifetime observer behind. mount() is idempotent.
+        if (global.document.readyState !== 'complete' &&
+            global.document.documentElement && typeof global.MutationObserver === 'function') {
+            observer = new global.MutationObserver(mount);
+            observer.observe(global.document.documentElement, { childList: true, subtree: true });
+        }
+
+        mount();
         if (global.document.readyState === 'loading') {
             global.document.addEventListener('DOMContentLoaded', mount, { once: true });
+        }
+        if (global.document.readyState !== 'complete' && typeof global.addEventListener === 'function') {
+            global.addEventListener('load', finish, { once: true });
         } else {
-            mount();
+            finish();
         }
     }
+
+    installMountLifecycle();
 })(typeof window !== 'undefined' ? window : globalThis);

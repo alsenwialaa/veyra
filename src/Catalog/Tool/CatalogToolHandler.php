@@ -410,7 +410,9 @@ final class CatalogToolHandler implements ToolHandler
                 'observed_at' => gmdate(DATE_ATOM),
             ]];
         }
+        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Public WooCommerce quantity contract; Veyra must honor extension-adjusted limits.
         $minimum = max(0.0001, (float) apply_filters('woocommerce_quantity_input_min', $product->get_min_purchase_quantity(), $product));
+        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Public WooCommerce quantity contract; Veyra must honor extension-adjusted limits.
         $maximumRaw = (float) apply_filters('woocommerce_quantity_input_max', $product->get_max_purchase_quantity(), $product);
         $maximum = $maximumRaw > 0 ? $maximumRaw : null;
         $enoughStock = method_exists($product, 'has_enough_stock') ? $product->has_enough_stock($quantity) : $product->is_in_stock();
@@ -460,10 +462,23 @@ final class CatalogToolHandler implements ToolHandler
         if ($categorySlugs === []) {
             return ['ok' => true, 'candidates' => [], 'relationship' => 'same_category_candidate'];
         }
-        $products = wc_get_products([
+        $boundedLimit = max(1, min(12, $limit));
+        $queriedIds = wc_get_products([
             'status' => 'publish', 'visibility' => 'visible', 'category' => $categorySlugs,
-            'exclude' => [$productId], 'limit' => max(1, min(12, $limit)), 'return' => 'ids',
+            // Fetch one extra row and exclude the source in memory. This avoids
+            // the exclusionary post__not_in query while preserving the bound.
+            'limit' => $boundedLimit + 1, 'return' => 'ids',
         ]);
+        $products = [];
+        foreach ($queriedIds as $candidateId) {
+            if (!is_int($candidateId) || $candidateId === $productId) {
+                continue;
+            }
+            $products[] = $candidateId;
+            if (count($products) === $boundedLimit) {
+                break;
+            }
+        }
         return ['ok' => true, 'candidates' => $this->snapshotsFromIds($products), 'relationship' => 'same_category_candidate'];
     }
 

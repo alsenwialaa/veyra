@@ -11,6 +11,22 @@ if (!defined('STDERR')) {
     define('STDERR', fopen('php://stderr', 'wb'));
 }
 
+// Request-boundary fixtures exercise production sanitization without loading a
+// complete WordPress runtime. Individual integration runners may override
+// these before including this bootstrap.
+if (!function_exists('wp_unslash')) {
+    function wp_unslash(string $value): string
+    {
+        return stripslashes($value);
+    }
+}
+if (!function_exists('sanitize_text_field')) {
+    function sanitize_text_field(string $value): string
+    {
+        return trim(strip_tags($value));
+    }
+}
+
 $composer = dirname(__DIR__) . '/vendor/autoload.php';
 
 if (is_readable($composer)) {

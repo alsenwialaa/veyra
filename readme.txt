@@ -8,7 +8,7 @@ Stable tag: 0.1.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-AI-led conversational commerce infrastructure for WooCommerce, built around typed tools, backend authority, customer isolation, and fail-closed release gates.
+AI-led conversational commerce infrastructure for WooCommerce with typed tools, backend authority, customer isolation, and fail-closed gates.
 
 == Description ==
 
@@ -113,11 +113,11 @@ No. The implementation uses WooCommerce CRUD APIs for order reads, but HPOS comp
 
 = 0.1.7 =
 
-Runs the bounded schema 1.6.0 migration for Conversation Focus unresolved references. Protected-media routes now also require an explicit approved `VEYRA_PROTECTED_MEDIA_RETENTION_SECONDS` value. Review `docs/review-and-implementation-report-0.1.7.md`; this version is NOT READY and is not production-certified.
+Runs schema 1.6.0 migration for Conversation Focus unresolved references. Protected media now requires an approved `VEYRA_PROTECTED_MEDIA_RETENTION_SECONDS`. This engineering candidate remains NOT READY and not production-certified.
 
 = 0.1.6 =
 
-Runs the bounded schema 1.5.0 migration for metadata-only Context Bundle manifests. No default manifest-retention period or legal-hold policy is invented; live database/privacy/WooCommerce/provider matrices and formal acceptance remain required. Review `docs/review-and-implementation-report-0.1.6.md`; this version is NOT READY and is not production-certified.
+Runs schema 1.5.0 migration for metadata-only Context Bundle manifests. Retention and legal-hold policy remain operator decisions. Live database, privacy, WooCommerce, provider, and formal acceptance gates remain open; this candidate is NOT READY.
 
 = 0.1.5 =
 

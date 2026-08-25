@@ -16,6 +16,7 @@ return [
         'default_text_tool_orchestration' => [
             'provider' => 'google_gemini',
             'api_surface' => 'interactions',
+            // phpcs:ignore PluginCheck.CodeAnalysis.AIProvider.DirectIntegration -- Canonical v4.1 Gemini adapter route; WordPress 6.5-6.9 support precludes a WordPress 7-only client, and all transmission gates remain false.
             'endpoint' => 'https://generativelanguage.googleapis.com/v1beta/interactions',
             'model_id' => 'gemini-3.7-flash',
             'adapter_version' => '1.1.0',

@@ -170,10 +170,7 @@ final class RuntimeModule
                     return;
                 }
             }
-            $rawToken = isset($_COOKIE[GuestSessionManager::COOKIE_NAME])
-                && is_string($_COOKIE[GuestSessionManager::COOKIE_NAME])
-                    ? $_COOKIE[GuestSessionManager::COOKIE_NAME]
-                    : null;
+            $rawToken = GuestCookieManager::readSessionToken();
             if ($guestAccountLinks->link($rawToken, (int) $user->ID)) {
                 try {
                     $guestCookies->clear();

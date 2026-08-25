@@ -15,6 +15,7 @@ use Veyra\Identity\Application\ActorResolver;
 use Veyra\Identity\Application\GuestSessionManager;
 use Veyra\Identity\Domain\Actor;
 use Veyra\Identity\Domain\ActorType;
+use Veyra\Identity\Infrastructure\GuestCookieManager;
 use Veyra\Media\Application\ProtectedAttachmentAccessService;
 use Veyra\Media\Application\ProtectedUploadService;
 use Veyra\Shared\Domain\Clock;
@@ -217,9 +218,7 @@ final class MediaRestController
                 ? $actor
                 : $this->permissionError('veyra_csrf_check_failed', 403);
         }
-        $raw = isset($_COOKIE[GuestSessionManager::COOKIE_NAME]) && is_string($_COOKIE[GuestSessionManager::COOKIE_NAME])
-            ? $_COOKIE[GuestSessionManager::COOKIE_NAME]
-            : null;
+        $raw = GuestCookieManager::readSessionToken();
         $context = $this->guestSessions->inspectFromRawToken($raw);
         $csrf = $request->get_header('X-Veyra-CSRF');
         return $context !== null && is_string($csrf) && $this->guestSessions->verifyCsrf($context->session, $csrf)

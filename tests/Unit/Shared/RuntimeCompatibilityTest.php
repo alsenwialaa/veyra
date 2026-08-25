@@ -29,5 +29,32 @@ final class RuntimeCompatibilityTest extends TestCase
 
         self::assertTrue($report->commerceReady());
     }
-}
 
+    public function testAbbreviatedStableVersionsMeetEquivalentMinimums(): void
+    {
+        $report = (new RuntimeCompatibility())->evaluate(
+            new EnvironmentSnapshot('8.1', '6.5', '8.5', true)
+        );
+
+        self::assertTrue($report->foundationReady());
+        self::assertTrue($report->commerceReady());
+        self::assertSame([], $report->codes());
+    }
+
+    public function testAbbreviatedPrereleasesRemainBelowStableMinimums(): void
+    {
+        $phpReport = (new RuntimeCompatibility())->evaluate(
+            new EnvironmentSnapshot('8.1-RC1', '6.5', '8.5', true)
+        );
+        $wordpressReport = (new RuntimeCompatibility())->evaluate(
+            new EnvironmentSnapshot('8.1', '6.5-RC1', '8.5', true)
+        );
+        $woocommerceReport = (new RuntimeCompatibility())->evaluate(
+            new EnvironmentSnapshot('8.1', '6.5', '8.5-RC1', true)
+        );
+
+        self::assertContains('veyra_php_too_old', $phpReport->codes());
+        self::assertContains('veyra_wordpress_too_old', $wordpressReport->codes());
+        self::assertContains('veyra_woocommerce_too_old', $woocommerceReport->codes());
+    }
+}

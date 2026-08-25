@@ -43,7 +43,10 @@ final class CustomerExperience
         }
 
         add_action('wp_enqueue_scripts', [$this, 'registerAssets']);
-        add_action('wp_footer', [$this, 'renderLauncher'], 30);
+        // WordPress prints footer scripts at priority 20. Render the complete
+        // launcher before that boundary so the client never executes against a
+        // surface that has not reached the document yet.
+        add_action('wp_footer', [$this, 'renderLauncher'], 5);
         add_shortcode('veyra_chat', [$this, 'renderShortcode']);
     }
 

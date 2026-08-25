@@ -67,15 +67,18 @@ final class Deactivator
             if ($exists === null) {
                 return false;
             }
-            if ($exists && $wpdb->query($wpdb->prepare(
-                "UPDATE {$confirmationTable}
+            $confirmationFence = $wpdb->prepare(
+                'UPDATE %i
                  SET status = %s, invalidation_reason = %s, updated_at = %s, version = version + 1
-                 WHERE status = %s",
+                 WHERE status = %s',
+                $confirmationTable,
                 'invalidated',
                 'plugin_deactivated',
                 $now,
                 'active'
-            )) === false) {
+            );
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Deactivation must synchronously fence active sensitive mutations; a cached write cannot satisfy that postcondition.
+            if ($exists && $wpdb->query($confirmationFence) === false) {
                 return false;
             }
 
@@ -84,18 +87,21 @@ final class Deactivator
             if ($exists === null) {
                 return false;
             }
-            if ($exists && $wpdb->query($wpdb->prepare(
-                "UPDATE {$idempotencyTable}
+            $idempotencyFence = $wpdb->prepare(
+                'UPDATE %i
                  SET status = %s, result_code = %s, result_json = NULL, retry_safe = %d,
                      completed_at = %s, updated_at = %s, version = version + 1
-                 WHERE status = %s",
+                 WHERE status = %s',
+                $idempotencyTable,
                 'uncertain',
                 'plugin_deactivated_during_execution',
                 0,
                 $now,
                 $now,
                 'in_progress'
-            )) === false) {
+            );
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Deactivation must persist uncertain outcomes before releasing locks; cache APIs cannot perform this state transition.
+            if ($exists && $wpdb->query($idempotencyFence) === false) {
                 return false;
             }
 
@@ -104,7 +110,9 @@ final class Deactivator
             if ($exists === null) {
                 return false;
             }
-            if ($exists && $wpdb->query("DELETE FROM {$lockTable}") === false) {
+            $releaseLocks = $wpdb->prepare('DELETE FROM %i', $lockTable);
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Locks are plugin-owned volatile rows and may be released only after both mutation fences succeed.
+            if ($exists && $wpdb->query($releaseLocks) === false) {
                 return false;
             }
         } catch (\Throwable) {

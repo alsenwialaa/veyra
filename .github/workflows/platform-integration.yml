@@ -171,7 +171,7 @@ jobs:
 
       - name: Install pinned browser dependencies
         run: |
-          npm install --ignore-scripts
+          npm ci --ignore-scripts
           npx playwright install --with-deps chromium
 
       - name: Start WordPress and run browser tests

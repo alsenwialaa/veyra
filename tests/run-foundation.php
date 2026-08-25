@@ -157,6 +157,19 @@ $test('missing Woo is graceful and newer Woo has no upper restriction', static f
     $check($future->commerceReady(), 'An arbitrary Woo upper bound was applied.');
 });
 
+$test('abbreviated stable releases satisfy minimums while prereleases remain blocked', static function () use ($check): void {
+    $compatibility = new RuntimeCompatibility();
+    $stable = $compatibility->evaluate(new EnvironmentSnapshot('8.1', '6.5', '8.5', true));
+    $check($stable->foundationReady() && $stable->commerceReady(), 'Equivalent abbreviated releases were blocked.');
+
+    $phpPrerelease = $compatibility->evaluate(new EnvironmentSnapshot('8.1-RC1', '6.5', '8.5', true));
+    $check(in_array('veyra_php_too_old', $phpPrerelease->codes(), true), 'An old PHP prerelease was accepted.');
+    $wpPrerelease = $compatibility->evaluate(new EnvironmentSnapshot('8.1', '6.5-RC1', '8.5', true));
+    $check(in_array('veyra_wordpress_too_old', $wpPrerelease->codes(), true), 'An old WordPress prerelease was accepted.');
+    $wooPrerelease = $compatibility->evaluate(new EnvironmentSnapshot('8.1', '6.5', '8.5-RC1', true));
+    $check(in_array('veyra_woocommerce_too_old', $wooPrerelease->codes(), true), 'An old WooCommerce prerelease was accepted.');
+});
+
 $test('published customer AI identity text is valid UTF-8 and byte bounded', static function () use ($check): void {
     $method = new ReflectionMethod(RuntimeModule::class, 'boundedPublishedText');
     $method->setAccessible(true);

@@ -17,7 +17,7 @@ final class RuntimeCompatibility
     {
         $issues = [];
 
-        if (version_compare($environment->phpVersion, $this->minimumPhp, '<')) {
+        if (self::isBelowMinimum($environment->phpVersion, $this->minimumPhp)) {
             $issues[] = new CompatibilityIssue(
                 'veyra_php_too_old',
                 'php',
@@ -26,7 +26,7 @@ final class RuntimeCompatibility
             );
         }
 
-        if (version_compare($environment->wordpressVersion, $this->minimumWordPress, '<')) {
+        if (self::isBelowMinimum($environment->wordpressVersion, $this->minimumWordPress)) {
             $issues[] = new CompatibilityIssue(
                 'veyra_wordpress_too_old',
                 'wordpress',
@@ -51,7 +51,7 @@ final class RuntimeCompatibility
                 'WooCommerce is unavailable. Veyra commerce capabilities are blocked.',
                 false
             );
-        } elseif (version_compare($environment->woocommerceVersion, $this->minimumWooCommerce, '<')) {
+        } elseif (self::isBelowMinimum($environment->woocommerceVersion, $this->minimumWooCommerce)) {
             $issues[] = new CompatibilityIssue(
                 'veyra_woocommerce_too_old',
                 'woocommerce',
@@ -62,5 +62,34 @@ final class RuntimeCompatibility
 
         return new CompatibilityReport($issues);
     }
-}
 
+    private static function isBelowMinimum(string $current, string $minimum): bool
+    {
+        return version_compare(
+            self::normalizeReleaseVersion($current),
+            self::normalizeReleaseVersion($minimum),
+            '<'
+        );
+    }
+
+    /**
+     * Pads an abbreviated numeric release core without changing its suffix.
+     *
+     * WordPress publishes stable releases such as "6.5", while plugin headers
+     * conventionally declare the same minimum as "6.5.0". Preserving suffixes
+     * keeps versions such as "6.5-RC1" below the corresponding stable release.
+     */
+    private static function normalizeReleaseVersion(string $version): string
+    {
+        if (preg_match('/^(\d+(?:\.\d+){0,2})(.*)$/D', $version, $matches) !== 1) {
+            return $version;
+        }
+
+        $segments = explode('.', $matches[1]);
+        while (count($segments) < 3) {
+            $segments[] = '0';
+        }
+
+        return implode('.', $segments) . $matches[2];
+    }
+}

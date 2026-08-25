@@ -51,6 +51,16 @@ class VeyraProductWithMissingImage extends WC_Product
     public function get_image_id(): int { return 999; }
 }
 
+class VeyraCategorizedProduct extends WC_Product
+{
+    public function get_category_ids(): array { return [9]; }
+}
+
+class WP_Term
+{
+    public string $slug = 'catalog-category';
+}
+
 class WC_Product_Variation extends WC_Product
 {
     public function __construct(int $id, private int $parentId, string $status = 'publish', private array $variationAttributes = [])
@@ -73,6 +83,10 @@ class WC_Product_Attribute
 
 /** @var array<int, WC_Product> $veyraCatalogProducts */
 $veyraCatalogProducts = [];
+/** @var list<int> $veyraCatalogQueryResult */
+$veyraCatalogQueryResult = [];
+/** @var array<string,mixed> $veyraCatalogQueryParameters */
+$veyraCatalogQueryParameters = [];
 
 function wc_get_product(int $id): ?WC_Product
 {
@@ -82,12 +96,17 @@ function wc_get_product(int $id): ?WC_Product
 
 function wc_get_products(array $parameters): array
 {
-    return [];
+    global $veyraCatalogQueryParameters, $veyraCatalogQueryResult;
+    $veyraCatalogQueryParameters = $parameters;
+    return $veyraCatalogQueryResult;
 }
 
 function get_woocommerce_currency(): string { return 'USD'; }
 function wp_get_attachment_image_url(int $id, string $size): string|false { return false; }
-function get_term(int $id, string $taxonomy): mixed { return null; }
+function get_term(int $id, string $taxonomy): mixed
+{
+    return $id === 9 && $taxonomy === 'product_cat' ? new WP_Term() : null;
+}
 function sanitize_key(string $value): string { return strtolower(preg_replace('/[^a-z0-9_\-]/', '', $value) ?? ''); }
 function sanitize_title(string $value): string { return strtolower(trim($value)); }
 function apply_filters(string $hook, mixed $value, mixed ...$args): mixed { return $value; }
@@ -238,6 +257,30 @@ $scenario('variation limit is applied after public eligibility filtering', stati
     $assert(($result->data['count'] ?? 0) === 1 && ($result->data['eligible_count'] ?? 0) === 2, 'Eligibility was counted after applying the limit.');
     $assert(($result->data['variations'][0]['variation_id'] ?? 0) === 22, 'A later eligible variation was hidden by an earlier private child.');
     $assert(($result->data['truncated'] ?? false) === true && ($result->data['complete'] ?? true) === false, 'Non-exhaustive variation output was not explicit.');
+});
+
+$scenario('alternative candidates avoid exclusionary catalog queries', static function () use ($assert, $context): void {
+    global $veyraCatalogProducts, $veyraCatalogQueryParameters, $veyraCatalogQueryResult;
+    $veyraCatalogProducts = [
+        70 => new VeyraCategorizedProduct(70),
+        71 => new WC_Product(71),
+        72 => new WC_Product(72),
+    ];
+    $veyraCatalogQueryResult = [70, 71, 72];
+    $veyraCatalogQueryParameters = [];
+
+    $result = (new CatalogToolHandler())->execute(
+        new ToolCall('call-alternatives', 'catalog.find_alternatives', '1.0.0', ['product_id' => 70, 'limit' => 2]),
+        $context
+    );
+
+    $assert($result->status === 'succeeded', 'Alternative lookup did not succeed.');
+    $assert(!array_key_exists('exclude', $veyraCatalogQueryParameters), 'Alternative lookup used an exclusionary query parameter.');
+    $assert(($veyraCatalogQueryParameters['limit'] ?? null) === 3, 'Alternative lookup did not fetch exactly one bounded extra candidate.');
+    $candidateIds = array_column($result->data['candidates'] ?? [], 'product_id');
+    $assert($candidateIds === [71, 72], 'The source product was not excluded in memory while preserving the requested bound.');
+
+    $veyraCatalogQueryResult = [];
 });
 
 $scenario('variation resolution requires an exact complete attribute set and excludes Any', static function () use ($assert, $context): void {

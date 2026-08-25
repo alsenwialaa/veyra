@@ -43,10 +43,15 @@ class wpdb
     public function prepare(string $query, mixed ...$arguments): string
     {
         foreach ($arguments as $argument) {
-            $replacement = is_int($argument) || is_float($argument)
-                ? (string) $argument
-                : "'" . str_replace("'", "''", (string) $argument) . "'";
-            $query = preg_replace('/%[sd]/', $replacement, $query, 1) ?? $query;
+            if (preg_match('/%[sdi]/', $query, $match) !== 1) {
+                continue;
+            }
+            $replacement = match ($match[0]) {
+                '%i' => '`' . str_replace('`', '``', (string) $argument) . '`',
+                '%d' => (string) ((int) $argument),
+                default => "'" . str_replace("'", "''", (string) $argument) . "'",
+            };
+            $query = preg_replace('/%[sdi]/', $replacement, $query, 1) ?? $query;
         }
         return $query;
     }
@@ -177,6 +182,16 @@ function wp_salt(string $scheme = 'auth'): string
     return 'short';
 }
 
+function wp_unslash(string $value): string
+{
+    return stripslashes($value);
+}
+
+function sanitize_text_field(string $value): string
+{
+    return trim(strip_tags($value));
+}
+
 require_once dirname(__DIR__) . '/bootstrap.php';
 
 use Veyra\AI\Tool\FoundationActorMapper;
@@ -189,6 +204,8 @@ use Veyra\Bootstrap\Uninstaller;
 use Veyra\Infrastructure\Database\Repository\ActorScope;
 use Veyra\Infrastructure\Database\Repository\ActorScopedRepository;
 use Veyra\Infrastructure\Database\TableNames;
+use Veyra\Identity\Application\GuestSessionManager;
+use Veyra\Identity\Infrastructure\GuestCookieManager;
 use Veyra\Media\Application\ProtectedAttachmentAccessService;
 use Veyra\Media\Application\ProtectedStorage;
 use Veyra\Media\Domain\Attachment;
@@ -223,6 +240,19 @@ $runtimeTables = static function (): array {
     $tables = new TableNames('wp_');
     return [$tables->confirmations(), $tables->idempotency(), $tables->locks()];
 };
+
+$scenario('guest session credentials reject sanitizer normalization', static function () use ($assert): void {
+    $valid = str_repeat('A', 40);
+    $_COOKIE[GuestSessionManager::COOKIE_NAME] = $valid;
+    $assert(GuestCookieManager::readSessionToken() === $valid, 'A valid opaque guest credential was rejected.');
+
+    $_COOKIE[GuestSessionManager::COOKIE_NAME] = $valid . '<b></b>';
+    $assert(
+        GuestCookieManager::readSessionToken() === null,
+        'Hostile cookie text sanitized into a different valid credential.'
+    );
+    unset($_COOKIE[GuestSessionManager::COOKIE_NAME]);
+});
 
 $scenario('protected media has no guessed retention default', static function () use ($assert): void {
     $health = ProtectedStorageFactory::health();
@@ -342,7 +372,7 @@ $scenario('deactivation fences mutations before releasing runtime locks', static
     $queries = implode("\n", $wpdb->queries);
     $confirmation = strpos($queries, 'plugin_deactivated');
     $idempotency = strpos($queries, 'plugin_deactivated_during_execution');
-    $locks = strpos($queries, 'DELETE FROM wp_veyra_locks');
+    $locks = strpos($queries, 'DELETE FROM `wp_veyra_locks`');
     $assert(is_int($confirmation), 'Active confirmations were not invalidated.');
     $assert(is_int($idempotency), 'In-progress idempotency was not made uncertain.');
     $assert(is_int($locks), 'Plugin-owned runtime locks were not released.');
@@ -363,7 +393,7 @@ $scenario('deactivation query failure is blocked and does not release locks', st
 
     $queries = implode("\n", $wpdb->queries);
     $health = $veyraLifecycleOptions[Activator::HEALTH_OPTION] ?? [];
-    $assert(!str_contains($queries, 'DELETE FROM wp_veyra_locks'), 'Locks were released after an incomplete mutation fence.');
+    $assert(!str_contains($queries, 'DELETE FROM `wp_veyra_locks`'), 'Locks were released after an incomplete mutation fence.');
     $assert(($health['state'] ?? null) === 'blocked', 'Cleanup failure did not block lifecycle health.');
     $assert(
         in_array('deactivation_runtime_cleanup_failed', $health['codes'] ?? [], true),

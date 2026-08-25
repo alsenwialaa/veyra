@@ -91,11 +91,12 @@ test('privacy, retention, deactivation and uninstall remain capability-gated and
   assert.match(deactivator, /plugin_deactivated/);
   assert.match(deactivator, /plugin_deactivated_during_execution/);
   assert.ok(
-    deactivator.indexOf("'uncertain'") < deactivator.indexOf('DELETE FROM {$lockTable}'),
+    deactivator.indexOf("'uncertain'") < deactivator.indexOf("prepare('DELETE FROM %i'"),
     'in-progress mutations must become uncertain before runtime locks are released'
   );
   assert.ok(uninstaller.indexOf('deleteProtectedObjects') < uninstaller.indexOf('DROP TABLE IF EXISTS'));
-  assert.match(uninstaller, /DROP TABLE IF EXISTS \{\$table\}[\s\S]*tableExists\(\$wpdb, \$table\) !== false/);
+  assert.match(uninstaller, /prepare\('DROP TABLE IF EXISTS %i', \$table\)[\s\S]*tableExists\(\$wpdb, \$table\) !== false/);
+  assert.doesNotMatch(uninstaller, /DROP TABLE IF EXISTS \{\$table\}/, 'uninstall identifiers must use the WordPress %i placeholder');
   assert.match(uninstaller, /if \(!self::deleteOptions\(\)\)[\s\S]*return/);
   assert.match(uninstaller, /get_option\(\$option, \$missing\) !== \$missing/);
   assert.doesNotMatch(
@@ -118,6 +119,8 @@ test('security lifecycle wiring and staff/customer separation are explicit', () 
   const module = source('src/Bootstrap/SecurityLifecycleModule.php');
   const runtime = source('src/Runtime/RuntimeModule.php');
   const gate = source('src/Identity/Presentation/RestPermissionGate.php');
+  const cookieManager = source('src/Identity/Infrastructure/GuestCookieManager.php');
+  const actorResolver = source('src/Identity/Infrastructure/WordPressActorResolver.php');
   const customer = source('src/Experience/Presentation/CustomerExperience.php');
   assert.match(plugin, /SecurityLifecycleModule::register/);
   assert.match(
@@ -136,6 +139,14 @@ test('security lifecycle wiring and staff/customer separation are explicit', () 
   assert.match(module, /get_option\(Migrator::SCHEMA_OPTION, '0\.0\.0'\)[\s\S]*!==[\s\S]*VEYRA_SCHEMA_VERSION/);
   assert.doesNotMatch(module, /version_compare/, 'security lifecycle must reject both older and unknown newer schemas');
   assert.match(gate, /ActorType::Guest, ActorType::Customer/);
+  assert.match(cookieManager, /\$rawToken = wp_unslash\(\$_COOKIE\[GuestSessionManager::COOKIE_NAME\]\)/);
+  assert.match(cookieManager, /sanitize_text_field\(\$rawToken\)/);
+  assert.match(cookieManager, /hash_equals\(\$rawToken, \$token\)/);
+  assert.match(cookieManager, /\^\[A-Za-z0-9_-\]\{32,192\}\$/);
+  assert.match(gate, /GuestCookieManager::readSessionToken\(\)/);
+  assert.match(actorResolver, /GuestCookieManager::readSessionToken\(\)/);
+  assert.doesNotMatch(gate, /\$_COOKIE/, 'permission gates must use the centralized sanitized cookie boundary');
+  assert.doesNotMatch(actorResolver, /\$_COOKIE/, 'actor resolution must use the centralized sanitized cookie boundary');
   assert.match(customer, /staff_blocked/);
   assert.match(runtime, /if \(\$compatibility->commerceReady\(\) && \$featureGate->allows\(\$aiFeature\)\)/);
   assert.ok(
@@ -143,6 +154,8 @@ test('security lifecycle wiring and staff/customer separation are explicit', () 
     'the effective AI gate must run before public chat routes are registered'
   );
   assert.match(runtime, /get_option\('veyra_agent_published_v1', \[\]\)/);
+  assert.match(bootstrap, /add_action\('init', array\(\$this, 'loadTranslations'\), 0\)/);
+  assert.match(bootstrap, /load_plugin_textdomain\(/);
   assert.match(runtime, /'ai_name' => \$aiName/);
   assert.match(runtime, /'ai_disclosure' => \$aiDisclosure/);
   assert.match(runtime, /'customer:' \. \(string\) get_current_user_id\(\)/);

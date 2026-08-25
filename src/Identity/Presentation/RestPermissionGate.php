@@ -11,6 +11,7 @@ use Veyra\Identity\Application\CapabilityPolicy;
 use Veyra\Identity\Application\GuestSessionManager;
 use Veyra\Identity\Domain\ActorType;
 use Veyra\Identity\Domain\Capability;
+use Veyra\Identity\Infrastructure\GuestCookieManager;
 
 /**
  * Explicit REST permission callback infrastructure.
@@ -96,10 +97,7 @@ final class RestPermissionGate
             return is_string($nonce) && $nonce !== '' && wp_verify_nonce($nonce, 'wp_rest') === 1;
         }
 
-        $rawSessionToken = isset($_COOKIE[GuestSessionManager::COOKIE_NAME])
-            && is_string($_COOKIE[GuestSessionManager::COOKIE_NAME])
-            ? $_COOKIE[GuestSessionManager::COOKIE_NAME]
-            : null;
+        $rawSessionToken = GuestCookieManager::readSessionToken();
         $context = $this->guestSessions->inspectFromRawToken($rawSessionToken);
         $csrf = $request->get_header('X-Veyra-CSRF');
 

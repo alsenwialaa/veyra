@@ -42,6 +42,7 @@ final class Plugin
             return;
         }
 
+        // phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound -- The installable ZIP bundles Arabic translations in its own languages directory and must work outside WordPress.org language-pack delivery.
         load_plugin_textdomain(
             'veyra-ai-commerce-agent',
             false,
