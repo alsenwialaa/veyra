@@ -1,5 +1,8 @@
 # Veyra AI Commerce Agent for WooCommerce
 
+[![Candidate quality checks](https://github.com/alsenwialaa/veyra/actions/workflows/quality.yml/badge.svg)](https://github.com/alsenwialaa/veyra/actions/workflows/quality.yml)
+[![WordPress and WooCommerce integration](https://github.com/alsenwialaa/veyra/actions/workflows/platform-integration.yml/badge.svg)](https://github.com/alsenwialaa/veyra/actions/workflows/platform-integration.yml)
+
 Veyra is a chat-first WooCommerce commerce-agent engineering candidate built around typed tool contracts, WooCommerce authority, customer isolation, confirmation/idempotency controls, and fail-closed release gates.
 
 > **Release status: NOT READY for production.** Shopper AI transmission and incomplete or uncertified capabilities remain blocked by design. See [release evidence](docs/release-evidence.md) for the exact tested boundary and unresolved gates.
