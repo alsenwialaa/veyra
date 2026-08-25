@@ -160,6 +160,10 @@ jobs:
           /tmp/wp config set WP_ENVIRONMENT_TYPE development --path="$VEYRA_WP_PATH"
           /tmp/wp config set VEYRA_E2E_FIXTURE true --path="$VEYRA_WP_PATH" --raw
           /tmp/wp core install --path="$VEYRA_WP_PATH" --url="$VEYRA_BASE_URL" --title='Veyra Browser CI' --admin_user=admin --admin_password="$VEYRA_CI_PASSWORD-admin" --admin_email=ci@example.invalid --skip-email
+          /tmp/wp option update home "$VEYRA_BASE_URL" --path="$VEYRA_WP_PATH"
+          /tmp/wp option update siteurl "$VEYRA_BASE_URL" --path="$VEYRA_WP_PATH"
+          test "$(/tmp/wp option get home --path="$VEYRA_WP_PATH")" = "$VEYRA_BASE_URL"
+          test "$(/tmp/wp option get siteurl --path="$VEYRA_WP_PATH")" = "$VEYRA_BASE_URL"
           /tmp/wp plugin install https://downloads.wordpress.org/plugin/woocommerce.11.0.1.zip --path="$VEYRA_WP_PATH" --activate
           python3 scripts/package_release.py --output /tmp/veyra-browser-candidate
           VEYRA_INSTALLABLE=$(find /tmp/veyra-browser-candidate -maxdepth 1 -type f -name '*-installable.zip' -print -quit)
@@ -186,7 +190,10 @@ jobs:
             sleep 1
           done
           curl --fail --silent --show-error "$VEYRA_BASE_URL" --output /tmp/veyra-home.html
-          ! grep --fixed-strings '/veyra-browser-wordpress/wp-content/' /tmp/veyra-home.html
+          if grep --quiet --fixed-strings '/veyra-browser-wordpress/wp-content/' /tmp/veyra-home.html; then
+            echo 'WordPress emitted an asset URL containing the physical CI install directory.' >&2
+            exit 1
+          fi
           grep --fixed-strings '/wp-content/plugins/veyra-ai-commerce-agent/assets/customer/veyra-chat.js' /tmp/veyra-home.html
           curl --fail --silent --show-error \
             "$VEYRA_BASE_URL/wp-content/plugins/veyra-ai-commerce-agent/assets/customer/veyra-chat.js?ver=0.1.7" \
