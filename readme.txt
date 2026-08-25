@@ -2,6 +2,7 @@
 Contributors: veyra
 Tags: woocommerce, ai, conversational-commerce, customer-support
 Requires at least: 6.5
+Tested up to: 7.1
 Requires PHP: 8.1
 Stable tag: 0.1.7
 License: GPLv2 or later

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Veyra\Infrastructure\Database\Migration;
 
+// Internal migration exceptions are never rendered; adapters escape at the output boundary.
+// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped
+
 /** Verifies the material table, column, index, and engine postconditions described by CREATE SQL. */
 final class SchemaPostconditionVerifier
 {

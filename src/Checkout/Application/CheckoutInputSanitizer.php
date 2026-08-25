@@ -65,7 +65,9 @@ final class CheckoutInputSanitizer
             if (!is_string($key) || !is_string($value) || strlen($value) > 255 || preg_match('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', $value) === 1) {
                 throw new \InvalidArgumentException('Checkout contact/address value is invalid.');
             }
-            $clean = function_exists('sanitize_text_field') ? sanitize_text_field($value) : trim(strip_tags($value));
+            $clean = function_exists('sanitize_text_field')
+                ? sanitize_text_field($value)
+                : trim((string) preg_replace('/<[^>]*>/', '', $value));
             if ($key === 'email') {
                 $clean = function_exists('sanitize_email') ? sanitize_email($clean) : filter_var($clean, FILTER_SANITIZE_EMAIL);
                 if ($clean !== '' && ((function_exists('is_email') && is_email($clean) === false) || (!function_exists('is_email') && filter_var($clean, FILTER_VALIDATE_EMAIL) === false))) {

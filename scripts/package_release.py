@@ -15,15 +15,18 @@ from verify_release import VerificationError, verify
 
 ROOT_NAME = "veyra-ai-commerce-agent"
 FIXED_ZIP_TIME = (2026, 8, 24, 0, 0, 0)
-RUNTIME_TOP_LEVEL = {
+INSTALLABLE_DIRECTORIES = {
     "assets",
-    "config",
     "languages",
     "src",
     "templates",
-    "readme.txt",
-    "uninstall.php",
-    "veyra-ai-commerce-agent.php",
+}
+INSTALLABLE_FILES = {
+    PurePosixPath("config/contracts/logical-tool-catalog.json"),
+    PurePosixPath("config/provider-route-manifest.php"),
+    PurePosixPath("readme.txt"),
+    PurePosixPath("uninstall.php"),
+    PurePosixPath("veyra-ai-commerce-agent.php"),
 }
 SOURCE_EXCLUDES = {".git", ".idea", ".vscode", "build", "dist", "node_modules", "vendor", "__pycache__"}
 
@@ -36,8 +39,10 @@ def files_for(root: Path, installable: bool) -> list[Path]:
         relative = path.relative_to(root)
         if any(part in SOURCE_EXCLUDES for part in relative.parts):
             continue
-        if installable and relative.parts[0] not in RUNTIME_TOP_LEVEL:
-            continue
+        if installable:
+            relative_posix = PurePosixPath(relative.as_posix())
+            if relative.parts[0] not in INSTALLABLE_DIRECTORIES and relative_posix not in INSTALLABLE_FILES:
+                continue
         files.append(path)
     return sorted(files, key=lambda item: item.relative_to(root).as_posix())
 

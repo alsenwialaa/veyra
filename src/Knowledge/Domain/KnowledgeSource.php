@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace Veyra\Knowledge\Domain;
 
+// Internal validation exceptions are never rendered; adapters escape at the output boundary.
+// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped
+
 use Veyra\Shared\Domain\UtcInstant;
 
 final class KnowledgeSource
@@ -301,7 +304,10 @@ final class KnowledgeSource
             }
             if (isset($citation['url']) && $citation['url'] !== '') {
                 $url = self::boundedString($citation['url'], 1, 2000, 'citation URL');
-                $scheme = strtolower((string) parse_url($url, PHP_URL_SCHEME));
+                $scheme = function_exists('wp_parse_url')
+                    ? wp_parse_url($url, PHP_URL_SCHEME)
+                    : (preg_match('/\A([A-Za-z][A-Za-z0-9+.-]*):/', $url, $matches) === 1 ? $matches[1] : null);
+                $scheme = is_string($scheme) ? strtolower($scheme) : '';
                 if (!in_array($scheme, ['http', 'https'], true)) {
                     throw new \InvalidArgumentException('Knowledge citation URL scheme is invalid.');
                 }

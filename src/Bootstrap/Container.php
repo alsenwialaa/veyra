@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Veyra\Bootstrap;
 
+// Internal composition exceptions are never rendered; adapters escape at the output boundary.
+// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped
+
 final class Container
 {
     /** @var array<string, object|callable(self): object> */
@@ -46,4 +49,3 @@ final class Container
         return $service;
     }
 }
-

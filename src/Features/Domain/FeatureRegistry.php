@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Veyra\Features\Domain;
 
+// Internal registry exceptions are never rendered; adapters escape at the output boundary.
+// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped
+
 final class FeatureRegistry
 {
     /** @var array<string, FeatureDefinition> */
@@ -124,4 +127,3 @@ final class FeatureRegistry
         ]);
     }
 }
-

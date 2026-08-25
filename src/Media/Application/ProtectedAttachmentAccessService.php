@@ -4,6 +4,13 @@ declare(strict_types=1);
 
 namespace Veyra\Media\Application;
 
+// This bounded integrity verifier must hash and copy a protected stream without a plaintext disk buffer.
+// WP_Filesystem has no equivalent streaming API.
+// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_fopen
+// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_fread
+// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+
 use Veyra\AI\Tool\FoundationActorMapper;
 use Veyra\AI\Tool\ToolContext;
 use Veyra\Infrastructure\Database\Repository\ActorScope;

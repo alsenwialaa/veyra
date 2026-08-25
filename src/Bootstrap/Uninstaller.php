@@ -144,7 +144,7 @@ final class Uninstaller
                  * absent. Missing objects must also return true so retries are
                  * idempotent. The raw key is never sent to a client or log.
                  *
-                 * @param bool   $deleted
+                 * @param bool|null $deleted
                  * @param string $driver
                  * @param string $key
                  */

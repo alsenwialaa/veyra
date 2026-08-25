@@ -18,6 +18,7 @@ use Veyra\Recommendation\Domain\RecommendationPolicy;
 use Veyra\Recommendation\Tool\RecommendationToolHandler;
 use Veyra\Requirements\Application\RequirementStateService;
 use Veyra\Requirements\Domain\RequirementCriterion;
+use Veyra\Requirements\Domain\RequirementState;
 use Veyra\Shared\Domain\UtcInstant;
 use Veyra\Tests\Support\FrozenClock;
 use Veyra\Tests\Support\InMemoryRequirementStateRepository;
@@ -191,22 +192,24 @@ final class AdvisoryRecommendationEvidenceTest extends TestCase
 
         $sourceMessageId = 'msg_' . str_repeat('a', 32);
         $store = new MemoryConversationStore($sourceMessageId, 'I prefer laptops');
-        $store->saveMemory(
+        $repository = new InMemoryRequirementStateRepository();
+        $criterion = $this->requirement($sourceMessageId);
+        $repository->seed(RequirementState::empty(
             'conversation-advisory-test',
             'guest',
             'guest-session-advisory-test',
-            ['requirements' => [$this->requirement($sourceMessageId)->toArray()]],
-            $sourceMessageId
-        );
+            '2026-08-24T10:00:00Z'
+        )->next([$criterion], $sourceMessageId, '2026-08-24T10:00:00Z'));
         $states = new RequirementStateService(
             $store,
-            new InMemoryRequirementStateRepository(),
+            $repository,
             new FrozenClock(UtcInstant::fromDatabase('2026-08-24 10:00:00'))
         );
         $state = $states->get('conversation-advisory-test', 'guest', 'guest-session-advisory-test');
         self::assertTrue($state['ok']);
         self::assertIsInt($state['resource_version']);
         self::assertIsString($state['state_hash']);
+        self::assertCount(1, $state['active_requirements']);
         $this->binding = [
             'expected_requirements_resource_version' => $state['resource_version'],
             'expected_requirements_state_hash' => $state['state_hash'],

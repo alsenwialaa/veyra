@@ -25,16 +25,19 @@ jobs:
             php: '8.1'
             database: mysql-8.0
             database_image: mysql:8.0
+            database_health_command: mysqladmin ping --silent
           - wordpress: '7.1'
             woocommerce: '11.0.1'
             php: '8.4'
             database: mysql-8.0
             database_image: mysql:8.0
+            database_health_command: mysqladmin ping --silent
           - wordpress: '7.1'
             woocommerce: '11.0.1'
             php: '8.4'
             database: mariadb-11.4
             database_image: mariadb:11.4
+            database_health_command: healthcheck.sh --connect --innodb_initialized
 
     services:
       database:
@@ -47,7 +50,7 @@ jobs:
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping --silent"
+          --health-cmd="${{ matrix.database_health_command }}"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=10
@@ -58,7 +61,7 @@ jobs:
       VEYRA_CI_PASSWORD: veyra-ci-${{ github.run_id }}-${{ github.run_attempt }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: shivammathur/setup-php@v2
         with:
@@ -84,7 +87,10 @@ jobs:
           /tmp/wp config set WP_DEBUG_DISPLAY false --path="$VEYRA_WP_PATH" --raw
           /tmp/wp core install --path="$VEYRA_WP_PATH" --url=http://127.0.0.1:8080 --title='Veyra CI' --admin_user=admin --admin_password="$VEYRA_CI_PASSWORD-admin" --admin_email=ci@example.invalid --skip-email
           /tmp/wp plugin install "https://downloads.wordpress.org/plugin/woocommerce.${{ matrix.woocommerce }}.zip" --path="$VEYRA_WP_PATH" --activate
-          ln -s "$GITHUB_WORKSPACE" "$VEYRA_WP_PATH/wp-content/plugins/veyra-ai-commerce-agent"
+          python3 scripts/package_release.py --output /tmp/veyra-platform-candidate
+          VEYRA_INSTALLABLE=$(find /tmp/veyra-platform-candidate -maxdepth 1 -type f -name '*-installable.zip' -print -quit)
+          test -n "$VEYRA_INSTALLABLE"
+          unzip -q "$VEYRA_INSTALLABLE" -d "$VEYRA_WP_PATH/wp-content/plugins"
 
       - name: Activate, re-activate, and run platform smoke contracts
         run: |
@@ -131,7 +137,7 @@ jobs:
       VEYRA_BASE_URL: http://127.0.0.1:8080
       VEYRA_CI_PASSWORD: veyra-ci-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: shivammathur/setup-php@v2
         with:
@@ -139,9 +145,10 @@ jobs:
           coverage: none
           extensions: curl, dom, fileinfo, gd, intl, json, mbstring, mysqli, openssl
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: '24'
+          package-manager-cache: false
 
       - name: Install WordPress, WooCommerce, and the isolated UI fixture
         run: |
@@ -154,7 +161,10 @@ jobs:
           /tmp/wp config set VEYRA_E2E_FIXTURE true --path="$VEYRA_WP_PATH" --raw
           /tmp/wp core install --path="$VEYRA_WP_PATH" --url="$VEYRA_BASE_URL" --title='Veyra Browser CI' --admin_user=admin --admin_password="$VEYRA_CI_PASSWORD-admin" --admin_email=ci@example.invalid --skip-email
           /tmp/wp plugin install https://downloads.wordpress.org/plugin/woocommerce.11.0.1.zip --path="$VEYRA_WP_PATH" --activate
-          ln -s "$GITHUB_WORKSPACE" "$VEYRA_WP_PATH/wp-content/plugins/veyra-ai-commerce-agent"
+          python3 scripts/package_release.py --output /tmp/veyra-browser-candidate
+          VEYRA_INSTALLABLE=$(find /tmp/veyra-browser-candidate -maxdepth 1 -type f -name '*-installable.zip' -print -quit)
+          test -n "$VEYRA_INSTALLABLE"
+          unzip -q "$VEYRA_INSTALLABLE" -d "$VEYRA_WP_PATH/wp-content/plugins"
           /tmp/wp plugin activate veyra-ai-commerce-agent --path="$VEYRA_WP_PATH"
           mkdir -p "$VEYRA_WP_PATH/wp-content/mu-plugins"
           cp "$GITHUB_WORKSPACE/tests/E2E/wordpress-fixture.php" "$VEYRA_WP_PATH/wp-content/mu-plugins/veyra-e2e-fixture.php"
@@ -180,5 +190,5 @@ jobs:
           name: veyra-browser-diagnostics
           path: |
             /tmp/veyra-wp-server.log
-            test-results/
+            ${{ github.workspace }}/test-results/
           if-no-files-found: ignore

@@ -183,6 +183,8 @@ final class MediaRestController
         $payload = $result->get_data();
         try {
             while (!feof($payload->stream)) {
+                // WP_Filesystem does not expose a bounded response-stream primitive.
+                // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fread
                 $chunk = fread($payload->stream, 8192);
                 if (!is_string($chunk)) {
                     break;

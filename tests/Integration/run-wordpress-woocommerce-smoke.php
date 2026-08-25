@@ -1,6 +1,8 @@
 <?php
 
-declare(strict_types=1);
+// WP-CLI's eval-file command evaluates this contract inside an existing PHP
+// execution context. A strict_types declaration is therefore invalid here:
+// PHP requires it to be the first statement in the compiled script.
 
 use Veyra\Bootstrap\Activator;
 use Veyra\Bootstrap\Plugin;

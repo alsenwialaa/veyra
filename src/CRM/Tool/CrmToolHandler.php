@@ -405,8 +405,12 @@ final class CrmToolHandler implements ToolHandler
             if (!is_string($label) || !is_string($summary) || trim($label) === '' || trim($summary) === '') {
                 continue;
             }
-            $cleanLabel = function_exists('sanitize_text_field') ? sanitize_text_field($label) : trim(strip_tags($label));
-            $cleanSummary = function_exists('sanitize_text_field') ? sanitize_text_field($summary) : trim(strip_tags($summary));
+            $cleanLabel = function_exists('sanitize_text_field')
+                ? sanitize_text_field($label)
+                : trim((string) preg_replace('/<[^>]*>/', '', $label));
+            $cleanSummary = function_exists('sanitize_text_field')
+                ? sanitize_text_field($summary)
+                : trim((string) preg_replace('/<[^>]*>/', '', $summary));
             if ($cleanLabel !== '' && $cleanSummary !== '' && strlen($cleanLabel) <= 120 && strlen($cleanSummary) <= 200) {
                 $result[$key] = ['label' => $cleanLabel, 'confirmation_summary' => $cleanSummary];
             }

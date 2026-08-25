@@ -573,6 +573,7 @@ final class CartToolHandler implements ToolHandler
             );
         }
 
+        $decision = null;
         try {
             // Another request may have completed this exact key while this one
             // waited for the actor-wide cart lease. Re-inspect before claiming.
@@ -674,9 +675,15 @@ final class CartToolHandler implements ToolHandler
             );
         } catch (\Throwable) {
             $known = ['cart' => $this->safeSnapshot(), 'reconciliation_required' => true];
-            try {
-                $this->idempotency->markUncertain($decision->record, 'cart_mutation_uncertain', $known);
-            } catch (\Throwable) {
+            if ($decision instanceof IdempotencyDecision
+                && $decision->status === IdempotencyDecisionStatus::Claimed
+            ) {
+                try {
+                    $this->idempotency->markUncertain($decision->record, 'cart_mutation_uncertain', $known);
+                } catch (\Throwable) {
+                    $known['idempotency_reconciliation_required'] = true;
+                }
+            } else {
                 $known['idempotency_reconciliation_required'] = true;
             }
             return new ToolResult($call->callId, $call->name, 'uncertain', 'cart_mutation_uncertain', $known, [], true, false, $context->correlationId);

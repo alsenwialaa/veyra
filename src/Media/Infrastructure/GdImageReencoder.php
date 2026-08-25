@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Veyra\Media\Infrastructure;
 
+// This private temporary-file adapter enforces exact path permissions and cleanup.
+// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_is_writable
+// phpcs:disable WordPress.WP.AlternativeFunctions.unlink_unlink
+// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_chmod
+
 use Veyra\Media\Application\ImageReencoder;
 
 final class GdImageReencoder implements ImageReencoder

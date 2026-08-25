@@ -4,6 +4,15 @@ declare(strict_types=1);
 
 namespace Veyra\Media\Infrastructure;
 
+// This protected-storage adapter requires exclusive creation, streaming, containment checks,
+// exact private permissions, and unfiltered deletion that WP_Filesystem cannot guarantee.
+// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_fopen
+// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+// phpcs:disable WordPress.WP.AlternativeFunctions.unlink_unlink
+// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_chmod
+// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_is_writable
+// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_mkdir
+
 use Veyra\Media\Application\ProtectedStorage;
 use Veyra\Media\Domain\StoredObject;
 

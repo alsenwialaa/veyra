@@ -497,9 +497,14 @@ final class WordPressPrivacyIntegration
                 'value' => $this->exportValue((string) $name, $value),
             ];
         }
+        $groupLabel = sprintf(
+            /* translators: %s: exported Veyra data-group name. */
+            __('Veyra %s', 'veyra-ai-commerce-agent'),
+            ucwords(str_replace('-', ' ', $group))
+        );
         return [
             'group_id' => 'veyra-' . $group,
-            'group_label' => sprintf(__('Veyra %s', 'veyra-ai-commerce-agent'), ucwords(str_replace('-', ' ', $group))),
+            'group_label' => $groupLabel,
             'item_id' => 'veyra-' . $group . '-' . $id,
             'data' => $data,
         ];

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Veyra\Confirmation\Application;
 
+// Internal gate exceptions are never rendered; adapters escape at the output boundary.
+// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped
+
 use Veyra\Audit\Application\AuditWriter;
 use Veyra\Confirmation\Domain\IdempotencyDecisionStatus;
 use Veyra\Confirmation\Domain\SensitiveActionGateResult;

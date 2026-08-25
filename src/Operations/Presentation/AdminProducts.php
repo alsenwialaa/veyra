@@ -236,24 +236,18 @@ final class AdminProducts
                 'provider_readiness' => '/admin/provider/readiness',
             ],
             'strings' => [
-                'loading' => 'Loading authoritative state…',
-                'unavailable' => 'The authoritative service is unavailable. No change was made.',
-                'saved' => 'Draft saved by the server.',
-                'validated' => 'Validation completed.',
-                'published' => 'Published version confirmed by the server.',
-                'rolled_back' => 'Rollback confirmed by the server.',
-                'conflict' => 'The configuration changed elsewhere. Reload before continuing.',
-                'not_authorized' => 'You are not authorized for this action.',
-                'dirty' => 'Unsaved draft changes',
-                'clean' => 'Draft matches the loaded server version',
+                'loading' => __('Loading authoritative state…', 'veyra-ai-commerce-agent'),
+                'unavailable' => __('The authoritative service is unavailable. No change was made.', 'veyra-ai-commerce-agent'),
+                'saved' => __('Draft saved by the server.', 'veyra-ai-commerce-agent'),
+                'validated' => __('Validation completed.', 'veyra-ai-commerce-agent'),
+                'published' => __('Published version confirmed by the server.', 'veyra-ai-commerce-agent'),
+                'rolled_back' => __('Rollback confirmed by the server.', 'veyra-ai-commerce-agent'),
+                'conflict' => __('The configuration changed elsewhere. Reload before continuing.', 'veyra-ai-commerce-agent'),
+                'not_authorized' => __('You are not authorized for this action.', 'veyra-ai-commerce-agent'),
+                'dirty' => __('Unsaved draft changes', 'veyra-ai-commerce-agent'),
+                'clean' => __('Draft matches the loaded server version', 'veyra-ai-commerce-agent'),
             ],
         ];
-
-        if (function_exists('__')) {
-            foreach ($defaults['strings'] as $key => $value) {
-                $defaults['strings'][$key] = __($value, 'veyra-ai-commerce-agent');
-            }
-        }
 
         $configuration = array_replace($defaults, $provided);
         $configuration['routes'] = array_replace(

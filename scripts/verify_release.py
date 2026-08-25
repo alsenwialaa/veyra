@@ -130,9 +130,17 @@ def verify_localization(root: Path) -> dict[str, int]:
         raise VerificationError(f"invalid Arabic MO catalog: {exc}") from exc
 
     customer = (root / "src" / "Experience" / "Presentation" / "CustomerExperience.php").read_text(encoding="utf-8")
-    block = re.search(r"private function defaultStrings\(\): array\s*\{(?P<body>.*?)\n\s*if \(function_exists\('__'\)\)", customer, re.DOTALL)
+    block = re.search(
+        r"private function defaultStrings\(\): array\s*\{(?P<body>.*?)\n\s*\];\n\s*\}",
+        customer,
+        re.DOTALL,
+    )
     require(block is not None, "customer string catalog block is unavailable")
-    messages = re.findall(r"^\s*'[^']+'\s*=>\s*'([^']*)',\s*$", block.group("body"), re.MULTILINE)
+    messages = re.findall(
+        r"^\s*'[^']+'\s*=>\s*__\('([^']*)',\s*'veyra-ai-commerce-agent'\),\s*$",
+        block.group("body"),
+        re.MULTILINE,
+    )
     require(messages, "customer string catalog is empty")
     untranslated = [message for message in messages if catalog.gettext(message) == message]
     require(not untranslated, "Arabic catalog lacks customer strings: " + ", ".join(untranslated[:5]))

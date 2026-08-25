@@ -17,20 +17,21 @@ jobs:
     name: WordPress Plugin Check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
+
+      - name: Build and extract the deterministic installable plugin
+        run: |
+          python3 scripts/package_release.py --output build/plugin-check-artifacts
+          mkdir -p build/plugin-check
+          unzip -q build/plugin-check-artifacts/*-installable.zip -d build/plugin-check
+          test -f build/plugin-check/veyra-ai-commerce-agent/veyra-ai-commerce-agent.php
 
       - name: Run WordPress security, performance, accessibility, and repository checks
         uses: wordpress/plugin-check-action@v1.1.9
         with:
-          build-dir: './'
-          exclude-directories: |
-            .github
-            docs
-            scripts
-            tests
-          ignore-warnings: 'true'
-          include-experimental: 'false'
-          wp-version: '7.1'
+          build-dir: './build/plugin-check/veyra-ai-commerce-agent'
+          slug: 'veyra-ai-commerce-agent'
+          wp-version: 'latest'
 
   deterministic-contracts:
     name: PHP ${{ matrix.php }} deterministic contracts
@@ -41,7 +42,7 @@ jobs:
         php: ['8.1', '8.2', '8.3', '8.4']
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: shivammathur/setup-php@v2
         with:
@@ -49,15 +50,24 @@ jobs:
           coverage: none
           tools: composer:v2
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: '24'
+          package-manager-cache: false
 
       - name: Validate Composer metadata
         run: composer validate --strict --no-check-publish
 
       - name: Install test dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Capture the resolved Composer dependency lock
+        if: matrix.php == '8.4'
+        uses: actions/upload-artifact@v4
+        with:
+          name: veyra-composer-lock
+          path: composer.lock
+          if-no-files-found: error
 
       - name: Audit Composer dependencies
         run: composer audit --no-interaction
@@ -78,7 +88,7 @@ jobs:
     name: PHPUnit coverage evidence
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: shivammathur/setup-php@v2
         with:
@@ -104,7 +114,7 @@ jobs:
     name: PHPStan production-source analysis
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: shivammathur/setup-php@v2
         with:
@@ -122,14 +132,22 @@ jobs:
     name: Draft 2020-12 schema and registry contracts
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: '24'
+          package-manager-cache: false
 
       - name: Install pinned schema-validation runtime
         run: npm install --ignore-scripts
+
+      - name: Capture the resolved npm dependency lock
+        uses: actions/upload-artifact@v4
+        with:
+          name: veyra-npm-lock
+          path: package-lock.json
+          if-no-files-found: error
 
       - name: Compile every schema and validate governed registries
         run: npm run test:schemas
@@ -138,7 +156,7 @@ jobs:
     name: Deterministic package smoke test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Build source and installable archives twice
         run: |

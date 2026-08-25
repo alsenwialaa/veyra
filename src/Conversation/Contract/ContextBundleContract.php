@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace Veyra\Conversation\Contract;
 
+// Internal validation exceptions are never rendered; adapters escape at the output boundary.
+// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped
+
 use Veyra\AI\Tool\ToolContext;
 use Veyra\Conversation\Domain\ContextBundleException;
 use Veyra\Conversation\Domain\ContextBundlePolicy;

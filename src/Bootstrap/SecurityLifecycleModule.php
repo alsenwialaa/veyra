@@ -145,9 +145,13 @@ final class SecurityLifecycleModule
         RetentionService $retention,
         ?MediaRestController $media
     ): void {
+        $retentionCallback = static function () use ($retention): void {
+            $retention->run();
+        };
+
         try {
             $privacy->register();
-            add_action('veyra_retention', [$retention, 'run']);
+            add_action('veyra_retention', $retentionCallback);
             $media?->register();
         } catch (\Throwable $error) {
             if (function_exists('remove_filter')) {
@@ -158,7 +162,7 @@ final class SecurityLifecycleModule
                 }
             }
             if (function_exists('remove_action')) {
-                remove_action('veyra_retention', [$retention, 'run']);
+                remove_action('veyra_retention', $retentionCallback);
                 if ($media !== null) {
                     remove_action('rest_api_init', [$media, 'registerRoutes']);
                 }

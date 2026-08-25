@@ -18,8 +18,9 @@ final class ProtectedStreamPayload
     public function close(): void
     {
         if (is_resource($this->stream)) {
+            // WP_Filesystem cannot close an already-authorized response stream.
+            // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
             fclose($this->stream);
         }
     }
 }
-

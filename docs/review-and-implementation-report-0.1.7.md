@@ -125,7 +125,7 @@ There is no retention default. The bounded range is an implementation safety lim
 | Release verifier | Passed | `0.1.7`, schema `1.6.0`, 28 capabilities, 20 core, 17 optional, 30 JSON, 262 PHP source, 12 REST routes, 91 Arabic strings |
 | Workflow YAML and diff whitespace | Passed | Definition/static validity only |
 | Heuristic repository audit | 0 critical, 16 high, 34 medium | Manual dispositions; not independent security certification |
-| Deterministic package double-build | Passed | Two byte-identical builds; 422-file source and 306-file installable archives |
+| Deterministic package double-build | Passed | Two byte-identical builds; 422-file source and 275-file installable archives |
 
 The local PHP runner is a PHP 8.2.32 WebAssembly environment. The candidate requires PHP 8.1+, so the PHP 8.1–8.4 support matrix is not established by this run.
 

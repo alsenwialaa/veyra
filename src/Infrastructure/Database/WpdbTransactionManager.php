@@ -10,7 +10,11 @@ final class WpdbTransactionManager
     {
     }
 
-    /** @template T @param callable(): T $operation @return T */
+    /**
+     * @template T
+     * @param callable(): T $operation
+     * @return T
+     */
     public function transactional(callable $operation): mixed
     {
         if ($this->database->query('START TRANSACTION') === false) {
@@ -31,4 +35,3 @@ final class WpdbTransactionManager
         }
     }
 }
-

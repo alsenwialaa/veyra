@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Veyra\Operations\Configuration;
 
+// Internal persistence exceptions are never rendered; adapters escape at the output boundary.
+// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped
+
 use Veyra\Infrastructure\Database\TableNames;
 use Veyra\Shared\Domain\CanonicalJson;
 use Veyra\Shared\Domain\Uuid;

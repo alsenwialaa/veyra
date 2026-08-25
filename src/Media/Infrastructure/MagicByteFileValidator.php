@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Veyra\Media\Infrastructure;
 
+// This bounded signature validator needs random-access stream reads; WP_Filesystem has no equivalent API.
+// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_fopen
+// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_fread
+// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+
 use Veyra\Media\Application\FileValidator;
 use Veyra\Media\Domain\ValidatedFile;
 

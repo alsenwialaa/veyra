@@ -249,6 +249,8 @@ final class ProtectedUploadService
         } finally {
             $this->releaseLock($lock);
             if (is_string($ownedTemporaryPath) && is_file($ownedTemporaryPath)) {
+                // Delete the exact service-owned path; wp_delete_file filters may redirect it.
+                // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
                 @unlink($ownedTemporaryPath);
             }
         }
