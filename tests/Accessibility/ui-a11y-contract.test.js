@@ -14,7 +14,12 @@ const adminJs = fs.readFileSync(path.join(root, 'assets/admin/veyra-admin.js'), 
 
 assert.match(customerTemplate, /role="<\?php echo \$veyraIsModal \? 'dialog' : 'region'; \?>"/);
 assert.match(customerTemplate, /aria-modal="true"/);
-assert.match(customerTemplate, /role="log"/);
+const scrollRegion = customerTemplate.match(/<div\s+class="veyra-chat__main"[\s\S]*?>/)?.[0] || '';
+assert.match(scrollRegion, /role="log"/);
+assert.match(scrollRegion, /tabindex="0"/);
+assert.match(scrollRegion, /aria-label=/);
+const timelineList = customerTemplate.match(/<ol\s+[\s\S]*?data-veyra-timeline[\s\S]*?>/)?.[0] || '';
+assert.doesNotMatch(timelineList, /role="log"/, 'list items keep an implicit list parent inside the log region');
 assert.match(customerTemplate, /aria-live="polite"/);
 assert.match(customerTemplate, /aria-live="assertive"/);
 assert.match(customerTemplate, /<label class="veyra-chat__sr-only"/);
@@ -44,6 +49,10 @@ assert.match(customerCss, /\.veyra-chat\[dir="rtl"\][\s\S]*safe-area-inset-left/
 assert.match(customerCss, /inset-inline-end:\s*max\(1rem, var\(--veyra-safe-inline-end\)\)/);
 assert.match(customerCss, /100dvh/);
 assert.match(customerCss, /overflow-x:\s*hidden/);
+const customerControlDefaults = customerCss.match(/\.veyra-chat button,[\s\S]*?\}/)?.[0] || '';
+assert.doesNotMatch(customerControlDefaults, /color\s*:/, 'control defaults must not override component contrast colors');
+const customerLauncher = customerCss.match(/\.veyra-chat__launcher\s*\{[\s\S]*?\}/)?.[0] || '';
+assert.match(customerLauncher, /color:\s*#ffffff/, 'launcher text retains AA contrast against the dark brand surface');
 assert.match(adminCss, /overflow-x:\s*auto/);
 
 assert.doesNotMatch(customerJs, /\.innerHTML\s*=/, 'customer payloads never enter innerHTML');

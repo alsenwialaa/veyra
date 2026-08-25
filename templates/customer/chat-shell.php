@@ -88,7 +88,15 @@ $veyraShowLauncher = $veyraSurface === 'launcher';
 
         <div class="veyra-chat__connection" data-veyra-connection role="status" aria-live="polite" aria-atomic="true" hidden></div>
 
-        <div class="veyra-chat__main" data-veyra-scroll>
+        <div
+            class="veyra-chat__main"
+            data-veyra-scroll
+            role="log"
+            tabindex="0"
+            aria-live="polite"
+            aria-relevant="additions text"
+            aria-label="<?php echo esc_attr($veyraStrings['timeline']); ?>"
+        >
             <div class="veyra-chat__history-control">
                 <button type="button" class="veyra-chat__secondary-button" data-veyra-load-older hidden>
                     <?php echo esc_html($veyraStrings['load_older']); ?>
@@ -98,10 +106,6 @@ $veyraShowLauncher = $veyraSurface === 'launcher';
             <ol
                 class="veyra-chat__timeline"
                 data-veyra-timeline
-                role="log"
-                aria-live="polite"
-                aria-relevant="additions text"
-                aria-label="<?php echo esc_attr($veyraStrings['timeline']); ?>"
             >
                 <li class="veyra-chat__empty" data-veyra-empty>
                     <span class="veyra-chat__empty-mark" aria-hidden="true">✦</span>
