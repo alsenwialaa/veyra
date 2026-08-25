@@ -30,6 +30,7 @@ final class ProtectedStorageFactory
             }
         }
         $rawDocumentRoot = isset($_SERVER['DOCUMENT_ROOT']) && is_string($_SERVER['DOCUMENT_ROOT'])
+            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- The unslashed raw boundary value is sanitized below and rejected unless byte-identical before path validation.
             ? wp_unslash($_SERVER['DOCUMENT_ROOT'])
             : '';
         if (!is_string($rawDocumentRoot)) {

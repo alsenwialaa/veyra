@@ -398,6 +398,7 @@ final class ChatRestController
             return '';
         }
 
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- The unslashed raw boundary value is sanitized, byte-compared, and then validated as an IP before use.
         $rawAddress = wp_unslash($_SERVER['REMOTE_ADDR']);
         if (!is_string($rawAddress)) {
             return '';

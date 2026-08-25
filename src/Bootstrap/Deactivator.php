@@ -77,7 +77,7 @@ final class Deactivator
                 $now,
                 'active'
             );
-            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Deactivation must synchronously fence active sensitive mutations; a cached write cannot satisfy that postcondition.
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared -- The complete statement and %i identifier are prepared immediately above; deactivation must synchronously fence active sensitive mutations.
             if ($exists && $wpdb->query($confirmationFence) === false) {
                 return false;
             }
@@ -100,7 +100,7 @@ final class Deactivator
                 $now,
                 'in_progress'
             );
-            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Deactivation must persist uncertain outcomes before releasing locks; cache APIs cannot perform this state transition.
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared -- The complete statement and %i identifier are prepared immediately above; deactivation must persist uncertain outcomes before releasing locks.
             if ($exists && $wpdb->query($idempotencyFence) === false) {
                 return false;
             }
@@ -111,7 +111,7 @@ final class Deactivator
                 return false;
             }
             $releaseLocks = $wpdb->prepare('DELETE FROM %i', $lockTable);
-            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Locks are plugin-owned volatile rows and may be released only after both mutation fences succeed.
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared -- The fixed-registry %i identifier is prepared immediately above; plugin-owned locks may be released only after both mutation fences succeed.
             if ($exists && $wpdb->query($releaseLocks) === false) {
                 return false;
             }

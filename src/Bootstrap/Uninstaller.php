@@ -74,7 +74,7 @@ final class Uninstaller
             // Table names originate only from the validated WordPress prefix and
             // the fixed Veyra table registry and are escaped as SQL identifiers.
             $drop = $wpdb->prepare('DROP TABLE IF EXISTS %i', $table);
-            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.SchemaChange -- Uninstall must delete the explicitly authorized plugin schema and verifies the postcondition immediately.
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.SchemaChange,WordPress.DB.PreparedSQL.NotPrepared -- The fixed-registry identifier is prepared with %i immediately above; uninstall must delete the authorized schema and verify the postcondition synchronously.
             if ($wpdb->query($drop) === false
                 || self::tableExists($wpdb, $table) !== false
             ) {

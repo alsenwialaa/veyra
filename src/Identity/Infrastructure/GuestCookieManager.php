@@ -20,6 +20,7 @@ final class GuestCookieManager
             return null;
         }
 
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- The credential is sanitized below but accepted only when the raw and sanitized bytes match and the strict opaque-token grammar passes.
         $rawToken = wp_unslash($_COOKIE[GuestSessionManager::COOKIE_NAME]);
         if (!is_string($rawToken)) {
             return null;
