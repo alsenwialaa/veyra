@@ -176,11 +176,20 @@ jobs:
 
       - name: Start WordPress and run browser tests
         run: |
-          /tmp/wp server --path="$VEYRA_WP_PATH" --host=127.0.0.1 --port=8080 > /tmp/veyra-wp-server.log 2>&1 &
+          (
+            cd "$VEYRA_WP_PATH"
+            exec /tmp/wp server --host=127.0.0.1 --port=8080
+          ) > /tmp/veyra-wp-server.log 2>&1 &
           for attempt in $(seq 1 30); do
             if curl --silent --fail "$VEYRA_BASE_URL" >/dev/null; then break; fi
             sleep 1
           done
+          curl --fail --silent --show-error \
+            "$VEYRA_BASE_URL/wp-content/plugins/veyra-ai-commerce-agent/assets/customer/veyra-chat.js?ver=0.1.7" \
+            --output /tmp/veyra-served-chat.js
+          cmp \
+            "$VEYRA_WP_PATH/wp-content/plugins/veyra-ai-commerce-agent/assets/customer/veyra-chat.js" \
+            /tmp/veyra-served-chat.js
           npm run test:browser
 
       - name: Upload browser diagnostics
